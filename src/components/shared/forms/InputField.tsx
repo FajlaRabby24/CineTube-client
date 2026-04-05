@@ -1,5 +1,5 @@
+import { FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { cn } from "@/lib/utils";
 import type { AnyFieldApi } from "@tanstack/react-form";
 import React from "react";
@@ -46,12 +46,12 @@ const InputField = ({
 
   return (
     <div className={cn("space-y-1.5", className)}>
-      <Label
+      <FieldLabel
         htmlFor={field.name}
         className={cn(hasError && "text-destructive")}
       >
         {label}
-      </Label>
+      </FieldLabel>
 
       <div className="relative">
         {prepend && (

@@ -1,3 +1,6 @@
+"use client";
+
+import InputField from "@/components/shared/forms/InputField";
 import PasswordField from "@/components/shared/forms/PasswordField";
 import { Button } from "@/components/ui/button";
 import {
@@ -15,38 +18,72 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import FileUpload from "@/components/ui/file-upload";
-import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import { useForm } from "@tanstack/react-form";
 import Image from "next/image";
 import Link from "next/link";
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const form = useForm({
+    defaultValues: {
+      name: "",
+      email: "",
+      password: "",
+      confirm_password: "",
+      image: null,
+    },
+
+    onSubmit: async ({ value }) => {
+      try {
+      } catch (error: any) {
+        console.log(`Login failed: ${error.message}`);
+      }
+    },
+  });
+
   return (
     <div className={cn("flex flex-col gap-6", className)} {...props}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <Card>
             <CardHeader className="text-center">
+              <Link href="/" className="text-2xl font-bold">
+                CT
+              </Link>
               <CardTitle className="text-xl">Create your account</CardTitle>
               <CardDescription className="text-muted-foreground">
                 Enter your email below to create your account
               </CardDescription>
             </CardHeader>
             <CardContent>
-              <form>
+              <form
+                method="POST"
+                action="#"
+                noValidate
+                onSubmit={(e) => {
+                  e.preventDefault();
+                  e.stopPropagation();
+                  form.handleSubmit();
+                }}
+              >
                 <FieldGroup>
                   <Field className="grid grid-cols-2 gap-4">
-                    <Field>
-                      <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                      <Input
-                        id="name"
-                        type="text"
-                        placeholder="John Doe"
-                        required
-                      />
-                    </Field>
+                    {/* email  */}
+                    <form.Field
+                      name="name"
+                      // validators={{onChange: }}
+                    >
+                      {(field) => (
+                        <InputField
+                          field={field}
+                          label="Full Name"
+                          type="text"
+                          placeholder="John Doe"
+                        />
+                      )}
+                    </form.Field>
 
                     <Field>
                       <FieldLabel htmlFor="email">Image (optional)</FieldLabel>
@@ -54,30 +91,52 @@ export function SignupForm({
                     </Field>
                   </Field>
 
-                  <Field>
-                    <FieldLabel htmlFor="email">Email</FieldLabel>
-                    <Input
-                      id="email"
-                      type="email"
-                      placeholder="m@example.com"
-                      required
-                    />
-                  </Field>
+                  {/* email  */}
+                  <form.Field
+                    name="email"
+                    // validators={{onChange: }}
+                  >
+                    {(field) => (
+                      <InputField
+                        field={field}
+                        label="Email"
+                        type="email"
+                        placeholder="example@gamil.com"
+                      />
+                    )}
+                  </form.Field>
+
                   <Field>
                     <Field className="grid grid-cols-2 gap-4">
-                      <Field>
-                        <FieldLabel htmlFor="password">Password</FieldLabel>
-                        <PasswordField id="password" />
-                      </Field>
-                      <Field>
-                        <FieldLabel htmlFor="confirm-password">
-                          Confirm Password
-                        </FieldLabel>
-                        <PasswordField
-                          id="confirm-password"
-                          placeholder="Confirm password"
-                        />
-                      </Field>
+                      {/* password  */}
+                      <form.Field
+                        name="password"
+                        // validators={{ onChange: loginZodSchema.shape.password }}
+                      >
+                        {(field) => (
+                          <PasswordField
+                            field={field}
+                            label="Password"
+                            id="password"
+                            placeholder="Password"
+                          />
+                        )}
+                      </form.Field>
+
+                      {/* confirm password  */}
+                      <form.Field
+                        name="confirm_password"
+                        // validators={{ onChange: loginZodSchema.shape.password }}
+                      >
+                        {(field) => (
+                          <PasswordField
+                            field={field}
+                            label="Confirm Password"
+                            id="confirm-password"
+                            placeholder="confirm password"
+                          />
+                        )}
+                      </form.Field>
                     </Field>
                     <FieldDescription>
                       Must be at least 8 characters long.
@@ -114,6 +173,7 @@ export function SignupForm({
             <Image
               src="/auth.svg"
               alt="Image"
+              loading="eager"
               className="absolute inset-0 h-full w-full  object-cover "
               width={500}
               height={500}
