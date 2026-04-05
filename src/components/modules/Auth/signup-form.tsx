@@ -1,11 +1,5 @@
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Field,
   FieldDescription,
@@ -13,8 +7,10 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
+import FileUpload from "@/components/ui/file-upload";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
+import Image from "next/image";
 export function SignupForm({
   className,
   ...props
@@ -26,22 +22,27 @@ export function SignupForm({
           <Card>
             <CardHeader className="text-center">
               <CardTitle className="text-xl">Create your account</CardTitle>
-              <CardDescription>
-                Enter your email below to create your account
-              </CardDescription>
             </CardHeader>
             <CardContent>
               <form>
                 <FieldGroup>
-                  <Field>
-                    <FieldLabel htmlFor="name">Full Name</FieldLabel>
-                    <Input
-                      id="name"
-                      type="text"
-                      placeholder="John Doe"
-                      required
-                    />
+                  <Field className="grid grid-cols-2 gap-4">
+                    <Field>
+                      <FieldLabel htmlFor="name">Full Name</FieldLabel>
+                      <Input
+                        id="name"
+                        type="text"
+                        placeholder="John Doe"
+                        required
+                      />
+                    </Field>
+
+                    <Field>
+                      <FieldLabel htmlFor="email">Image (optional)</FieldLabel>
+                      <FileUpload />
+                    </Field>
                   </Field>
+
                   <Field>
                     <FieldLabel htmlFor="email">Email</FieldLabel>
                     <Input
@@ -96,10 +97,12 @@ export function SignupForm({
             </CardContent>
           </Card>
           <div className="relative hidden bg-muted md:block">
-            <img
-              src="/placeholder.svg"
+            <Image
+              src="/auth.svg"
               alt="Image"
-              className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+              className="absolute inset-0 h-full w-full object-cover "
+              width={500}
+              height={500}
             />
           </div>
         </CardContent>
