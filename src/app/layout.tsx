@@ -2,6 +2,7 @@ import { ThemeProvider } from "@/providers/ThemeProvider";
 import type { Metadata } from "next";
 import { Roboto } from "next/font/google";
 import { Toaster } from "sonner";
+import QueryProviders from "../providers/QueryProvider";
 import "./globals.css";
 
 const poppins = Roboto({
@@ -28,7 +29,7 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <Toaster richColors />
-          {children}
+          <QueryProviders>{children}</QueryProviders>
         </ThemeProvider>
       </body>
     </html>
