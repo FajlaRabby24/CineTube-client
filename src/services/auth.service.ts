@@ -11,7 +11,6 @@ import {
 } from "@/types/auth.types";
 import { loginZodSchema, registerZodSchema } from "@/zod/auth.validation";
 import { redirect } from "next/navigation";
-import { toast } from "sonner";
 import {
   getDefaultDashboardRoute,
   isValidRedirectForRole,
@@ -30,41 +29,22 @@ export const registerAction = async (payload: IRegisterPayload) => {
     };
   }
 
+  const dataToSend = { ...parsedPayload.data };
+  if (!dataToSend.image) {
+    delete dataToSend.image;
+  }
+
   try {
     const response = await httpClient.post<IRegisterResponse>(
       "/auth/register",
-      parsedPayload.data,
+      dataToSend,
     );
-    if (response.success) {
-      toast.success(
-        response.message ||
-          "We send you a verification email. Please check your inbox",
-        { duration: 4000 },
-      );
-      redirect("/login");
-    }
+    console.log(response, "from auth service");
+    return { success: true, message: response.message };
   } catch (error: any) {
-    console.log(error, "error");
-    if (
-      error &&
-      typeof error === "object" &&
-      "digest" in error &&
-      typeof error.digest === "string" &&
-      error.digest.startsWith("NEXT_REDIRECT")
-    ) {
-      throw error;
-    }
-
-    if (
-      error &&
-      error.response &&
-      error.response.data.message === "Email not verified"
-    ) {
-      redirect(`/verify-email?email=${payload.email}`);
-    }
     return {
       success: false,
-      message: `Login failed: ${error.message}`,
+      message: `Registration failed: ${error?.response?.data?.message}`,
     };
   }
 };
@@ -116,26 +96,9 @@ export const loginAction = async (
       redirect(targetPath);
     }
   } catch (error: any) {
-    if (
-      error &&
-      typeof error === "object" &&
-      "digest" in error &&
-      typeof error.digest === "string" &&
-      error.digest.startsWith("NEXT_REDIRECT")
-    ) {
-      throw error;
-    }
-
-    if (
-      error &&
-      error.response &&
-      error.response.data.message === "Email not verified"
-    ) {
-      redirect(`/verify-email?email=${payload.email}`);
-    }
     return {
       success: false,
-      message: `Login failed: ${error.message}`,
+      message: `Login failed: ${error?.response?.data?.message}`,
     };
   }
 };

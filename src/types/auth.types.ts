@@ -20,6 +20,7 @@ export interface ILoginResponse {
 }
 
 export interface IRegisterResponse {
-  success: boolean;
-  message: string;
+  user: {
+    name: string;
+  };
 }

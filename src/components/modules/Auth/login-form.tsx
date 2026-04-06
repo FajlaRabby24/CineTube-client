@@ -4,7 +4,6 @@
 import AppSubmitButton from "@/components/shared/forms/AppSubmitButton";
 import InputField from "@/components/shared/forms/InputField";
 import PasswordField from "@/components/shared/forms/PasswordField";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   Card,
   CardContent,
@@ -26,7 +25,7 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
+import { toast } from "sonner";
 import GoogleLoginButton from "../../shared/forms/GoogleLoginButton";
 
 interface LoginFormProps {
@@ -34,8 +33,6 @@ interface LoginFormProps {
 }
 
 export function LoginForm({ redirectPath }: LoginFormProps) {
-  const [serverError, setServerError] = useState<string | null>(null);
-
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (payload: ILoginPayload) => loginAction(payload, redirectPath),
   });
@@ -47,16 +44,14 @@ export function LoginForm({ redirectPath }: LoginFormProps) {
     },
 
     onSubmit: async ({ value }) => {
-      setServerError(null);
       try {
         const result = (await mutateAsync(value)) as any;
         if (!result.success) {
-          setServerError(result.message || "Login failed");
+          toast.error(result.message || "Login failed");
           return;
         }
       } catch (error: any) {
-        console.log(`Login failed: ${error.message}`);
-        setServerError(`Login failed: ${error.message}`);
+        toast.error(error?.response?.data?.message || "Login failed");
       }
     },
   });
@@ -127,12 +122,6 @@ export function LoginForm({ redirectPath }: LoginFormProps) {
                       />
                     )}
                   </form.Field>
-
-                  {serverError && (
-                    <Alert variant="destructive">
-                      <AlertDescription>{serverError}</AlertDescription>
-                    </Alert>
-                  )}
 
                   <Field>
                     <form.Subscribe

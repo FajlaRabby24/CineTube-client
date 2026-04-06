@@ -23,19 +23,18 @@ import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
-import { useState } from "react";
-import { isValidImage } from "../../../lib/utils/isValidImage";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
 import { registerAction } from "../../../services/auth.service";
 import { IRegisterPayload } from "../../../types/auth.types";
 import { registerZodSchema } from "../../../zod/auth.validation";
 import AppSubmitButton from "../../shared/forms/AppSubmitButton";
-import { Alert, AlertDescription } from "../../ui/alert";
 import ImagePreview from "../../ui/file-priview";
 export function SignupForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [serverError, setServerError] = useState<string | null>(null);
+  const router = useRouter();
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (payload: IRegisterPayload) => registerAction(payload),
@@ -46,20 +45,21 @@ export function SignupForm({
       name: "",
       email: "",
       password: "",
-      image: null as File | null,
+      image: null as string | null,
     },
 
     onSubmit: async ({ value }) => {
-      setServerError(null);
-
       try {
-        if (value.image) {
-          isValidImage(value.image);
+        const result = (await mutateAsync(value)) as any;
+        if (!result.success) {
+          toast.error(result.message || "Registration failed");
+          return;
         }
-        console.log(value);
+
+        toast.success(result.message || "Registration successful");
+        router.push(`/verify-email?email=${value.email}`);
       } catch (error: any) {
-        console.log(`Registration failed: ${error.message}`);
-        setServerError(`Login failed: ${error.message}`);
+        toast.error(error?.response?.data?.message || "Login failed");
       }
     },
   });
@@ -110,7 +110,10 @@ export function SignupForm({
                       <FieldLabel htmlFor="image">Image (optional)</FieldLabel>
                       <ImagePreview
                         onFileChange={(file) =>
-                          form.setFieldValue("image", file)
+                          form.setFieldValue(
+                            "image",
+                            file ? URL.createObjectURL(file) : null,
+                          )
                         }
                       />
                     </Field>
@@ -151,14 +154,9 @@ export function SignupForm({
                       )}
                     </form.Field>
                     <FieldDescription>
-                      Must be at least 6 characters long.
+                      Must be at least 8 characters long.
                     </FieldDescription>
                   </Field>
-                  {serverError && (
-                    <Alert variant="destructive">
-                      <AlertDescription>{serverError}</AlertDescription>
-                    </Alert>
-                  )}
 
                   <Field>
                     <form.Subscribe
