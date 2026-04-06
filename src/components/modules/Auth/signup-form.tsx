@@ -18,17 +18,19 @@ import {
   FieldLabel,
   FieldSeparator,
 } from "@/components/ui/field";
-import FileUpload from "@/components/ui/file-upload";
 import { cn } from "@/lib/utils";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
+import { isValidImage } from "../../../lib/utils/isValidImage";
 import { registerAction } from "../../../services/auth.service";
 import { IRegisterPayload } from "../../../types/auth.types";
+import { registerZodSchema } from "../../../zod/auth.validation";
 import AppSubmitButton from "../../shared/forms/AppSubmitButton";
 import { Alert, AlertDescription } from "../../ui/alert";
+import ImagePreview from "../../ui/file-priview";
 export function SignupForm({
   className,
   ...props
@@ -44,19 +46,17 @@ export function SignupForm({
       name: "",
       email: "",
       password: "",
-      confirm_password: "",
-      // Image: "",
+      image: null as File | null,
     },
 
     onSubmit: async ({ value }) => {
       setServerError(null);
 
       try {
-        const result = (await mutateAsync(value)) as any;
-        if (!result.success) {
-          setServerError(result.message || "Registration failed");
-          return;
+        if (value.image) {
+          isValidImage(value.image);
         }
+        console.log(value);
       } catch (error: any) {
         console.log(`Registration failed: ${error.message}`);
         setServerError(`Login failed: ${error.message}`);
@@ -94,7 +94,7 @@ export function SignupForm({
                     {/* email  */}
                     <form.Field
                       name="name"
-                      // validators={{onChange: }}
+                      validators={{ onChange: registerZodSchema.shape.name }}
                     >
                       {(field) => (
                         <InputField
@@ -107,60 +107,51 @@ export function SignupForm({
                     </form.Field>
 
                     <Field>
-                      <FieldLabel htmlFor="email">Image (optional)</FieldLabel>
-                      <FileUpload />
+                      <FieldLabel htmlFor="image">Image (optional)</FieldLabel>
+                      <ImagePreview
+                        onFileChange={(file) =>
+                          form.setFieldValue("image", file)
+                        }
+                      />
                     </Field>
                   </Field>
 
                   {/* email  */}
-                  <form.Field
-                    name="email"
-                    // validators={{onChange: }}
-                  >
-                    {(field) => (
-                      <InputField
-                        field={field}
-                        label="Email"
-                        type="email"
-                        placeholder="example@gamil.com"
-                      />
-                    )}
-                  </form.Field>
+                  <Field>
+                    <form.Field
+                      name="email"
+                      validators={{ onChange: registerZodSchema.shape.email }}
+                    >
+                      {(field) => (
+                        <InputField
+                          field={field}
+                          label="Email"
+                          type="email"
+                          placeholder="example@gamil.com"
+                        />
+                      )}
+                    </form.Field>
+                  </Field>
 
                   <Field>
-                    <Field className="grid grid-cols-2 gap-4">
-                      {/* password  */}
-                      <form.Field
-                        name="password"
-                        // validators={{ onChange: loginZodSchema.shape.password }}
-                      >
-                        {(field) => (
-                          <PasswordField
-                            field={field}
-                            label="Password"
-                            id="password"
-                            placeholder="Password"
-                          />
-                        )}
-                      </form.Field>
-
-                      {/* confirm password  */}
-                      <form.Field
-                        name="confirm_password"
-                        // validators={{ onChange: loginZodSchema.shape.password }}
-                      >
-                        {(field) => (
-                          <PasswordField
-                            field={field}
-                            label="Confirm Password"
-                            id="confirm-password"
-                            placeholder="confirm password"
-                          />
-                        )}
-                      </form.Field>
-                    </Field>
+                    {/* password  */}
+                    <form.Field
+                      name="password"
+                      validators={{
+                        onChange: registerZodSchema.shape.password,
+                      }}
+                    >
+                      {(field) => (
+                        <PasswordField
+                          field={field}
+                          label="Password"
+                          id="password"
+                          placeholder="Password"
+                        />
+                      )}
+                    </form.Field>
                     <FieldDescription>
-                      Must be at least 8 characters long.
+                      Must be at least 6 characters long.
                     </FieldDescription>
                   </Field>
                   {serverError && (

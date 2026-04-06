@@ -92,10 +92,7 @@ export const loginAction = async (
       accessToken,
       refreshToken,
       token,
-      email,
-      emailVerified,
-      role,
-      needPasswordChange,
+      user: { needPasswordChange, email, role, emailVerified },
     } = response.data;
     console.log(response.data, "response data");
     await setTokenInCookies("accessToken", accessToken);
@@ -103,7 +100,7 @@ export const loginAction = async (
     await setTokenInCookies(
       "better-auth.session_token",
       token,
-      60 * 60 * 24 * 7,
+      60 * 60 * 24 * 7, // 7 days
     );
 
     if (!emailVerified) {

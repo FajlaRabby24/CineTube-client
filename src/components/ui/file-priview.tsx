@@ -5,12 +5,21 @@ import { CircleUserRoundIcon } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useFileUpload } from "@/hooks/use-file-uplaod";
 import Image from "next/image";
+import { useEffect } from "react";
 
-export default function FileUpload() {
+interface ImagePreviewProps {
+  onFileChange?: (file: File | null) => void;
+}
+
+export default function ImagePreview({ onFileChange }: ImagePreviewProps) {
   const [{ files }, { removeFile, openFileDialog, getInputProps }] =
     useFileUpload({
       accept: "image/*",
     });
+
+  useEffect(() => {
+    onFileChange?.(files[0]?.file instanceof File ? files[0].file : null);
+  }, [files, onFileChange]);
 
   const previewUrl = files[0]?.preview || null;
   const fileName = files[0]?.file.name || null;
@@ -68,11 +77,6 @@ export default function FileUpload() {
           </button>
         </div>
       )}
-      <p
-        aria-live="polite"
-        className="mt-2 text-muted-foreground text-xs"
-        role="region"
-      ></p>
     </div>
   );
 }
