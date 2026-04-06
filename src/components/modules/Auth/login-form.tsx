@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import AppSubmitButton from "@/components/shared/forms/AppSubmitButton";
