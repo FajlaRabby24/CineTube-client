@@ -4,6 +4,7 @@
 import AppSubmitButton from "@/components/shared/forms/AppSubmitButton";
 import InputField from "@/components/shared/forms/InputField";
 import PasswordField from "@/components/shared/forms/PasswordField";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -34,7 +35,6 @@ interface LoginFormProps {
 
 export function LoginForm({ redirectPath }: LoginFormProps) {
   const [serverError, setServerError] = useState<string | null>(null);
-  const [showPassword, setShowPassword] = useState(false);
 
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (payload: ILoginPayload) => loginAction(payload, redirectPath),
@@ -49,7 +49,11 @@ export function LoginForm({ redirectPath }: LoginFormProps) {
     onSubmit: async ({ value }) => {
       setServerError(null);
       try {
-        const result = await mutateAsync(value);
+        const result = (await mutateAsync(value)) as any;
+        if (!result.success) {
+          setServerError(result.message || "Login failed");
+          return;
+        }
       } catch (error: any) {
         console.log(`Login failed: ${error.message}`);
         setServerError(`Login failed: ${error.message}`);
@@ -122,6 +126,12 @@ export function LoginForm({ redirectPath }: LoginFormProps) {
                       />
                     )}
                   </form.Field>
+
+                  {serverError && (
+                    <Alert variant="destructive">
+                      <AlertDescription>{serverError}</AlertDescription>
+                    </Alert>
+                  )}
 
                   <Field>
                     <form.Subscribe
