@@ -1,6 +1,6 @@
 import { httpClient } from "../axios/httpClient";
 
-export const isValidImage = async (file: File) => {
+export const validateImage = async (file: File) => {
   const meta = {
     name: file.name,
     size: file.size,
@@ -9,5 +9,11 @@ export const isValidImage = async (file: File) => {
 
   const res = await httpClient.post("/validate-file", meta);
   console.log(res, "res from isValidImage");
-  return res;
+  if (!res.success) {
+    return {
+      success: false,
+      message: "File is not valid",
+    };
+  }
+  console.log(res, "fron validate image ");
 };

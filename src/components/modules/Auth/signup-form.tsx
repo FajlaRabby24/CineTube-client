@@ -50,6 +50,9 @@ export function SignupForm({
 
     onSubmit: async ({ value }) => {
       try {
+        if (value.image) {
+          // TODO: upload image
+        }
         const result = (await mutateAsync(value)) as any;
         if (!result.success) {
           toast.error(result.message || "Registration failed");
@@ -59,7 +62,7 @@ export function SignupForm({
         toast.success(result.message || "Registration successful");
         router.push(`/verify-email?email=${value.email}`);
       } catch (error: any) {
-        toast.error(error?.response?.data?.message || "Login failed");
+        toast.error("Registration failed. Please try again.");
       }
     },
   });
