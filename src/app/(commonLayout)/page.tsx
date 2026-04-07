@@ -1,10 +1,11 @@
 import Banner from "@/components/modules/Home/Banner";
-import Stats from "@/components/modules/Home/Stats";
-import TrendingMovies from "@/components/modules/Home/TrendingMovies";
-import FeaturedReviews from "@/components/modules/Home/FeaturedReviews";
-import TopRatedMovies from "@/components/modules/Home/TopRatedMovies";
-import GenreCategories from "@/components/modules/Home/GenreCategories";
 import CTASection from "@/components/modules/Home/CTASection";
+import FeaturedReviews from "@/components/modules/Home/FeaturedReviews";
+import GenreCategories from "@/components/modules/Home/GenreCategories";
+import PricingSection from "@/components/modules/Home/PricingSection";
+import Stats from "@/components/modules/Home/Stats";
+import TopRatedMovies from "@/components/modules/Home/TopRatedMovies";
+import TrendingMovies from "@/components/modules/Home/TrendingMovies";
 
 const HomePage = () => {
   return (
@@ -14,6 +15,7 @@ const HomePage = () => {
       <TrendingMovies />
       <GenreCategories />
       <FeaturedReviews />
+      <PricingSection />
       <TopRatedMovies />
       <CTASection />
     </div>
