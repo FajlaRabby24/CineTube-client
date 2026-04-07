@@ -27,6 +27,16 @@ export const getCommonNavItems = (role: UserRole): NavSection[] => {
           href: "change-password",
           icon: "Settings",
         },
+        {
+          title: "Update Profile",
+          href: "update-profile",
+          icon: "User",
+        },
+        {
+          title: "Reset Password",
+          href: "reset-password",
+          icon: "Key",
+        },
       ],
     },
   ];
