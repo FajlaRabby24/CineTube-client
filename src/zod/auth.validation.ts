@@ -35,3 +35,22 @@ export const changePasswordSchema = z.object({
     .string()
     .min(8, "New password must be at least 8 characters long"),
 });
+
+export const updateProfileSchema = z.object({
+  name: z
+    .string()
+    .min(2, "Name must be at least 2 characters long")
+    .max(50, "Name must be at most 50 characters long")
+    .optional(),
+  image: z.string().url("Image must be a valid URL").nullable().optional(),
+  bio: z
+    .string()
+    .max(250, "Bio must be at most 250 characters long")
+    .nullable()
+    .optional(),
+  phoneNumber: z
+    .string()
+    .min(11, "Phone number must be at least 11 characters long")
+    .nullable()
+    .optional(),
+});
