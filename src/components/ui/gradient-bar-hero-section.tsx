@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import { useState } from "react";
 
 interface AvatarProps {
@@ -74,22 +75,19 @@ const WaitlistForm: React.FC = () => {
   return (
     <div className="relative z-10 w-full">
       {!isSubmitted ? (
-        <form
-          onSubmit={handleSubmit}
-          className="flex flex-col sm:flex-row gap-3"
-        >
+        <form onSubmit={handleSubmit} className="flex flex-col sm:flex-row">
           <input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="Search for a movie..."
-            className="flex-1 px-6 sm:px-8 py-3 sm:py-4 rounded-full bg-gray-900/60 border border-gray-700 focus:border-white outline-none text-white text-sm sm:text-base shadow-[0_0_15px_rgba(0,0,0,0.3)] backdrop-blur-sm transition-all duration-300"
+            className="flex-1 px-6 sm:px-8 py-3 sm:py-4 rounded-l-full bg-gray-900/60 border border-gray-700 focus:border-white outline-none text-white text-sm sm:text-base shadow-[0_0_15px_rgba(0,0,0,0.3)] backdrop-blur-sm transition-all duration-300"
             required
           />
           <button
             type="submit"
             disabled={isSubmitting}
-            className={`px-6 sm:px-8 py-3 cursor-pointer sm:py-4 rounded-full transition-all duration-300 transform hover:scale-105 whitespace-nowrap text-sm sm:text-base ${
+            className={`px-6 sm:px-8 py-3 cursor-pointer sm:py-4 rounded-r-full transition-all duration-300 transform hover:scale-105 whitespace-nowrap text-sm sm:text-base ${
               isSubmitting
                 ? "bg-gray-600 text-gray-300 cursor-not-allowed"
                 : "bg-white hover:bg-gray-100 text-black"
@@ -145,7 +143,7 @@ const GradientBars: React.FC = () => {
               style={{
                 flex: "1 0 calc(100% / 15)",
                 maxWidth: "calc(100% / 15)",
-                height: "95%",
+                // height: "95%",
                 background:
                   "linear-gradient(to top, rgb(255, 60, 0), transparent)",
                 transform: `scaleY(${height / 100})`,
@@ -166,7 +164,7 @@ export const GradientBarHeroSection: React.FC = () => {
   return (
     <section
       className="relative flex flex-col items-center px-6 sm:px-8 md:px-12 overflow-hidden"
-      style={{ height: "calc(100vh - 64px)" }}
+      // style={{ height: "calc(100vh - 64px)" }}
     >
       <div className="absolute inset-0 bg-gray-950" />
       <GradientBars />
@@ -195,14 +193,17 @@ export const GradientBarHeroSection: React.FC = () => {
             </p>
           </div>
 
-          <div className="w-full max-w-2xl mb-6 sm:mb-6 md:mb-6 px-4">
+          <div className="w-full max-w-2xl mx-auto mb-6 sm:mb-6 md:mb-6 px-4">
             <WaitlistForm />
           </div>
         </div>
 
         {/* <div className="w-full max-w-3xl sm:max-w-4xl md:max-w-5xl mx-auto mt-auto px-2 sm:px-4"> */}
-        <img
-          src="https://images.unsplash.com/photo-1626814026160-2237a95fc5a0?w=1600&h=800&fit=crop"
+        <Image
+          height={200}
+          width={200}
+          loading="eager"
+          src="/banner.webp"
           alt="Movie streaming preview"
           className="w-full h-auto rounded-lg shadow-2xl opacity-80"
           style={{
