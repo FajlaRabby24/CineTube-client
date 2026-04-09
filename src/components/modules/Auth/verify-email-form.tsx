@@ -21,29 +21,30 @@ import {
   InputOTPSlot,
 } from "@/components/ui/input-otp";
 import { cn } from "@/lib/utils";
-import { verifyEmailAction } from "@/services/auth.service";
+import { verifyEmailAction } from "@/services/Auth/verifyEmail.service";
 import { IVerifyEmailOtpPayload } from "@/types/auth.types";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 
 interface VerifyEmailFormProps {
   email?: string;
-  className?: string;
+  redirectPath?: string;
 }
 
 export function VerifyEmailForm({
   email: initialEmail,
-  className,
-  ...props
+  redirectPath,
 }: VerifyEmailFormProps) {
+  const router = useRouter();
   const [otp, setOtp] = useState("");
   const { mutateAsync } = useMutation({
     mutationFn: ({ email, otp }: IVerifyEmailOtpPayload) =>
-      verifyEmailAction(email, otp),
+      verifyEmailAction(email, otp, redirectPath),
   });
 
   const form = useForm({
@@ -60,6 +61,7 @@ export function VerifyEmailForm({
         })) as {
           success: boolean;
           message: string;
+          route: string;
         };
         if (!result.success) {
           toast.error(result.message || "Email verification failed");
@@ -67,6 +69,7 @@ export function VerifyEmailForm({
         }
 
         toast.success(result.message || "Email verification successful");
+        router.push(result?.route);
       } catch (error) {
         toast.error("Email verification failed. Please try again.");
       }
@@ -74,7 +77,7 @@ export function VerifyEmailForm({
   });
 
   return (
-    <div className={cn("flex flex-col gap-6", className)} {...props}>
+    <div className={cn("flex flex-col gap-6")}>
       <Card className="overflow-hidden p-0">
         <CardContent className="grid p-0 md:grid-cols-2">
           <div className="relative hidden bg-muted md:block">
@@ -110,7 +113,9 @@ export function VerifyEmailForm({
                     <div className="text-center text-sm text-muted-foreground">
                       Code sent to:{" "}
                       <span className="font-medium text-foreground">
-                        {initialEmail ? `${initialEmail.slice(0, 2)}${"*".repeat(initialEmail.indexOf("@") - 2)}${initialEmail.slice(initialEmail.indexOf("@"))}` : ""}
+                        {initialEmail
+                          ? `${initialEmail.slice(0, 2)}${"*".repeat(initialEmail.indexOf("@") - 2)}${initialEmail.slice(initialEmail.indexOf("@"))}`
+                          : ""}
                       </span>
                     </div>
                   </Field>

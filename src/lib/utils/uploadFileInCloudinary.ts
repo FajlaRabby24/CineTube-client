@@ -16,19 +16,21 @@ export const uploadToCloudinary = async (
 
   const data = res.data;
 
-  console.log({ res }, "fron upload file in cloudinary file");
+  console.log({ res, data }, "fron upload file in cloudinary file");
 
   if (res.status !== 200 || !data.secure_url) {
     return {
       success: false,
-      message: "Cloudinary upload failed",
+      message: "Image upload failed",
       data: null,
     };
   }
 
   return {
     success: true,
-    data: data.secure_url,
+    data: {
+      url: data.secure_url,
+    },
     message: "Image uploaded successfully",
   };
 };

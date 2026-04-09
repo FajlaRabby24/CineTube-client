@@ -25,11 +25,22 @@ export interface ILoginResponse {
 }
 
 export interface IRegisterResponse {
+  user: {
+    needPasswordChange: boolean;
+    email: string;
+    name: string;
+    role: string;
+    image: string;
+    emailVerified: boolean;
+  };
+}
+
+export interface IVerifyEmailOtpResponse {
   token: string;
   accessToken: string;
   refreshToken: string;
   user: {
-    needPasswordChange: boolean;
+    id: string;
     email: string;
     name: string;
     role: string;

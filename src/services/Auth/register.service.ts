@@ -1,3 +1,5 @@
+"use server";
+
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import {
   getDefaultDashboardRoute,
@@ -5,7 +7,6 @@ import {
   UserRole,
 } from "../../lib/authUtilts";
 import { httpClient } from "../../lib/axios/httpClient";
-import { setTokenInCookies } from "../../lib/tokenUtils";
 import { IRegisterPayload, IRegisterResponse } from "../../types/auth.types";
 import { registerZodSchema } from "../../zod/auth.validation";
 
@@ -33,32 +34,22 @@ export const registerAction = async (
       "/auth/register",
       dataToSend,
     );
+
     const {
-      accessToken,
-      refreshToken,
-      token,
       user: { needPasswordChange, email, role, emailVerified },
     } = response.data;
-
-    await setTokenInCookies("accessToken", accessToken);
-    await setTokenInCookies("refreshToken", refreshToken);
-    await setTokenInCookies(
-      "better-auth.session_token",
-      token,
-      60 * 60 * 24 * 7, // 7 days
-    );
 
     if (!emailVerified) {
       return {
         success: true,
         message: "Registration successful. Please verify your email.",
-        route: `/verify-email?email=${email}`,
+        route: `/verify-email?email=${email}${redirectPath ? `&redirectPath=${redirectPath}` : ""}`,
       };
     } else if (needPasswordChange) {
       return {
         success: true,
         message: "Registration successful. Please reset your password.",
-        route: `/reset-password?email=${email}`,
+        route: `/reset-password?email=${email}${redirectPath ? `&redirectPath=${redirectPath}` : ""}`,
       };
     }
 

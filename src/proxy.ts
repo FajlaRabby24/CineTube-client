@@ -137,7 +137,7 @@ export const proxy = async (request: NextRequest) => {
     }
 
     // Rule - 4 User is Not logged in but trying to access protected route -> redirect to login
-    if (!accessToken || isValidAccessToken) {
+    if (!accessToken || !isValidAccessToken) {
       const loginUrl = new URL("/login", request.url);
       loginUrl.searchParams.set("redirect", pathname);
       return NextResponse.redirect(loginUrl);

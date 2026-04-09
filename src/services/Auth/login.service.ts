@@ -50,7 +50,7 @@ export const loginAction = async (
       return {
         success: true,
         message: "Please first reset your password.",
-        route: `/reset-password?email=${email}`,
+        route: `/reset-password?email=${email}${redirectPath ? `&redirectPath=${redirectPath}` : ""}`,
       };
     }
 
@@ -70,7 +70,7 @@ export const loginAction = async (
       return {
         success: true,
         message: "Login successful. Please verify your email.",
-        route: `/verify-email?email=${payload.email}`,
+        route: `/verify-email?email=${payload.email}${redirectPath ? `&redirectPath=${redirectPath}` : ""}`,
       };
     }
     return {

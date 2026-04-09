@@ -19,6 +19,8 @@ import {
   FieldSeparator,
 } from "@/components/ui/field";
 import { cn } from "@/lib/utils";
+import { uploadToCloudinary } from "@/lib/utils/uploadFileInCloudinary";
+import { validateImage } from "@/lib/utils/validateImage";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
 import Image from "next/image";
@@ -48,20 +50,39 @@ export function SignupForm({ redirectPath }: RegisterFormProps) {
       name: "",
       email: "",
       password: "",
-      image: null as string | null,
+      image: null as File | null | undefined,
     },
 
     onSubmit: async ({ value }) => {
       try {
+        let image: string | null | undefined = null;
         if (value.image) {
-          // TODO: upload image
-          // validateImage(value.image as File);
+          const isValidImage = await validateImage(value.image);
+          if (!isValidImage.success) {
+            toast.error(isValidImage.message);
+            return;
+          }
+
+          const uploadImage = await uploadToCloudinary(value.image);
+          if (!uploadImage.success) {
+            toast.error(uploadImage.message);
+            return;
+          }
+          image = uploadImage?.data?.url;
+          console.log(uploadImage, "from sign up form");
+          // return;
         }
-        const result = (await mutateAsync(value)) as {
+        const result = (await mutateAsync({
+          name: value.name,
+          email: value.email,
+          password: value.password,
+          image,
+        })) as {
           success: boolean;
           message: string;
           route: string;
         };
+        console.log({ result }, "from sign up form");
         if (!result.success) {
           toast.error(result.message || "Registration failed");
           return;
@@ -121,10 +142,7 @@ export function SignupForm({ redirectPath }: RegisterFormProps) {
                       <FieldLabel htmlFor="image">Image (optional)</FieldLabel>
                       <ImagePreview
                         onFileChange={(file) =>
-                          form.setFieldValue(
-                            "image",
-                            file ? URL.createObjectURL(file) : null,
-                          )
+                          form.setFieldValue("image", file)
                         }
                       />
                     </Field>
