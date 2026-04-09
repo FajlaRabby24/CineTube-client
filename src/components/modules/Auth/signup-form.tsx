@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client";
 
 import GoogleLoginButton from "@/components/shared/forms/GoogleLoginButton";
@@ -27,6 +26,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { deleteFromCloudinary } from "../../../lib/utils/deleteFromCloudinary";
 import { registerAction } from "../../../services/Auth/register.service";
 import { IRegisterPayload } from "../../../types/auth.types";
 import { registerZodSchema } from "../../../zod/auth.validation";
@@ -54,8 +54,8 @@ export function SignupForm({ redirectPath }: RegisterFormProps) {
     },
 
     onSubmit: async ({ value }) => {
+      let image: string | null | undefined = null;
       try {
-        let image: string | null | undefined = null;
         if (value.image) {
           const isValidImage = await validateImage(value.image);
           if (!isValidImage.success) {
@@ -90,8 +90,12 @@ export function SignupForm({ redirectPath }: RegisterFormProps) {
 
         toast.success(result.message || "Registration successful");
         router.push(result.route);
-      } catch (error: any) {
+      } catch (error) {
         toast.error("Registration failed. Please try again.");
+        console.log(error, "Error from signup-form service");
+        if (image) {
+          await deleteFromCloudinary(image, "image");
+        }
       }
     },
   });
