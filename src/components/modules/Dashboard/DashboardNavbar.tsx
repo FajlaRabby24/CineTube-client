@@ -20,7 +20,6 @@ const DashboardNavbar = async () => {
       navItems={navItems}
       dashboardHome={dashboardHome}
     />
-    // <h2>Dashboard navbar</h2>
   );
 };
 

@@ -67,7 +67,6 @@ export async function getUserInfo() {
     });
 
     const data = res.data;
-    console.log({ data }, "from get me service");
 
     return data;
   } catch (error) {
