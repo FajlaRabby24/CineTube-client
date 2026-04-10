@@ -42,8 +42,8 @@ export interface IUserInfo {
   email: string;
   image: string | null;
   role: UserRole;
-  isActive: boolean | null;
-  isBanned: boolean | null;
+  isActive: boolean;
+  isBanned: boolean;
   id: string;
   emailVerified: true;
   needPasswordChange: boolean;
@@ -65,10 +65,6 @@ export async function getUserInfo() {
         Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
       },
     });
-
-    if (!res.success) {
-      return null;
-    }
 
     const data = res.data;
     console.log({ data }, "from get me service");

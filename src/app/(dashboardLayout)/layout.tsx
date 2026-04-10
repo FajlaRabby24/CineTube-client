@@ -1,3 +1,4 @@
+import DashboardNavbar from "@/components/modules/Dashboard/DashboardNavbar";
 import DashboardSidebar from "../../components/modules/Dashboard/DashboardSidebar";
 
 const RootDashboardLayout = async ({
@@ -11,7 +12,7 @@ const RootDashboardLayout = async ({
       <DashboardSidebar />
 
       <div className="flex flex-1 flex-col overflow-hidden">
-        {/* DashboardNavbar */}
+        <DashboardNavbar />
         {/* Dashboard Content */}
         <main className="flex-1 overflow-y-auto bg-muted/10 p-4 md:p-6">
           <div>{children}</div>
