@@ -37,38 +37,39 @@ import {
 } from "@/components/ui/table";
 
 import {
+  getUserReviews,
+  IGetUserReviewsResponse,
+  IReview,
+} from "@/services/Admin/getUserReviews.service";
+import {
   getAllUsers,
   getUserById,
   IGetUserByIdResponse,
   IGetUsersApiResponse,
   IUser,
 } from "@/services/Admin/getUsers.service";
-import {
-  banUser,
-  deleteUser,
-  toggleUserActive,
-  unbanUser,
-} from "@/services/Admin/userActions.service";
+import { banUser, unbanUser } from "@/services/Admin/userActions.service";
 
 import { useMutation, useQuery } from "@tanstack/react-query";
 
 import {
   BanIcon,
+  BubblesIcon,
   CalendarIcon,
   CreditCardIcon,
+  HeartIcon,
   MailIcon,
   MoreHorizontalIcon,
   PhoneIcon,
   SearchIcon,
   ShieldIcon,
-  Trash2Icon,
+  StarIcon,
   UserCheckIcon,
   UserIcon,
   UserXIcon,
 } from "lucide-react";
 
 import Image from "next/image";
-import Link from "next/link";
 
 import { UserRole } from "@/lib/authUtilts";
 import { toast } from "sonner";
@@ -89,6 +90,10 @@ const UserManagement = ({ initialQueryString }: UserManagementProps) => {
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const [selectedUserId, setSelectedUserId] = useState<string | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [selectedReviewUserId, setSelectedReviewUserId] = useState<
+    string | null
+  >(null);
+  const [isReviewsOpen, setIsReviewsOpen] = useState(false);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -122,6 +127,16 @@ const UserManagement = ({ initialQueryString }: UserManagementProps) => {
       enabled: !!selectedUserId && isDetailsOpen,
     });
 
+  const {
+    data: userReviews,
+    isLoading: isLoadingReviews,
+    refetch: refetchReviews,
+  } = useQuery<IGetUserReviewsResponse | null>({
+    queryKey: ["admin-user-reviews", selectedReviewUserId],
+    queryFn: () => getUserReviews(selectedReviewUserId!, ""),
+    enabled: !!selectedReviewUserId && isReviewsOpen,
+  });
+
   console.log(selectedUser, "in user managemen");
   const banMutation = useMutation({
     mutationFn: ({ userId, reason }: { userId: string; reason?: string }) =>
@@ -138,31 +153,6 @@ const UserManagement = ({ initialQueryString }: UserManagementProps) => {
 
   const unbanMutation = useMutation({
     mutationFn: (userId: string) => unbanUser(userId),
-    onSuccess: (data) => {
-      if (data.success) {
-        toast.success(data.message);
-        refetch();
-      } else {
-        toast.error(data.message);
-      }
-    },
-  });
-
-  const deleteMutation = useMutation({
-    mutationFn: (userId: string) => deleteUser(userId),
-    onSuccess: (data) => {
-      if (data.success) {
-        toast.success(data.message);
-        refetch();
-      } else {
-        toast.error(data.message);
-      }
-    },
-  });
-
-  const toggleActiveMutation = useMutation({
-    mutationFn: ({ userId, isActive }: { userId: string; isActive: boolean }) =>
-      toggleUserActive(userId, isActive),
     onSuccess: (data) => {
       if (data.success) {
         toast.success(data.message);
@@ -193,6 +183,11 @@ const UserManagement = ({ initialQueryString }: UserManagementProps) => {
     setIsDetailsOpen(true);
   };
 
+  const handleViewReviews = (userId: string) => {
+    setSelectedReviewUserId(userId);
+    setIsReviewsOpen(true);
+  };
+
   const handleBan = (user: IUser) => {
     Swal.fire({
       title: "Ban User",
@@ -203,28 +198,9 @@ const UserManagement = ({ initialQueryString }: UserManagementProps) => {
       confirmButtonColor: "#dc2626",
     }).then((result) => {
       if (result.isConfirmed) {
-        banMutation.mutate({ userId: user.id, reason: result.value });
+        banMutation.mutate({ userId: user.id, reason: result?.value });
       }
     });
-  };
-
-  const handleDelete = (user: IUser) => {
-    Swal.fire({
-      title: "Delete User",
-      text: `Are you sure you want to delete ${user.name}? This action cannot be undone.`,
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonText: "Delete",
-      confirmButtonColor: "#dc2626",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        deleteMutation.mutate(user.id);
-      }
-    });
-  };
-
-  const handleToggleActive = (user: IUser) => {
-    toggleActiveMutation.mutate({ userId: user.id, isActive: !user.isActive });
   };
 
   const handleUnban = (userId: string) => {
@@ -332,11 +308,6 @@ const UserManagement = ({ initialQueryString }: UserManagementProps) => {
                         <Badge variant="secondary">Inactive</Badge>
                       )}
                     </div>
-                    {user.bannedReason && (
-                      <p className="mt-1 text-xs text-red-500">
-                        {user.bannedReason}
-                      </p>
-                    )}
                   </TableCell>
                   <TableCell>
                     {user.emailVerified ? (
@@ -378,50 +349,31 @@ const UserManagement = ({ initialQueryString }: UserManagementProps) => {
                           <UserIcon className="mr-2 size-4" />
                           View Details
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                          <Link
-                            href={`/admin/dashboard/user-management/${user.id}/reviews`}
-                            className="flex w-full items-center"
-                          >
-                            <Trash2Icon className="mr-2 size-4" />
-                            View Reviews
-                          </Link>
-                        </DropdownMenuItem>
                         <DropdownMenuItem
-                          onClick={() => handleToggleActive(user)}
+                          className="cursor-pointer"
+                          onClick={() => handleViewReviews(user.id)}
                         >
-                          {user.isActive ? (
-                            <>
-                              <UserXIcon className="mr-2 size-4" />
-                              Deactivate
-                            </>
-                          ) : (
-                            <>
-                              <UserCheckIcon className="mr-2 size-4" />
-                              Activate
-                            </>
-                          )}
+                          <BubblesIcon className="mr-2 size-4" />
+                          View Reviews
                         </DropdownMenuItem>
+
                         {user.isBanned ? (
                           <DropdownMenuItem
+                            className="cursor-pointer"
                             onClick={() => handleUnban(user.id)}
                           >
                             <UserCheckIcon className="mr-2 size-4" />
                             Unban User
                           </DropdownMenuItem>
                         ) : (
-                          <DropdownMenuItem onClick={() => handleBan(user)}>
+                          <DropdownMenuItem
+                            className="cursor-pointer text-destructive"
+                            onClick={() => handleBan(user)}
+                          >
                             <BanIcon className="mr-2 size-4" />
                             Ban User
                           </DropdownMenuItem>
                         )}
-                        <DropdownMenuItem
-                          onClick={() => handleDelete(user)}
-                          className="text-red-500 focus:text-red-500"
-                        >
-                          <Trash2Icon className="mr-2 size-4" />
-                          Delete User
-                        </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
                   </TableCell>
@@ -715,6 +667,125 @@ const UserManagement = ({ initialQueryString }: UserManagementProps) => {
           ) : (
             <p className="py-4 text-center text-muted-foreground">
               Unable to load user details
+            </p>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* User Reviews Dialog */}
+      <Dialog open={isReviewsOpen} onOpenChange={setIsReviewsOpen}>
+        <DialogContent className="max-h-[90vh] max-w-2xl overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle>User Reviews</DialogTitle>
+            <DialogDescription>Reviews written by this user</DialogDescription>
+          </DialogHeader>
+
+          {isLoadingReviews ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="size-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
+            </div>
+          ) : userReviews?.data?.reviews &&
+            userReviews.data.reviews.length > 0 ? (
+            <div className="space-y-4">
+              {userReviews.data.reviews.map((review: IReview) => (
+                <div
+                  key={review.id}
+                  className="rounded-lg border p-4 shadow-sm"
+                >
+                  <div className="mb-2 flex items-center justify-between">
+                    <div className="flex items-center gap-3">
+                      {review.mediaPoster && (
+                        <Image
+                          src={review.mediaPoster}
+                          alt={review.mediaTitle || "Media"}
+                          width={40}
+                          height={60}
+                          className="rounded object-cover"
+                        />
+                      )}
+                      <div>
+                        <p className="font-medium">
+                          {review.mediaTitle || "Unknown Media"}
+                        </p>
+                        <p className="text-xs text-muted-foreground">
+                          {new Date(review.createdAt).toLocaleDateString()}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        className={
+                          review.status === "APPROVED"
+                            ? "bg-green-500"
+                            : review.status === "REJECTED"
+                              ? "bg-red-500"
+                              : "bg-yellow-500"
+                        }
+                      >
+                        {review.status}
+                      </Badge>
+                      <Badge
+                        variant="outline"
+                        className="flex items-center gap-1"
+                      >
+                        <StarIcon className="size-3 text-yellow-500" />
+                        {review.rating}/10
+                      </Badge>
+                    </div>
+                  </div>
+
+                  {review.title && (
+                    <h4 className="mb-1 font-semibold">{review.title}</h4>
+                  )}
+
+                  <p className="mb-2 text-sm">
+                    {review.hasSpoiler && (
+                      <span className="mb-1 inline-block rounded bg-yellow-100 px-1 py-0.5 text-xs text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200">
+                        Spoiler
+                      </span>
+                    )}
+                    {review.content}
+                  </p>
+
+                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                    <div className="flex items-center gap-1">
+                      <HeartIcon className="size-4" />
+                      <span>{review.likesCount}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <BubblesIcon className="size-4" />
+                      <span>{review.commentsCount}</span>
+                    </div>
+                  </div>
+
+                  {review.status === "REJECTED" && review.rejectedReason && (
+                    <div className="mt-2 rounded bg-red-50 p-2 text-xs text-red-600 dark:bg-red-950 dark:text-red-400">
+                      <strong>Rejected:</strong> {review.rejectedReason}
+                    </div>
+                  )}
+
+                  {review.status === "APPROVED" && review.publishedAt && (
+                    <p className="mt-2 text-xs text-muted-foreground">
+                      Published:{" "}
+                      {new Date(review.publishedAt).toLocaleDateString()}
+                    </p>
+                  )}
+                </div>
+              ))}
+
+              {/* Pagination Info */}
+              {userReviews.data.meta.totalPages > 1 && (
+                <div className="flex items-center justify-between pt-2">
+                  <p className="text-sm text-muted-foreground">
+                    Showing {userReviews.data.reviews.length} of{" "}
+                    {userReviews.data.meta.total} reviews
+                  </p>
+                </div>
+              )}
+            </div>
+          ) : (
+            <p className="py-8 text-center text-muted-foreground">
+              No reviews found for this user
             </p>
           )}
         </DialogContent>
