@@ -37,18 +37,23 @@ import {
 } from "@/components/ui/table";
 
 import {
+  createAdmin,
+  ICreateAdminPayload,
+} from "@/services/Admin/createAdmin.service";
+import {
   getAdminById,
   getAllAdmins,
   IAdminListItem,
 } from "@/services/Admin/getAdmins.service";
 
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery } from "@tanstack/react-query";
 
 import {
   CalendarIcon,
   MailIcon,
   MoreHorizontalIcon,
   PhoneIcon,
+  PlusIcon,
   SearchIcon,
   ShieldIcon,
   UserCheckIcon,
@@ -57,6 +62,8 @@ import {
 } from "lucide-react";
 
 import Image from "next/image";
+
+import { toast } from "sonner";
 
 interface AdminManagementProps {
   initialQueryString: string;
@@ -73,6 +80,13 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
   const [debouncedSearch, setDebouncedSearch] = useState(search);
   const [selectedAdminId, setSelectedAdminId] = useState<string | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [createForm, setCreateForm] = useState<ICreateAdminPayload>({
+    name: "",
+    email: "",
+    password: "",
+  });
+  const [createError, setCreateError] = useState<string | null>(null);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -101,6 +115,26 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
     queryFn: () => getAdminById(selectedAdminId!),
     enabled: !!selectedAdminId && isDetailsOpen,
   });
+
+  const createAdminMutation = useMutation({
+    mutationFn: (payload: ICreateAdminPayload) => createAdmin(payload),
+    onSuccess: (data) => {
+      if (data.success) {
+        toast.success(data.message);
+        setIsCreateOpen(false);
+        setCreateForm({ name: "", email: "", password: "" });
+        setCreateError(null);
+      } else {
+        setCreateError(data.message);
+      }
+    },
+  });
+
+  const handleCreateSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setCreateError(null);
+    createAdminMutation.mutate(createForm);
+  };
 
   const handlePageChange = (newPage: number) => {
     const params = new URLSearchParams(initialQueryString);
@@ -150,15 +184,26 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
               Manage and monitor all admins
             </p>
           </div>
-          <div className="relative w-full sm:w-72">
-            <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-            <Input
-              placeholder="Search admins..."
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              onKeyDown={(e) => e.key === "Enter" && handleSearch(searchInput)}
-              className="pl-9"
-            />
+          <div className="flex items-center gap-2">
+            <div className="relative w-full sm:w-72">
+              <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+              <Input
+                placeholder="Search admins..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                onKeyDown={(e) =>
+                  e.key === "Enter" && handleSearch(searchInput)
+                }
+                className="pl-9"
+              />
+            </div>
+            <Button
+              onClick={() => setIsCreateOpen(true)}
+              className="shrink-0 cursor-pointer"
+            >
+              <PlusIcon className="mr-2 size-4" />
+              Create Admin
+            </Button>
           </div>
         </div>
 
@@ -535,6 +580,92 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
               Unable to load admin details
             </p>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Create Admin Dialog */}
+      <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Create New Admin</DialogTitle>
+            <DialogDescription>
+              Add a new admin to the system. They will be able to access the
+              admin dashboard.
+            </DialogDescription>
+          </DialogHeader>
+
+          <form onSubmit={handleCreateSubmit} className="space-y-4">
+            <div className="space-y-2">
+              <label htmlFor="name" className="text-sm font-medium">
+                Name
+              </label>
+              <Input
+                id="name"
+                placeholder="Enter admin name"
+                value={createForm.name}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, name: e.target.value })
+                }
+                required
+                minLength={2}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="email" className="text-sm font-medium">
+                Email
+              </label>
+              <Input
+                id="email"
+                type="email"
+                placeholder="Enter admin email"
+                value={createForm.email}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, email: e.target.value })
+                }
+                required
+              />
+            </div>
+
+            <div className="space-y-2">
+              <label htmlFor="password" className="text-sm font-medium">
+                Password
+              </label>
+              <Input
+                id="password"
+                type="password"
+                placeholder="Enter password (min 8 characters)"
+                value={createForm.password}
+                onChange={(e) =>
+                  setCreateForm({ ...createForm, password: e.target.value })
+                }
+                required
+                minLength={8}
+              />
+            </div>
+
+            {createError && (
+              <p className="text-sm text-red-500">{createError}</p>
+            )}
+
+            <div className="flex justify-end gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                className="cursor-pointer"
+                onClick={() => setIsCreateOpen(false)}
+              >
+                Cancel
+              </Button>
+              <Button
+                className="cursor-pointer"
+                type="submit"
+                disabled={createAdminMutation.isPending}
+              >
+                {createAdminMutation.isPending ? "Creating..." : "Create Admin"}
+              </Button>
+            </div>
+          </form>
         </DialogContent>
       </Dialog>
     </>
