@@ -19,7 +19,7 @@ export async function deleteMedia(mediaId: string) {
 
     return {
       success: true,
-      message: res?.data?.message || "Media deleted successfully",
+      message: res?.message || "Media deleted successfully",
     };
   } catch (error: any) {
     console.error("Error deleting media:", error);
@@ -47,7 +47,7 @@ export async function createMedia(data: any) {
 
     return {
       success: true,
-      message: res?.data?.message || "Media created successfully",
+      message: res?.message || "Media created successfully",
     };
   } catch (error: any) {
     console.error("Error creating media:", error);
@@ -58,3 +58,30 @@ export async function createMedia(data: any) {
   }
 }
 
+export async function updateMedia({ id, data }: { id: string; data: any }) {
+  try {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
+
+    if (!accessToken && !sessionToken)
+      return { success: false, message: "Unauthorized" };
+
+    const res = await httpClient.patch(`/media/${id}`, data, {
+      headers: {
+        Cookie: `accessToken=${accessToken || ""}; better-auth.session_token=${sessionToken || ""}`,
+      },
+    });
+
+    return {
+      success: true,
+      message: res?.message || "Media updated successfully",
+    };
+  } catch (error: any) {
+    console.error("Error updating media:", error);
+    return {
+      success: false,
+      message: error.response?.data?.message || "Failed to update media",
+    };
+  }
+}

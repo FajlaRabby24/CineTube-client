@@ -65,6 +65,8 @@ import Image from "next/image";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
 import { CreateMediaModal } from "./CreateMediaModal";
+import { EditMediaModal } from "./EditMediaModal";
+import { CopyIcon, EditIcon } from "lucide-react";
 
 interface MediaManagementProps {
   initialQueryString: string;
@@ -84,6 +86,7 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
     null,
   );
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
+  const [isEditOpen, setIsEditOpen] = useState(false);
   const [isCreateOpen, setIsCreateOpen] = useState(false);
 
   useEffect(() => {
@@ -117,7 +120,7 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
     useQuery<IMediaResponse | null>({
       queryKey: ["admin-media-details", selectedMediaSlug],
       queryFn: () => getMediaBySlug(selectedMediaSlug!),
-      enabled: !!selectedMediaSlug && isDetailsOpen,
+      enabled: !!selectedMediaSlug && (isDetailsOpen || isEditOpen),
     });
 
   const selectedMedia = selectedMediaData;
@@ -153,6 +156,11 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
   const handleViewDetails = (slug: string) => {
     setSelectedMediaSlug(slug);
     setIsDetailsOpen(true);
+  };
+
+  const handleEditMedia = (slug: string) => {
+    setSelectedMediaSlug(slug);
+    setIsEditOpen(true);
   };
 
   const handleDelete = (media: IMediasResponse) => {
@@ -319,6 +327,14 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
                         >
                           <FilmIcon className="mr-2 size-4" />
                           View Details
+                        </DropdownMenuItem>
+
+                        <DropdownMenuItem
+                          className="cursor-pointer"
+                          onClick={() => handleEditMedia(media.slug)}
+                        >
+                          <EditIcon className="mr-2 size-4" />
+                          Edit Media
                         </DropdownMenuItem>
 
                         <DropdownMenuItem
@@ -714,6 +730,20 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
       </Dialog>
 
       <CreateMediaModal open={isCreateOpen} onOpenChange={setIsCreateOpen} />
+
+      {isEditOpen && selectedMedia && (
+        <EditMediaModal
+          open={isEditOpen}
+          onOpenChange={(val) => {
+            setIsEditOpen(val);
+            if (!val) {
+              setTimeout(() => setSelectedMediaSlug(null), 300);
+            }
+          }}
+          mediaId={selectedMedia.id}
+          initialData={selectedMedia}
+        />
+      )}
     </>
   );
 };
