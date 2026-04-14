@@ -49,15 +49,14 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   CalendarIcon,
   FilmIcon,
+  GlobeIcon,
   MoreHorizontalIcon,
+  PlayCircleIcon,
   PlusIcon,
   SearchIcon,
   StarIcon,
   TrashIcon,
-  GlobeIcon,
   UsersIcon,
-  PlayCircleIcon,
-  TagIcon,
 } from "lucide-react";
 
 import { ContentStatus } from "@/lib/enum";
@@ -248,9 +247,9 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
                   <TableCell>
                     <div className="flex items-center gap-3">
                       <div className="h-14 w-10 overflow-hidden rounded bg-muted">
-                        {media.posterUrl ? (
+                        {media.youtubeStreamUrl ? (
                           <Image
-                            src={media.posterUrl}
+                            src={`https://img.youtube.com/vi/${media.youtubeStreamUrl}/hqdefault.jpg`}
                             alt={media.title}
                             width={40}
                             height={56}
@@ -462,7 +461,9 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
                   <div className="flex items-center gap-3">
                     <GlobeIcon className="size-4 text-muted-foreground" />
                     <div>
-                      <p className="text-xs text-muted-foreground">Country & Language</p>
+                      <p className="text-xs text-muted-foreground">
+                        Country & Language
+                      </p>
                       <p className="text-sm font-medium">
                         {selectedMedia.country} ({selectedMedia.language})
                       </p>
@@ -483,19 +484,22 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
                     </div>
                   ) : null}
 
-                  {selectedMedia.type === "SERIES" && selectedMedia.totalSeasons && (
-                    <div className="flex items-center gap-3">
-                      <FilmIcon className="size-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">
-                          Seasons / Episodes
-                        </p>
-                        <p className="text-sm font-medium">
-                          {selectedMedia.totalSeasons} Seasons {selectedMedia.totalEpisodes && `/ ${selectedMedia.totalEpisodes} Episodes`}
-                        </p>
+                  {selectedMedia.type === "SERIES" &&
+                    selectedMedia.totalSeasons && (
+                      <div className="flex items-center gap-3">
+                        <FilmIcon className="size-4 text-muted-foreground" />
+                        <div>
+                          <p className="text-xs text-muted-foreground">
+                            Seasons / Episodes
+                          </p>
+                          <p className="text-sm font-medium">
+                            {selectedMedia.totalSeasons} Seasons{" "}
+                            {selectedMedia.totalEpisodes &&
+                              `/ ${selectedMedia.totalEpisodes} Episodes`}
+                          </p>
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
 
                   <div className="flex items-center gap-3">
                     <StarIcon className="size-4 text-muted-foreground" />
@@ -511,7 +515,9 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
                   <div className="flex items-center gap-3">
                     <UsersIcon className="size-4 text-muted-foreground" />
                     <div>
-                      <p className="text-xs text-muted-foreground">Age Rating</p>
+                      <p className="text-xs text-muted-foreground">
+                        Age Rating
+                      </p>
                       <p className="text-sm font-medium">
                         {selectedMedia.ageRating}
                       </p>
@@ -525,19 +531,33 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
                 <div>
                   <h4 className="mb-2 font-semibold">Genres</h4>
                   <div className="flex flex-wrap gap-1">
-                    {selectedMedia.genres?.length ? selectedMedia.genres.map(g => (
-                      <Badge key={g.id} variant="secondary">{g.genre}</Badge>
-                    )) : <span className="text-sm text-muted-foreground">None</span>}
+                    {selectedMedia.genres?.length ? (
+                      selectedMedia.genres.map((g) => (
+                        <Badge key={g.id} variant="secondary">
+                          {g.genre}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-sm text-muted-foreground">
+                        None
+                      </span>
+                    )}
                   </div>
                 </div>
                 <div>
                   <h4 className="mb-2 font-semibold">Tags</h4>
                   <div className="flex flex-wrap gap-1">
-                    {selectedMedia.tags?.length ? selectedMedia.tags.map(t => (
-                      <Badge key={t.id} variant="outline" className="text-xs">
-                        {t.tag.name}
-                      </Badge>
-                    )) : <span className="text-sm text-muted-foreground">None</span>}
+                    {selectedMedia.tags?.length ? (
+                      selectedMedia.tags.map((t) => (
+                        <Badge key={t.id} variant="outline" className="text-xs">
+                          {t.tag.name}
+                        </Badge>
+                      ))
+                    ) : (
+                      <span className="text-sm text-muted-foreground">
+                        None
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -546,22 +566,43 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
               <div className="grid gap-4 rounded-lg border p-4">
                 <h4 className="font-semibold">Cast & Crew</h4>
                 <div className="grid gap-4 sm:grid-cols-2">
-                   <div>
-                     <p className="mb-1 text-sm font-medium text-muted-foreground">Directors</p>
-                     <ul className="text-sm">
-                       {selectedMedia.directors?.length ? selectedMedia.directors.map(d => (
-                         <li key={d.id}>• {d.directorName}</li>
-                       )) : <li className="text-muted-foreground">No directors listed</li>}
-                     </ul>
-                   </div>
-                   <div>
-                     <p className="mb-1 text-sm font-medium text-muted-foreground">Top Cast</p>
-                     <ul className="text-sm">
-                       {selectedMedia.castMembers?.length ? selectedMedia.castMembers.slice(0, 5).map(c => (
-                         <li key={c.id}>• {c.actorName} <span className="text-muted-foreground">as {c.character}</span></li>
-                       )) : <li className="text-muted-foreground">No cast members listed</li>}
-                     </ul>
-                   </div>
+                  <div>
+                    <p className="mb-1 text-sm font-medium text-muted-foreground">
+                      Directors
+                    </p>
+                    <ul className="text-sm">
+                      {selectedMedia.directors?.length ? (
+                        selectedMedia.directors.map((d) => (
+                          <li key={d.id}>• {d.directorName}</li>
+                        ))
+                      ) : (
+                        <li className="text-muted-foreground">
+                          No directors listed
+                        </li>
+                      )}
+                    </ul>
+                  </div>
+                  <div>
+                    <p className="mb-1 text-sm font-medium text-muted-foreground">
+                      Top Cast
+                    </p>
+                    <ul className="text-sm">
+                      {selectedMedia.castMembers?.length ? (
+                        selectedMedia.castMembers.slice(0, 5).map((c) => (
+                          <li key={c.id}>
+                            • {c.actorName}{" "}
+                            <span className="text-muted-foreground">
+                              as {c.character}
+                            </span>
+                          </li>
+                        ))
+                      ) : (
+                        <li className="text-muted-foreground">
+                          No cast members listed
+                        </li>
+                      )}
+                    </ul>
+                  </div>
                 </div>
               </div>
 
@@ -569,9 +610,16 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
                 <div className="rounded-lg border p-4">
                   <h4 className="mb-3 font-semibold">Available Platforms</h4>
                   <div className="flex flex-col gap-2">
-                    {selectedMedia.platforms.map(p => (
-                      <a key={p.id} href={p.streamUrl} target="_blank" rel="noreferrer" className="flex items-center gap-2 text-sm text-blue-500 hover:underline">
-                        <PlayCircleIcon className="size-4" /> Watch on {p.platform}
+                    {selectedMedia.platforms.map((p) => (
+                      <a
+                        key={p.id}
+                        href={p.streamUrl}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="flex items-center gap-2 text-sm text-blue-500 hover:underline"
+                      >
+                        <PlayCircleIcon className="size-4" /> Watch on{" "}
+                        {p.platform}
                       </a>
                     ))}
                   </div>
@@ -580,21 +628,39 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
 
               {/* External Links */}
               <div className="flex flex-wrap gap-3">
-                 {selectedMedia.trailerUrl && (
-                   <a href={selectedMedia.trailerUrl} target="_blank" rel="noreferrer">
-                     <Button size="sm" variant="secondary">Watch Trailer</Button>
-                   </a>
-                 )}
-                 {selectedMedia.youtubeStreamUrl && (
-                   <a href={selectedMedia.youtubeStreamUrl} target="_blank" rel="noreferrer">
-                     <Button size="sm" variant="outline">YouTube Stream</Button>
-                   </a>
-                 )}
-                 {selectedMedia.imdbId && (
-                   <a href={`https://www.imdb.com/title/${selectedMedia.imdbId}`} target="_blank" rel="noreferrer">
-                     <Button size="sm" variant="outline">IMDb</Button>
-                   </a>
-                 )}
+                {selectedMedia.trailerUrl && (
+                  <a
+                    href={selectedMedia.trailerUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Button size="sm" variant="secondary">
+                      Watch Trailer
+                    </Button>
+                  </a>
+                )}
+                {selectedMedia.youtubeStreamUrl && (
+                  <a
+                    href={selectedMedia.youtubeStreamUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Button size="sm" variant="outline">
+                      YouTube Stream
+                    </Button>
+                  </a>
+                )}
+                {selectedMedia.imdbId && (
+                  <a
+                    href={`https://www.imdb.com/title/${selectedMedia.imdbId}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    <Button size="sm" variant="outline">
+                      IMDb
+                    </Button>
+                  </a>
+                )}
               </div>
 
               {/* Stats */}

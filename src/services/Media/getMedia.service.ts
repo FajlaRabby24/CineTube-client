@@ -9,7 +9,7 @@ export interface IMediasResponse {
   slug: string;
   type: string;
   status: string;
-  posterUrl: string | null;
+  youtubeStreamUrl: string | null;
   averageRating: number;
   releaseYear: number;
 }
@@ -78,7 +78,6 @@ export async function getAllMedia(queryString: string) {
   try {
     const url = `/media${queryString ? `?${queryString}` : ""}`;
     const res = await httpClient.get<IMediasResponse[]>(url);
-    console.log(res, "media service");
     return res ?? null;
   } catch (error) {
     console.error("Error fetching media:", error);

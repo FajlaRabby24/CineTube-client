@@ -1,5 +1,6 @@
 "use client";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -10,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
+import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   Select,
   SelectContent,
@@ -17,16 +19,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { createMedia } from "@/services/Media/mediaActions.service";
 import { createMediaZodSchema, GenreEnum } from "@/zod/media.validation";
 import { useForm } from "@tanstack/react-form";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { PlusIcon, TrashIcon, XIcon } from "lucide-react";
 import { useState } from "react";
 import { toast } from "sonner";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { ScrollArea } from "@/components/ui/scroll-area";
-import { Badge } from "@/components/ui/badge";
-import { PlusIcon, TrashIcon, XIcon } from "lucide-react";
 
 const getErrorMessage = (error: unknown): string => {
   if (typeof error === "string") return error;
@@ -50,13 +50,21 @@ export const CreateMediaModal = ({
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
 
-  const [castMembers, setCastMembers] = useState<{actorName: string, character: string, profileUrl: string}[]>([]);
-  const [directors, setDirectors] = useState<{directorName: string, profileUrl: string}[]>([]);
-  const [platforms, setPlatforms] = useState<{platform: "YOUTUBE", streamUrl: string}[]>([]);
+  const [castMembers, setCastMembers] = useState<
+    { actorName: string; character: string; profileUrl: string }[]
+  >([]);
+  const [directors, setDirectors] = useState<
+    { directorName: string; profileUrl: string }[]
+  >([]);
+  const [platforms, setPlatforms] = useState<
+    { platform: "YOUTUBE"; streamUrl: string }[]
+  >([]);
 
-  const { mutateAsync: createMediaMutate, isPending: isCreating } = useMutation({
-    mutationFn: createMedia,
-  });
+  const { mutateAsync: createMediaMutate, isPending: isCreating } = useMutation(
+    {
+      mutationFn: createMedia,
+    },
+  );
 
   const form = useForm({
     defaultValues: {
@@ -82,10 +90,10 @@ export const CreateMediaModal = ({
     onSubmit: async ({ value }) => {
       try {
         setCreateError(null);
-        
+
         if (genres.length === 0) {
-           toast.error("At least one genre is required");
-           return;
+          toast.error("At least one genre is required");
+          return;
         }
 
         const submissionValue = {
@@ -163,10 +171,30 @@ export const CreateMediaModal = ({
           <ScrollArea className="flex-1 max-h-[60vh] px-6">
             <Tabs defaultValue="general" className="w-full">
               <TabsList className="w-full justify-start border-b rounded-none h-auto bg-transparent p-0 flex-wrap mb-4">
-                <TabsTrigger value="general" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none">General Info</TabsTrigger>
-                <TabsTrigger value="media" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none">Media & URLs</TabsTrigger>
-                <TabsTrigger value="metadata" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none">Metadata & Tags</TabsTrigger>
-                <TabsTrigger value="crew" className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none">Cast & Crew</TabsTrigger>
+                <TabsTrigger
+                  value="general"
+                  className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none"
+                >
+                  General Info
+                </TabsTrigger>
+                <TabsTrigger
+                  value="media"
+                  className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none"
+                >
+                  Media & URLs
+                </TabsTrigger>
+                <TabsTrigger
+                  value="metadata"
+                  className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none"
+                >
+                  Metadata & Tags
+                </TabsTrigger>
+                <TabsTrigger
+                  value="crew"
+                  className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none"
+                >
+                  Cast & Crew
+                </TabsTrigger>
               </TabsList>
 
               {/* GENERAL INFO TAB */}
@@ -175,11 +203,15 @@ export const CreateMediaModal = ({
                   <Field>
                     <form.Field
                       name="title"
-                      validators={{ onChange: createMediaZodSchema.shape.title }}
+                      validators={{
+                        onChange: createMediaZodSchema.shape.title,
+                      }}
                     >
                       {(field) => (
                         <div className="space-y-2 sm:col-span-2">
-                          <FieldLabel htmlFor={field.name}>Title <span className="text-red-500">*</span></FieldLabel>
+                          <FieldLabel htmlFor={field.name}>
+                            Title <span className="text-red-500">*</span>
+                          </FieldLabel>
                           <Input
                             id={field.name}
                             name={field.name}
@@ -202,11 +234,15 @@ export const CreateMediaModal = ({
                   <Field>
                     <form.Field
                       name="synopsis"
-                      validators={{ onChange: createMediaZodSchema.shape.synopsis }}
+                      validators={{
+                        onChange: createMediaZodSchema.shape.synopsis,
+                      }}
                     >
                       {(field) => (
                         <div className="space-y-2 sm:col-span-2">
-                          <FieldLabel htmlFor={field.name}>Synopsis <span className="text-red-500">*</span></FieldLabel>
+                          <FieldLabel htmlFor={field.name}>
+                            Synopsis <span className="text-red-500">*</span>
+                          </FieldLabel>
                           <Input
                             id={field.name}
                             name={field.name}
@@ -230,8 +266,15 @@ export const CreateMediaModal = ({
                     <form.Field name="type">
                       {(field) => (
                         <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>Media Type</FieldLabel>
-                          <Select value={field.state.value} onValueChange={(val: any) => field.handleChange(val)}>
+                          <FieldLabel htmlFor={field.name}>
+                            Media Type
+                          </FieldLabel>
+                          <Select
+                            value={field.state.value}
+                            onValueChange={(val: any) =>
+                              field.handleChange(val)
+                            }
+                          >
                             <SelectTrigger>
                               <SelectValue placeholder="Select type" />
                             </SelectTrigger>
@@ -249,14 +292,18 @@ export const CreateMediaModal = ({
                     <form.Field name="releaseYear">
                       {(field) => (
                         <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>Release Year <span className="text-red-500">*</span></FieldLabel>
+                          <FieldLabel htmlFor={field.name}>
+                            Release Year <span className="text-red-500">*</span>
+                          </FieldLabel>
                           <Input
                             id={field.name}
                             name={field.name}
                             type="number"
                             value={field.state.value}
                             onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(Number(e.target.value))}
+                            onChange={(e) =>
+                              field.handleChange(Number(e.target.value))
+                            }
                           />
                         </div>
                       )}
@@ -267,8 +314,13 @@ export const CreateMediaModal = ({
                     <form.Field name="ageRating">
                       {(field) => (
                         <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>Age Rating</FieldLabel>
-                          <Select value={field.state.value} onValueChange={field.handleChange}>
+                          <FieldLabel htmlFor={field.name}>
+                            Age Rating
+                          </FieldLabel>
+                          <Select
+                            value={field.state.value}
+                            onValueChange={field.handleChange}
+                          >
                             <SelectTrigger>
                               <SelectValue placeholder="Select rating" />
                             </SelectTrigger>
@@ -292,14 +344,18 @@ export const CreateMediaModal = ({
                     <form.Field name="duration">
                       {(field) => (
                         <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>Duration (mins)</FieldLabel>
+                          <FieldLabel htmlFor={field.name}>
+                            Duration (mins)
+                          </FieldLabel>
                           <Input
                             id={field.name}
                             name={field.name}
                             type="number"
                             value={field.state.value || ""}
                             onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(Number(e.target.value))}
+                            onChange={(e) =>
+                              field.handleChange(Number(e.target.value))
+                            }
                           />
                         </div>
                       )}
@@ -310,8 +366,15 @@ export const CreateMediaModal = ({
                     <form.Field name="pricingType">
                       {(field) => (
                         <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>Pricing Type</FieldLabel>
-                          <Select value={field.state.value} onValueChange={(val: any) => field.handleChange(val)}>
+                          <FieldLabel htmlFor={field.name}>
+                            Pricing Type
+                          </FieldLabel>
+                          <Select
+                            value={field.state.value}
+                            onValueChange={(val: any) =>
+                              field.handleChange(val)
+                            }
+                          >
                             <SelectTrigger>
                               <SelectValue placeholder="Select pricing" />
                             </SelectTrigger>
@@ -330,13 +393,22 @@ export const CreateMediaModal = ({
                       {(field) => (
                         <div className="space-y-2">
                           <FieldLabel htmlFor={field.name}>Status</FieldLabel>
-                          <Select value={field.state.value} onValueChange={(val: any) => field.handleChange(val)}>
+                          <Select
+                            value={field.state.value}
+                            onValueChange={(val: any) =>
+                              field.handleChange(val)
+                            }
+                          >
                             <SelectTrigger>
                               <SelectValue placeholder="Select status" />
                             </SelectTrigger>
                             <SelectContent>
-                              <SelectItem value="PUBLISHED">Published</SelectItem>
-                              <SelectItem value="UNPUBLISHED">Unpublished</SelectItem>
+                              <SelectItem value="PUBLISHED">
+                                Published
+                              </SelectItem>
+                              <SelectItem value="UNPUBLISHED">
+                                Unpublished
+                              </SelectItem>
                               <SelectItem value="DRAFT">Draft</SelectItem>
                             </SelectContent>
                           </Select>
@@ -348,13 +420,18 @@ export const CreateMediaModal = ({
               </TabsContent>
 
               {/* MEDIA URLs TAB */}
-              <TabsContent value="media" className="mt-0 outline-none space-y-4">
+              <TabsContent
+                value="media"
+                className="mt-0 outline-none space-y-4"
+              >
                 <FieldGroup className="grid gap-4 sm:grid-cols-2">
                   <Field>
                     <form.Field name="posterUrl">
                       {(field) => (
                         <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>Poster URL</FieldLabel>
+                          <FieldLabel htmlFor={field.name}>
+                            Poster URL
+                          </FieldLabel>
                           <Input
                             id={field.name}
                             name={field.name}
@@ -373,7 +450,9 @@ export const CreateMediaModal = ({
                     <form.Field name="backdropUrl">
                       {(field) => (
                         <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>Backdrop URL</FieldLabel>
+                          <FieldLabel htmlFor={field.name}>
+                            Backdrop URL
+                          </FieldLabel>
                           <Input
                             id={field.name}
                             name={field.name}
@@ -392,7 +471,9 @@ export const CreateMediaModal = ({
                     <form.Field name="trailerUrl">
                       {(field) => (
                         <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>Trailer URL</FieldLabel>
+                          <FieldLabel htmlFor={field.name}>
+                            Trailer URL
+                          </FieldLabel>
                           <Input
                             id={field.name}
                             name={field.name}
@@ -411,7 +492,9 @@ export const CreateMediaModal = ({
                     <form.Field name="youtubeStreamUrl">
                       {(field) => (
                         <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>YouTube Stream URL</FieldLabel>
+                          <FieldLabel htmlFor={field.name}>
+                            YouTube Stream URL
+                          </FieldLabel>
                           <Input
                             id={field.name}
                             name={field.name}
@@ -431,8 +514,8 @@ export const CreateMediaModal = ({
                   <h4 className="font-semibold text-sm">Streaming Platforms</h4>
                   {platforms.map((platform, idx) => (
                     <div key={idx} className="flex items-center gap-2">
-                      <Select 
-                        value={platform.platform} 
+                      <Select
+                        value={platform.platform}
                         onValueChange={(val: any) => {
                           const newPlatforms = [...platforms];
                           newPlatforms[idx].platform = val;
@@ -446,8 +529,8 @@ export const CreateMediaModal = ({
                           <SelectItem value="YOUTUBE">YouTube</SelectItem>
                         </SelectContent>
                       </Select>
-                      <Input 
-                        placeholder="Stream URL" 
+                      <Input
+                        placeholder="Stream URL"
                         value={platform.streamUrl}
                         onChange={(e) => {
                           const newPlatforms = [...platforms];
@@ -455,21 +538,39 @@ export const CreateMediaModal = ({
                           setPlatforms(newPlatforms);
                         }}
                       />
-                      <Button variant="ghost" size="icon" type="button" onClick={() => {
-                        setPlatforms(platforms.filter((_, i) => i !== idx));
-                      }}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        type="button"
+                        onClick={() => {
+                          setPlatforms(platforms.filter((_, i) => i !== idx));
+                        }}
+                      >
                         <TrashIcon className="size-4 text-destructive" />
                       </Button>
                     </div>
                   ))}
-                  <Button type="button" variant="outline" size="sm" onClick={() => setPlatforms([...platforms, { platform: "YOUTUBE", streamUrl: "" }])}>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    size="sm"
+                    onClick={() =>
+                      setPlatforms([
+                        ...platforms,
+                        { platform: "YOUTUBE", streamUrl: "" },
+                      ])
+                    }
+                  >
                     <PlusIcon className="mr-2 size-4" /> Add Platform
                   </Button>
                 </div>
               </TabsContent>
 
               {/* METADATA TAB */}
-              <TabsContent value="metadata" className="mt-0 outline-none space-y-6">
+              <TabsContent
+                value="metadata"
+                className="mt-0 outline-none space-y-6"
+              >
                 <FieldGroup className="grid gap-4 sm:grid-cols-2">
                   <Field>
                     <form.Field name="language">
@@ -529,7 +630,14 @@ export const CreateMediaModal = ({
                       <form.Field name="isFeatured">
                         {(field) => (
                           <label className="flex items-center gap-2 cursor-pointer border p-2 px-3 rounded text-sm hover:bg-muted/50 transition">
-                            <input type="checkbox" checked={field.state.value} onChange={(e) => field.handleChange(e.target.checked)} className="rounded" />
+                            <input
+                              type="checkbox"
+                              checked={field.state.value}
+                              onChange={(e) =>
+                                field.handleChange(e.target.checked)
+                              }
+                              className="rounded"
+                            />
                             Is Featured
                           </label>
                         )}
@@ -539,7 +647,14 @@ export const CreateMediaModal = ({
                       <form.Field name="isTrending">
                         {(field) => (
                           <label className="flex items-center gap-2 cursor-pointer border p-2 px-3 rounded text-sm hover:bg-muted/50 transition">
-                            <input type="checkbox" checked={field.state.value} onChange={(e) => field.handleChange(e.target.checked)} className="rounded" />
+                            <input
+                              type="checkbox"
+                              checked={field.state.value}
+                              onChange={(e) =>
+                                field.handleChange(e.target.checked)
+                              }
+                              className="rounded"
+                            />
                             Is Trending
                           </label>
                         )}
@@ -549,7 +664,14 @@ export const CreateMediaModal = ({
                       <form.Field name="isEditorsPick">
                         {(field) => (
                           <label className="flex items-center gap-2 cursor-pointer border p-2 px-3 rounded text-sm hover:bg-muted/50 transition">
-                            <input type="checkbox" checked={field.state.value} onChange={(e) => field.handleChange(e.target.checked)} className="rounded" />
+                            <input
+                              type="checkbox"
+                              checked={field.state.value}
+                              onChange={(e) =>
+                                field.handleChange(e.target.checked)
+                              }
+                              className="rounded"
+                            />
                             Editor's Pick
                           </label>
                         )}
@@ -559,11 +681,13 @@ export const CreateMediaModal = ({
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel>Genres <span className="text-red-500">*</span></FieldLabel>
+                  <FieldLabel>
+                    Genres <span className="text-red-500">*</span>
+                  </FieldLabel>
                   <div className="flex flex-wrap gap-2">
                     {GenreEnum.options.map((g) => (
-                      <Badge 
-                        key={g} 
+                      <Badge
+                        key={g}
                         variant={genres.includes(g) ? "default" : "outline"}
                         className="cursor-pointer"
                         onClick={() => toggleGenre(g)}
@@ -577,19 +701,33 @@ export const CreateMediaModal = ({
                 <div className="space-y-2">
                   <FieldLabel>Tags</FieldLabel>
                   <div className="flex items-center gap-2 mb-2">
-                    <Input 
-                      placeholder="Add a tag..." 
+                    <Input
+                      placeholder="Add a tag..."
                       value={tagInput}
                       onChange={(e) => setTagInput(e.target.value)}
-                      onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addTag())}
+                      onKeyDown={(e) =>
+                        e.key === "Enter" && (e.preventDefault(), addTag())
+                      }
                     />
-                    <Button type="button" onClick={addTag} variant="secondary">Add</Button>
+                    <Button type="button" onClick={addTag} variant="secondary">
+                      Add
+                    </Button>
                   </div>
                   <div className="flex flex-wrap gap-2">
                     {tags.map((tag) => (
-                      <Badge key={tag} variant="secondary" className="pl-3 pr-1 py-1 gap-1">
-                        {tag} 
-                        <button type="button" onClick={() => setTags(tags.filter(t => t !== tag))} className="opacity-70 hover:opacity-100"><XIcon className="size-3" /></button>
+                      <Badge
+                        key={tag}
+                        variant="secondary"
+                        className="pl-3 pr-1 py-1 gap-1"
+                      >
+                        {tag}
+                        <button
+                          type="button"
+                          onClick={() => setTags(tags.filter((t) => t !== tag))}
+                          className="opacity-70 hover:opacity-100"
+                        >
+                          <XIcon className="size-3" />
+                        </button>
                       </Badge>
                     ))}
                   </div>
@@ -598,18 +736,31 @@ export const CreateMediaModal = ({
 
               {/* CAST & CREW TAB */}
               <TabsContent value="crew" className="mt-0 outline-none space-y-6">
-                 <div className="rounded-lg p-1 space-y-4">
+                <div className="rounded-lg p-1 space-y-4">
                   <div className="flex items-center justify-between">
                     <h4 className="font-semibold text-sm">Directors</h4>
-                    <Button type="button" variant="outline" size="sm" onClick={() => setDirectors([...directors, { directorName: "", profileUrl: "" }])}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setDirectors([
+                          ...directors,
+                          { directorName: "", profileUrl: "" },
+                        ])
+                      }
+                    >
                       <PlusIcon className="mr-2 size-4" /> Add Director
                     </Button>
                   </div>
                   {directors.map((director, idx) => (
-                    <div key={idx} className="flex items-center gap-2 border p-2 rounded-md shadow-sm bg-muted/20">
+                    <div
+                      key={idx}
+                      className="flex items-center gap-2 border p-2 rounded-md shadow-sm bg-muted/20"
+                    >
                       <div className="grid grid-cols-2 gap-2 flex-1">
-                        <Input 
-                          placeholder="Director Name" 
+                        <Input
+                          placeholder="Director Name"
                           value={director.directorName}
                           onChange={(e) => {
                             const newArr = [...directors];
@@ -617,8 +768,8 @@ export const CreateMediaModal = ({
                             setDirectors(newArr);
                           }}
                         />
-                        <Input 
-                          placeholder="Profile URL" 
+                        <Input
+                          placeholder="Profile URL"
                           value={director.profileUrl}
                           onChange={(e) => {
                             const newArr = [...directors];
@@ -627,25 +778,49 @@ export const CreateMediaModal = ({
                           }}
                         />
                       </div>
-                      <Button variant="ghost" size="icon" type="button" onClick={() => setDirectors(directors.filter((_, i) => i !== idx))}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        type="button"
+                        onClick={() =>
+                          setDirectors(directors.filter((_, i) => i !== idx))
+                        }
+                      >
                         <TrashIcon className="size-4 text-destructive" />
                       </Button>
                     </div>
                   ))}
-                  {directors.length === 0 && <p className="text-xs text-muted-foreground">No directors added.</p>}
+                  {directors.length === 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      No directors added.
+                    </p>
+                  )}
                 </div>
 
                 <div className="rounded-lg p-1 space-y-4">
                   <div className="flex items-center justify-between">
                     <h4 className="font-semibold text-sm">Cast Members</h4>
-                    <Button type="button" variant="outline" size="sm" onClick={() => setCastMembers([...castMembers, { actorName: "", character: "", profileUrl: "" }])}>
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() =>
+                        setCastMembers([
+                          ...castMembers,
+                          { actorName: "", character: "", profileUrl: "" },
+                        ])
+                      }
+                    >
                       <PlusIcon className="mr-2 size-4" /> Add Cast
                     </Button>
                   </div>
                   {castMembers.map((member, idx) => (
-                    <div key={idx} className="grid sm:grid-cols-[1fr_1fr_1fr_auto] gap-2 items-center border p-2 rounded-md shadow-sm bg-muted/20">
-                      <Input 
-                        placeholder="Actor Name" 
+                    <div
+                      key={idx}
+                      className="grid sm:grid-cols-[1fr_1fr_1fr_auto] gap-2 items-center border p-2 rounded-md shadow-sm bg-muted/20"
+                    >
+                      <Input
+                        placeholder="Actor Name"
                         value={member.actorName}
                         onChange={(e) => {
                           const newArr = [...castMembers];
@@ -653,8 +828,8 @@ export const CreateMediaModal = ({
                           setCastMembers(newArr);
                         }}
                       />
-                      <Input 
-                        placeholder="Character" 
+                      <Input
+                        placeholder="Character"
                         value={member.character}
                         onChange={(e) => {
                           const newArr = [...castMembers];
@@ -662,8 +837,8 @@ export const CreateMediaModal = ({
                           setCastMembers(newArr);
                         }}
                       />
-                      <Input 
-                        placeholder="Profile URL" 
+                      <Input
+                        placeholder="Profile URL"
                         value={member.profileUrl}
                         onChange={(e) => {
                           const newArr = [...castMembers];
@@ -671,23 +846,38 @@ export const CreateMediaModal = ({
                           setCastMembers(newArr);
                         }}
                       />
-                      <Button variant="ghost" size="icon" type="button" onClick={() => setCastMembers(castMembers.filter((_, i) => i !== idx))}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        type="button"
+                        onClick={() =>
+                          setCastMembers(
+                            castMembers.filter((_, i) => i !== idx),
+                          )
+                        }
+                      >
                         <TrashIcon className="size-4 text-destructive" />
                       </Button>
                     </div>
                   ))}
-                  {castMembers.length === 0 && <p className="text-xs text-muted-foreground">No cast members added.</p>}
+                  {castMembers.length === 0 && (
+                    <p className="text-xs text-muted-foreground">
+                      No cast members added.
+                    </p>
+                  )}
                 </div>
               </TabsContent>
             </Tabs>
           </ScrollArea>
 
           <div className="p-6 pt-4 border-t flex flex-col gap-2 bg-background z-10 sticky bottom-0">
-             {createError && (
-              <p className="text-sm text-red-500 bg-red-50 dark:bg-red-950 p-2 rounded mb-2 font-medium">{createError}</p>
+            {createError && (
+              <p className="text-sm text-red-500 bg-red-50 dark:bg-red-950 p-2 rounded mb-2 font-medium">
+                {createError}
+              </p>
             )}
             <div className="flex justify-end gap-2 isolate">
-               <Button
+              <Button
                 type="button"
                 variant="outline"
                 className="cursor-pointer"
