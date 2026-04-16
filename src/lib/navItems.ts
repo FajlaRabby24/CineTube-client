@@ -72,10 +72,9 @@ export const adminNavItems: NavSection[] = [
 
 export const userNavItems: NavSection[] = [
   {
-    // title: "Payments",
     items: [
       {
-        title: "Payments",
+        title: "Payments",   // TODO:  check in decktop
         href: "/dashboard/payments",
         icon: "CreditCard",
       },
