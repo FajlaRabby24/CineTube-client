@@ -94,7 +94,7 @@ export const userNavItems: NavSection[] = [
         icon: "Calendar",
       },
       {
-        title: "Watchlist", // TODO:  check in desktop, Home page
+        title: "Watchlist", // TODO:  check in desktop, Home page, Movies page, Movies details page
         href: "/dashboard/watchlist",
         icon: "Heart",
       },

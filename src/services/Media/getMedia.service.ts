@@ -96,3 +96,13 @@ export async function getMediaBySlug(slug: string) {
     return null;
   }
 }
+export async function getMediaById(id: string) {
+  try {
+    const url = `/media/${id}`;
+    const res = await httpClient.get<IMediaResponse>(url);
+    return (res as any).data ?? null;
+  } catch (error) {
+    console.error("Error fetching media by id:", error);
+    return null;
+  }
+}

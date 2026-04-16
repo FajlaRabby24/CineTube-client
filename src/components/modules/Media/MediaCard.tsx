@@ -20,7 +20,7 @@ const MediaCard = ({ media }: MediaCardProps) => {
       viewport={{ once: true }}
       className="group relative aspect-[2/3] overflow-hidden rounded-xl bg-slate-900 shadow-lg transition-all duration-500 hover:shadow-2xl"
     >
-      <Link href={`/media/${media.slug}`}>
+      <Link href={`/movies/${media.id}`}>
         <Image
           src={(media as any).posterUrl || "/placeholder-movie.jpg"}
           alt={media.title}
