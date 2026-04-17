@@ -38,7 +38,7 @@ const MediaPage = async ({
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["medias", queryString],
+    queryKey: ["media", queryString],
     queryFn: () => getAllMedia(queryString),
   });
 

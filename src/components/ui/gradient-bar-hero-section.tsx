@@ -61,7 +61,7 @@ const MovieSearchForm: React.FC = () => {
     e.preventDefault();
     if (!searchTerm.trim()) return;
 
-    router.push(`/media?searchTem=${encodeURIComponent(searchTerm)}`);
+    router.push(`/media?searchTerm=${encodeURIComponent(searchTerm)}`);
   };
 
   return (
