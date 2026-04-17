@@ -1,4 +1,6 @@
+import { MediaHeader } from "@/components/modules/Media/MediaHeader";
 import MoviesListing from "@/components/modules/Media/MoviesListing";
+import { BackgroundEffects } from "@/components/ui/background-effects";
 import { getAllMedia } from "@/services/Media/getMedia.service";
 import {
   dehydrate,
@@ -37,25 +39,16 @@ const MediaPage = async ({
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
-    queryKey: ["movies", queryString],
+    queryKey: ["medias", queryString],
     queryFn: () => getAllMedia(fullQueryString),
   });
 
   return (
-    <div className="min-h-screen bg-slate-950 pt-32 pb-20">
-      <div className="container mx-auto px-4">
+    <div className="relative min-h-screen pt-32 pb-20 overflow-hidden">
+      <BackgroundEffects />
+      <div className="container relative z-10 mx-auto px-4">
         {/* Page Header */}
-        <div className="mb-12 space-y-4">
-          <div className="inline-flex items-center rounded-full border border-primary/30 bg-primary/10 px-4 py-1.5 text-[10px] font-black uppercase tracking-widest text-primary">
-            Cinematic Library
-          </div>
-          <h1 className="text-4xl font-black text-white md:text-6xl uppercase font-outfit tracking-tighter">
-            Discover <span className="text-primary italic">Movies</span>
-          </h1>
-          <p className="text-slate-400 max-w-2xl text-lg font-medium">
-            Explore our vast collection of feature films across all genres. From timeless classics to the latest blockbusters.
-          </p>
-        </div>
+        <MediaHeader />
 
         <HydrationBoundary state={dehydrate(queryClient)}>
           <MoviesListing initialQueryString={fullQueryString} />
