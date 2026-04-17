@@ -1,5 +1,3 @@
-"use client";
-
 import { GradientBarHeroSection } from "@/components/ui/gradient-bar-hero-section";
 
 const Banner = () => {

@@ -34,13 +34,12 @@ const MediaPage = async ({
     .join("&");
 
   // Default to type=MOVIE for this page
-  const fullQueryString = `type=MOVIE${queryString ? `&${queryString}` : ""}`;
 
   const queryClient = new QueryClient();
 
   await queryClient.prefetchQuery({
     queryKey: ["medias", queryString],
-    queryFn: () => getAllMedia(fullQueryString),
+    queryFn: () => getAllMedia(queryString),
   });
 
   return (
@@ -51,7 +50,7 @@ const MediaPage = async ({
         <MediaHeader />
 
         <HydrationBoundary state={dehydrate(queryClient)}>
-          <MoviesListing initialQueryString={fullQueryString} />
+          <MoviesListing initialQueryString={queryString} />
         </HydrationBoundary>
       </div>
     </div>

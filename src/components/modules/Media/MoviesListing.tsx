@@ -61,10 +61,24 @@ const MoviesListing = ({ initialQueryString }: MoviesListingProps) => {
 
   const [searchInput, setSearchInput] = useState(searchTerm);
 
-  // Sync search input with URL search term
+  // Sync search input with URL search term (only if different to avoid cursor jumps)
   useEffect(() => {
-    setSearchInput(searchTerm);
+    if (searchTerm !== searchInput) {
+      setSearchInput(searchTerm);
+    }
   }, [searchTerm]);
+
+  // Debounce search input
+  useEffect(() => {
+    // Don't trigger on initial mount if searchInput matches searchTerm
+    if (searchInput === searchTerm) return;
+
+    const timer = setTimeout(() => {
+      updateFilters({ searchTerm: searchInput });
+    }, 500);
+
+    return () => clearTimeout(timer);
+  }, [searchInput]);
 
   const updateFilters = (newParams: Record<string, string | number | null>) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -94,7 +108,7 @@ const MoviesListing = ({ initialQueryString }: MoviesListingProps) => {
 
   const { data: mediaData, isLoading } = useQuery({
     queryKey: ["media", searchParams.toString()],
-    queryFn: () => getAllMedia(`type=MOVIE&${searchParams.toString()}`),
+    queryFn: () => getAllMedia(searchParams.toString()),
   });
 
   const handleSearch = (e: React.FormEvent) => {
