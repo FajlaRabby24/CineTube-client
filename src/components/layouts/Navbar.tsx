@@ -20,6 +20,8 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import Link from "next/link";
+import { IUserInfo } from "../../services/Auth/getMe.service";
+import UserDropdown from "../modules/Dashboard/UserDropdown";
 
 interface MenuItem {
   title: string;
@@ -38,6 +40,7 @@ interface Navbar1Props {
     title: string;
     className?: string;
   };
+  userInfo: IUserInfo | null;
   menu?: MenuItem[];
   auth?: {
     login: {
@@ -74,7 +77,9 @@ const Navbar = ({
     signup: { title: "Register", url: "/register" },
   },
   className,
+  userInfo,
 }: Navbar1Props) => {
+
   return (
     <section className={cn("py-2", className)}>
       <div className="container mx-auto px-4">
@@ -153,12 +158,16 @@ const Navbar = ({
                     </Accordion>
 
                     <div className="flex flex-col gap-3">
+                  {
+                    userInfo ? <UserDropdown userInfo={userInfo} /> :
+                    <>
                       <Button asChild variant="outline">
                         <Link href={auth.login.url}>{auth.login.title}</Link>
                       </Button>
                       <Button asChild>
                         <Link href={auth.signup.url}>{auth.signup.title}</Link>
-                      </Button>
+                      </Button></>
+                  }
                     </div>
                   </div>
                 </SheetContent>
