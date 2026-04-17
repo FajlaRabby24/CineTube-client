@@ -61,12 +61,13 @@ import {
 
 import { ContentStatus } from "@/lib/enum";
 import { cn } from "@/lib/utils";
+import { EditIcon } from "lucide-react";
 import Image from "next/image";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
+import { getYouTubeVideoId } from "../../../lib/utils/getYoutubeVedioId";
 import { CreateMediaModal } from "./CreateMediaModal";
 import { EditMediaModal } from "./EditMediaModal";
-import { CopyIcon, EditIcon } from "lucide-react";
 
 interface MediaManagementProps {
   initialQueryString: string;
@@ -259,7 +260,7 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
                       <div className="h-14 w-10 overflow-hidden rounded bg-muted">
                         {media.youtubeStreamUrl ? (
                           <Image
-                            src={`https://img.youtube.com/vi/${media.youtubeStreamUrl}/hqdefault.jpg`}
+                            src={`https://img.youtube.com/vi/${getYouTubeVideoId(media.youtubeStreamUrl)}/hqdefault.jpg`}
                             alt={media.title}
                             width={40}
                             height={56}
