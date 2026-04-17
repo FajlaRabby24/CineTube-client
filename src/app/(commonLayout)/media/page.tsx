@@ -6,7 +6,7 @@ import {
   QueryClient,
 } from "@tanstack/react-query";
 
-const MoviesPage = async ({
+const MediaPage = async ({
   searchParams,
 }: {
   searchParams: Promise<{ [key: string]: string | undefined }>;
@@ -65,4 +65,4 @@ const MoviesPage = async ({
   );
 };
 
-export default MoviesPage;
+export default MediaPage;

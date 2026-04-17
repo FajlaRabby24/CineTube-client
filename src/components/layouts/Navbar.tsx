@@ -61,12 +61,8 @@ const Navbar = ({
   menu = [
     { title: "Home", url: "/ " },
     {
-      title: "Movies",
-      url: "/movies",
-    },
-    {
-      title: "Blog",
-      url: "/blogs",
+      title: "Media",
+      url: "/media",
     },
     {
       title: "Dashboard",
@@ -198,3 +194,4 @@ const renderMobileMenuItem = (item: MenuItem) => {
 };
 
 export { Navbar };
+

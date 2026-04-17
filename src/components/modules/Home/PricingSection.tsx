@@ -6,15 +6,15 @@ import { motion } from "motion/react";
 
 const plans = [
   {
-    name: "Basic",
-    price: 9.99,
+    name: "Free",
+    price: 0,
     period: "/mo",
     features: [
-      "Access to all movies",
-      "Standard Definition",
-      "Watch on 1 device",
-      "Unlimited reviews",
-      "No ads",
+        "Access to all movies",
+        "Standard Definition",
+        "Watch on 1 device",
+        "Unlimited reviews",
+        "No ads",
     ],
     popular: false,
     color: "bg-slate-800",
@@ -35,8 +35,8 @@ const plans = [
   },
   {
     name: "Premium",
-    price: 19.99,
-    period: "/mo",
+    price: 99.99,
+    period: "/year",
     features: [
       "Everything in Standard",
       "Ultra HD (4K) + HDR",

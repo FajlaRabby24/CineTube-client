@@ -15,7 +15,7 @@ import {
 const TrendingMovies = () => {
   const { data: movies, isLoading } = useQuery({
     queryKey: ["trending-media"],
-    queryFn: () => getAllMedia("isTrending=true&limit=10"),
+    queryFn: () => getAllMedia("isTrending=true"),
   });
 
   if (isLoading) {
@@ -74,7 +74,7 @@ const TrendingMovies = () => {
                 transition={{ delay: index * 0.1 }}
                 className="relative aspect-[2/3] w-[180px] md:w-[220px] shrink-0 snap-start overflow-hidden rounded-xl group cursor-pointer"
               >
-                <Link href={`/movies/${media.slug}`}>
+                <Link href={`/media/${media.id}`}>
                   <Image
                     src={(media as any).posterUrl || "/placeholder-movie.jpg"}
                     alt={media.title}
