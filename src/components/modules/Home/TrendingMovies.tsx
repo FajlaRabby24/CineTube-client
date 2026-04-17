@@ -8,6 +8,7 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { MagicCard } from "@/components/ui/magic-card";
+import { Marquee } from "@/components/ui/marquee";
 import { getYouTubeVideoId } from "@/lib/utils/getYoutubeVedioId";
 import {
   getAllMedia,
@@ -66,15 +67,15 @@ const TrendingMovies = () => {
         </div>
 
         <div className="relative group/row">
-          <div className="flex gap-4 overflow-x-auto pb-8 scrollbar-hide snap-x">
+          <Marquee pauseOnHover className="[--duration:60s] [--gap:1rem]">
             {trendingItems.map((media, index) => (
               <motion.div
                 key={media.id}
-                initial={{ opacity: 0, x: 20 }}
-                whileInView={{ opacity: 1, x: 0 }}
+                initial={{ opacity: 0, scale: 0.95 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                transition={{ delay: index * 0.1 }}
-                className="relative aspect-video w-[300px] md:w-[450px] shrink-0 snap-start overflow-hidden rounded-xl group cursor-pointer"
+                transition={{ delay: (index % trendingItems.length) * 0.1 }}
+                className="relative aspect-video w-[300px] md:w-[450px] shrink-0 overflow-hidden rounded-xl group cursor-pointer"
               >
                 <Link href={`/media/${media.id}`}>
                   <MagicCard
@@ -136,7 +137,7 @@ const TrendingMovies = () => {
                 )}
               </motion.div>
             ))}
-          </div>
+          </Marquee>
         </div>
       </div>
     </section>
