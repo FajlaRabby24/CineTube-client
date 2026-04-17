@@ -426,69 +426,6 @@ export const CreateMediaModal = ({
               >
                 <FieldGroup className="grid gap-4 sm:grid-cols-2">
                   <Field>
-                    <form.Field name="posterUrl">
-                      {(field) => (
-                        <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>
-                            Poster URL
-                          </FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            type="url"
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            placeholder="https://example.com/poster.jpg"
-                          />
-                        </div>
-                      )}
-                    </form.Field>
-                  </Field>
-
-                  <Field>
-                    <form.Field name="backdropUrl">
-                      {(field) => (
-                        <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>
-                            Backdrop URL
-                          </FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            type="url"
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            placeholder="https://example.com/backdrop.jpg"
-                          />
-                        </div>
-                      )}
-                    </form.Field>
-                  </Field>
-
-                  <Field>
-                    <form.Field name="trailerUrl">
-                      {(field) => (
-                        <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>
-                            Trailer URL
-                          </FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            type="url"
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            placeholder="https://youtube.com/watch?v=..."
-                          />
-                        </div>
-                      )}
-                    </form.Field>
-                  </Field>
-
-                  <Field>
                     <form.Field name="youtubeStreamUrl">
                       {(field) => (
                         <div className="space-y-2">
@@ -599,23 +536,6 @@ export const CreateMediaModal = ({
                             value={field.state.value}
                             onBlur={field.handleBlur}
                             onChange={(e) => field.handleChange(e.target.value)}
-                          />
-                        </div>
-                      )}
-                    </form.Field>
-                  </Field>
-                  <Field>
-                    <form.Field name="imdbId">
-                      {(field) => (
-                        <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>IMDB ID</FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            placeholder="tt1375666"
                           />
                         </div>
                       )}

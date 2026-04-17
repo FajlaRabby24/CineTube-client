@@ -431,9 +431,9 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
               {/* Profile Section */}
               <div className="flex items-center gap-4">
                 <div className="h-28 w-20 overflow-hidden rounded bg-muted">
-                  {selectedMedia.posterUrl ? (
+                  {selectedMedia.youtubeStreamUrl ? (
                     <Image
-                      src={selectedMedia.posterUrl}
+                      src={`https://img.youtube.com/vi/${getYouTubeVideoId(selectedMedia.youtubeStreamUrl)}/hqdefault.jpg`}
                       alt={selectedMedia.title}
                       width={80}
                       height={112}
@@ -658,17 +658,6 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
 
               {/* External Links */}
               <div className="flex flex-wrap gap-3">
-                {selectedMedia.trailerUrl && (
-                  <a
-                    href={selectedMedia.trailerUrl}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Button size="sm" variant="secondary">
-                      Watch Trailer
-                    </Button>
-                  </a>
-                )}
                 {selectedMedia.youtubeStreamUrl && (
                   <a
                     href={selectedMedia.youtubeStreamUrl}
@@ -677,17 +666,6 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
                   >
                     <Button size="sm" variant="outline">
                       YouTube Stream
-                    </Button>
-                  </a>
-                )}
-                {selectedMedia.imdbId && (
-                  <a
-                    href={`https://www.imdb.com/title/${selectedMedia.imdbId}`}
-                    target="_blank"
-                    rel="noreferrer"
-                  >
-                    <Button size="sm" variant="outline">
-                      IMDb
                     </Button>
                   </a>
                 )}

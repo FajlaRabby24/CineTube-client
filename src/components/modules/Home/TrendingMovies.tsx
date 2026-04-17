@@ -7,6 +7,8 @@ import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
+import { MagicCard } from "@/components/ui/magic-card";
+import { getYouTubeVideoId } from "@/lib/utils/getYoutubeVedioId";
 import {
   getAllMedia,
   IMediasResponse,
@@ -72,55 +74,63 @@ const TrendingMovies = () => {
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: index * 0.1 }}
-                className="relative aspect-[2/3] w-[180px] md:w-[220px] shrink-0 snap-start overflow-hidden rounded-xl group cursor-pointer"
+                className="relative aspect-video w-[300px] md:w-[450px] shrink-0 snap-start overflow-hidden rounded-xl group cursor-pointer"
               >
                 <Link href={`/media/${media.id}`}>
-                  <Image
-                    src={(media as any).posterUrl || "/placeholder-movie.jpg"}
-                    alt={media.title}
-                    fill
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                  />
+                  <MagicCard
+                    className="w-full h-full rounded-xl p-0"
+                    gradientColor="#3b82f6"
+                    gradientOpacity={0.4}
+                  >
+                    <Image
+                      src={`https://img.youtube.com/vi/${getYouTubeVideoId(media?.youtubeStreamUrl)}/hqdefault.jpg`}
+                      alt={media.title}
+                      fill
+                      className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    />
 
-                  {/* Glass Overlay on Hover */}
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-4">
-                    <div className="space-y-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
-                      <h3 className="font-bold text-white text-sm line-clamp-2 leading-tight">
-                        {media.title}
-                      </h3>
+                    {/* Glass Overlay on Hover */}
+                    <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex flex-col justify-end p-6">
+                      <div className="space-y-3 transform translate-y-4 group-hover:translate-y-0 transition-transform duration-300">
+                        <h3 className="font-bold text-white text-base line-clamp-2 leading-tight">
+                          {media.title}
+                        </h3>
 
-                      <div className="flex items-center gap-2 text-[10px] font-bold text-white/80">
-                        <span className="flex items-center gap-0.5">
-                          <StarIcon className="size-2 text-yellow-400 fill-yellow-400" />{" "}
-                          {media.averageRating}
-                        </span>
-                        <span>•</span>
-                        <span>{media.releaseYear}</span>
-                      </div>
+                        <div className="flex items-center gap-3 text-xs font-bold text-white/80">
+                          <span className="flex items-center gap-1 font-outfit">
+                            <StarIcon className="size-3 text-yellow-400 fill-yellow-400" />{" "}
+                            {media.averageRating}
+                          </span>
+                          <span>•</span>
+                          <span className="font-outfit">
+                            {media.releaseYear}
+                          </span>
+                        </div>
 
-                      <div className="flex gap-2">
-                        <Button
-                          size="icon"
-                          variant="secondary"
-                          className="size-8 rounded-full"
-                        >
-                          <PlayIcon className="size-4 fill-current" />
-                        </Button>
-                        <Button
-                          size="icon"
-                          variant="outline"
-                          className="size-8 rounded-full border-white/40 text-white hover:bg-white/10"
-                        >
-                          <PlusIcon className="size-4" />
-                        </Button>
+                        <div className="flex gap-3">
+                          <Button
+                            size="icon"
+                            variant="secondary"
+                            className="size-10 rounded-full"
+                          >
+                            <PlayIcon className="size-5 fill-current" />
+                          </Button>
+                          <Button
+                            size="icon"
+                            variant="outline"
+                            className="size-10 rounded-full border-white/40 text-white hover:bg-white/10"
+                          >
+                            <PlusIcon className="size-5" />
+                          </Button>
+                        </div>
                       </div>
                     </div>
-                  </div>
+                  </MagicCard>
                 </Link>
 
                 {/* Rank Badge for first 5 */}
                 {index < 5 && (
-                  <div className="absolute -left-2 -bottom-4 text-7xl font-black text-white/20 select-none italic font-outfit pointer-events-none">
+                  <div className="absolute -left-3 -bottom-6 text-8xl font-black text-white/30 select-none italic font-outfit pointer-events-none drop-shadow-2xl">
                     {index + 1}
                   </div>
                 )}

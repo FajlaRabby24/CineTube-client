@@ -10,18 +10,18 @@ const plans = [
     price: 0,
     period: "/mo",
     features: [
-        "Access to all movies",
-        "Standard Definition",
-        "Watch on 1 device",
-        "Unlimited reviews",
-        "No ads",
+      "Access to all movies",
+      "Standard Definition",
+      "Watch on 1 device",
+      "Unlimited reviews",
+      "No ads",
     ],
     popular: false,
     color: "bg-slate-800",
   },
   {
     name: "Standard",
-    price: 15.99,
+    price: 10,
     period: "/mo",
     features: [
       "Everything in Basic",
@@ -58,7 +58,8 @@ const PricingSection = () => {
             Choose Your <span className="text-primary italic">Adventure</span>
           </h2>
           <p className="text-slate-400 text-lg max-w-2xl mx-auto">
-            Unlock the ultimate cinematic experience with plans tailored to your needs.
+            Unlock the ultimate cinematic experience with plans tailored to your
+            needs.
           </p>
         </div>
 
@@ -84,20 +85,33 @@ const PricingSection = () => {
 
               <div className="space-y-8">
                 <div className="space-y-2">
-                  <h3 className="text-2xl font-bold text-white font-outfit">{plan.name}</h3>
+                  <h3 className="text-2xl font-bold text-white font-outfit">
+                    {plan.name}
+                  </h3>
                   <div className="flex items-baseline gap-1">
-                    <span className="text-5xl font-black text-white font-outfit tracking-tighter">${plan.price}</span>
-                    <span className="text-slate-500 font-bold uppercase text-xs">{plan.period}</span>
+                    <span className="text-5xl font-black text-white font-outfit tracking-tighter">
+                      ${plan.price}
+                    </span>
+                    <span className="text-slate-500 font-bold uppercase text-xs">
+                      {plan.period}
+                    </span>
                   </div>
                 </div>
 
                 <div className="space-y-4">
                   {plan.features.map((feature) => (
-                    <div key={feature} className="flex items-center gap-3 group/feat">
-                      <div className={`p-1 rounded-full ${plan.popular ? "bg-primary text-white" : "bg-white/10 text-slate-400"}`}>
+                    <div
+                      key={feature}
+                      className="flex items-center gap-3 group/feat"
+                    >
+                      <div
+                        className={`p-1 rounded-full ${plan.popular ? "bg-primary text-white" : "bg-white/10 text-slate-400"}`}
+                      >
                         <CheckIcon className="size-3" />
                       </div>
-                      <span className="text-slate-300 text-sm font-medium">{feature}</span>
+                      <span className="text-slate-300 text-sm font-medium">
+                        {feature}
+                      </span>
                     </div>
                   ))}
                 </div>
@@ -111,7 +125,8 @@ const PricingSection = () => {
                       : "bg-white/10 text-white hover:bg-white hover:text-slate-950"
                   }`}
                 >
-                  Start Your Journey <ChevronRightIcon className="ml-2 size-4" />
+                  Start Your Journey{" "}
+                  <ChevronRightIcon className="ml-2 size-4" />
                 </Button>
               </div>
             </motion.div>
@@ -119,7 +134,7 @@ const PricingSection = () => {
         </div>
 
         <div className="mt-16 text-center text-slate-500 text-xs font-bold uppercase tracking-widest">
-            Prices may vary based on your location. Cancel anytime.
+          Prices may vary based on your location. Cancel anytime.
         </div>
       </div>
     </section>

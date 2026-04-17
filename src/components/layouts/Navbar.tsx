@@ -76,16 +76,16 @@ const Navbar = ({
     login: { title: "Login", url: "/login" },
     signup: { title: "Register", url: "/register" },
   },
-  className,
+
   userInfo,
 }: Navbar1Props) => {
-
+  console.log(userInfo, "navbar");
   return (
-    <section className={cn("py-2", className)}>
+    <section className={cn("py-2 sticky top-0 z-50  bg-slate-950")}>
       <div className="container mx-auto px-4">
         {/* Desktop Menu */}
         <nav className="hidden items-center justify-between lg:flex">
-          <div className="flex items-center gap-6">
+          <div className="flex items-center  gap-6">
             {/* Logo */}
             <Link href={logo.url} className="flex items-center gap-2">
               <img
@@ -97,21 +97,27 @@ const Navbar = ({
                 {logo.title}
               </span>
             </Link>
-            <div className="flex items-center">
-              <NavigationMenu>
-                <NavigationMenuList>
-                  {menu.map((item) => renderMenuItem(item))}
-                </NavigationMenuList>
-              </NavigationMenu>
-            </div>
+          </div>
+          <div className="flex items-center ">
+            <NavigationMenu>
+              <NavigationMenuList>
+                {menu.map((item) => renderMenuItem(item))}
+              </NavigationMenuList>
+            </NavigationMenu>
           </div>
           <div className="flex gap-2">
-            <Button asChild variant="outline" size="sm">
-              <Link href={auth.login.url}>{auth.login.title}</Link>
-            </Button>
-            <Button asChild size="sm">
-              <Link href={auth.signup.url}>{auth.signup.title}</Link>
-            </Button>
+            {userInfo ? (
+              <UserDropdown userInfo={userInfo} />
+            ) : (
+              <>
+                <Button asChild variant="outline">
+                  <Link href={auth.login.url}>{auth.login.title}</Link>
+                </Button>
+                <Button asChild>
+                  <Link href={auth.signup.url}>{auth.signup.title}</Link>
+                </Button>
+              </>
+            )}
           </div>
         </nav>
 
@@ -158,16 +164,22 @@ const Navbar = ({
                     </Accordion>
 
                     <div className="flex flex-col gap-3">
-                  {
-                    userInfo ? <UserDropdown userInfo={userInfo} /> :
-                    <>
-                      <Button asChild variant="outline">
-                        <Link href={auth.login.url}>{auth.login.title}</Link>
-                      </Button>
-                      <Button asChild>
-                        <Link href={auth.signup.url}>{auth.signup.title}</Link>
-                      </Button></>
-                  }
+                      {userInfo ? (
+                        <UserDropdown userInfo={userInfo} />
+                      ) : (
+                        <>
+                          <Button asChild variant="outline">
+                            <Link href={auth.login.url}>
+                              {auth.login.title}
+                            </Link>
+                          </Button>
+                          <Button asChild>
+                            <Link href={auth.signup.url}>
+                              {auth.signup.title}
+                            </Link>
+                          </Button>
+                        </>
+                      )}
                     </div>
                   </div>
                 </SheetContent>
@@ -203,4 +215,3 @@ const renderMobileMenuItem = (item: MenuItem) => {
 };
 
 export { Navbar };
-

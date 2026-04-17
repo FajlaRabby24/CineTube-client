@@ -9,7 +9,7 @@ export interface IMediasResponse {
   slug: string;
   type: string;
   status: string;
-  youtubeStreamUrl: string | null;
+  youtubeStreamUrl: string;
   averageRating: number;
   pricingType: string;
   releaseYear: number;
@@ -26,11 +26,7 @@ export interface IMediaResponse {
   duration: number;
   totalSeasons: number | null;
   totalEpisodes: number | null;
-  posterUrl: string;
-  backdropUrl: string;
-  trailerUrl: string;
   youtubeStreamUrl: string;
-  imdbId: string;
   language: string;
   country: string;
   pricingType: string;
