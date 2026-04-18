@@ -40,7 +40,10 @@ export async function createCheckoutSession(plan: string) {
     const accessToken = cookieStore.get("accessToken")?.value;
     const sessionToken = cookieStore.get("better-auth.session_token")?.value;
 
-    const res = await httpClient.post<{ sessionId: string; paymentUrl: string }>(
+    const res = await httpClient.post<{
+      sessionId: string;
+      paymentUrl: string;
+    }>(
       "/subscription/create-checkout-session",
       { plan },
       {
@@ -50,9 +53,33 @@ export async function createCheckoutSession(plan: string) {
       },
     );
 
-    return res;
+    return res ?? null;
   } catch (error) {
     console.error("Error creating checkout session:", error);
-    return { success: false, message: "Failed to create checkout session" };
+    return null;
+  }
+}
+export async function createCustomerPortalSession() {
+  try {
+    const cookieStore = await cookies();
+    const accessToken = cookieStore.get("accessToken")?.value;
+    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
+
+    const res = await httpClient.post<{
+      url: string;
+    }>(
+      "/subscription/create-customer-portal",
+      {},
+      {
+        headers: {
+          Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
+        },
+      },
+    );
+
+    return res ?? null;
+  } catch (error) {
+    console.error("Error creating portal session:", error);
+    return null;
   }
 }

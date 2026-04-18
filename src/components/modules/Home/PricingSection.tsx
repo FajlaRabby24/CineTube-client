@@ -1,20 +1,32 @@
 "use client";
 
 import { Button } from "@/components/ui/button";
-import { CheckIcon, ChevronRightIcon } from "lucide-react";
+import { CheckIcon, ChevronRightIcon, Loader2Icon } from "lucide-react";
 import { motion } from "motion/react";
+import { usePathname, useRouter } from "next/navigation";
+import { toast } from "sonner";
+
+import { getUserInfo } from "@/services/Auth/getMe.service";
+import {
+  createCheckoutSession,
+  createCustomerPortalSession,
+  getUserSubscription,
+  ISubscriptionResponse,
+} from "@/services/Subscription/subscription.service";
+import { useEffect, useState } from "react";
 
 const plans = [
   {
     name: "Free",
     price: 0,
     period: "/mo",
+    planKey: "FREE",
     features: [
-      "Access to all movies",
-      "Standard Definition",
-      "Watch on 1 device",
-      "Unlimited reviews",
-      "No ads",
+      "Everything in Standard",
+      "Ultra HD (4K) + HDR",
+      "Watch on 4 devices",
+      "Offline downloads",
+      "Exclusive creator content",
     ],
     popular: false,
     color: "bg-slate-800",
@@ -23,12 +35,13 @@ const plans = [
     name: "Standard",
     price: 10,
     period: "/mo",
+    planKey: "MONTHLY",
     features: [
-      "Everything in Basic",
-      "Full HD (1080p)",
-      "Watch on 2 devices",
-      "Personalized recommendations",
-      "Priority streaming",
+      "Everything in Standard",
+      "Ultra HD (4K) + HDR",
+      "Watch on 4 devices",
+      "Offline downloads",
+      "Exclusive creator content",
     ],
     popular: true,
     color: "bg-primary",
@@ -37,6 +50,7 @@ const plans = [
     name: "Premium",
     price: 99.99,
     period: "/year",
+    planKey: "YEARLY",
     features: [
       "Everything in Standard",
       "Ultra HD (4K) + HDR",
@@ -50,6 +64,74 @@ const plans = [
 ];
 
 const PricingSection = () => {
+  const router = useRouter();
+  const pathname = usePathname();
+  const [loadingPlan, setLoadingPlan] = useState<string | null>(null);
+  const [subscription, setSubscription] =
+    useState<ISubscriptionResponse | null>(null);
+
+  useEffect(() => {
+    const fetchSub = async () => {
+      const sub = await getUserSubscription();
+      setSubscription(sub);
+    };
+    fetchSub();
+  }, []);
+
+  const handleSubscribe = async (planKey: string) => {
+    try {
+      setLoadingPlan(planKey);
+      const user = await getUserInfo();
+
+      if (!user) {
+        toast.error("Please login to subscribe to a plan");
+        router.push(`/login?redirectPath=${pathname}`);
+        return;
+      }
+
+      // If user is already on this exact plan
+      if (subscription?.plan === planKey && subscription?.status === "ACTIVE") {
+        toast.info("You are already on this plan!");
+        return;
+      }
+
+      // If user has ANY paid plan and wants to manage/change
+      if (subscription && subscription.plan !== "FREE") {
+        toast.loading("Opening management portal...", { id: "portal" });
+        const res = await createCustomerPortalSession();
+        if (res?.success && res?.data?.url) {
+          window.location.href = res.data.url;
+          return;
+        } else {
+          toast.error("Failed to open management portal", { id: "portal" });
+          return;
+        }
+      }
+
+      if (planKey === "FREE") {
+        toast.success("You are already on the Free plan!");
+        return;
+      }
+
+      toast.loading("Preparing checkout...", { id: "checkout" });
+      const res = await createCheckoutSession(planKey);
+
+      if (res?.success && res?.data?.paymentUrl) {
+        toast.success("Redirecting to checkout...", { id: "checkout" });
+        window.location.href = res.data.paymentUrl;
+      } else {
+        toast.error(res?.message || "Failed to create checkout session", {
+          id: "checkout",
+        });
+      }
+    } catch (error) {
+      console.error("Subscription error:", error);
+      toast.error("An error occurred. Please try again.", { id: "checkout" });
+    } finally {
+      setLoadingPlan(null);
+    }
+  };
+
   return (
     <section className="w-full bg-slate-950 py-24 relative overflow-hidden">
       <div className="container mx-auto px-4 relative z-10">
@@ -119,14 +201,27 @@ const PricingSection = () => {
 
               <div className="mt-12">
                 <Button
+                  onClick={() => handleSubscribe(plan.planKey)}
+                  disabled={loadingPlan === plan.planKey}
                   className={`w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs transition-all duration-300 ${
                     plan.popular
                       ? "bg-primary text-white hover:bg-white hover:text-primary"
                       : "bg-white/10 text-white hover:bg-white hover:text-slate-950"
                   }`}
                 >
-                  Start Your Journey{" "}
-                  <ChevronRightIcon className="ml-2 size-4" />
+                  {loadingPlan === plan.planKey ? (
+                    <Loader2Icon className="mr-2 size-4 animate-spin" />
+                  ) : subscription?.plan === plan.planKey &&
+                    subscription?.status === "ACTIVE" ? (
+                    "Current Plan"
+                  ) : subscription && subscription.plan !== "FREE" ? (
+                    "Manage Subscription"
+                  ) : (
+                    <>
+                      Start Your Journey{" "}
+                      <ChevronRightIcon className="ml-2 size-4" />
+                    </>
+                  )}
                 </Button>
               </div>
             </motion.div>
