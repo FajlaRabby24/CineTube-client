@@ -20,7 +20,7 @@ export async function getUserSubscription() {
     const accessToken = cookieStore.get("accessToken")?.value;
     const sessionToken = cookieStore.get("better-auth.session_token")?.value;
 
-    const res = await httpClient.get<ISubscriptionResponse>("/subscription", {
+    const res = await httpClient.get<ISubscriptionResponse>("/subscriptions", {
       headers: {
         Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
       },
@@ -44,7 +44,7 @@ export async function createCheckoutSession(plan: string) {
       sessionId: string;
       paymentUrl: string;
     }>(
-      "/subscription/create-checkout-session",
+      "/subscriptions/create-checkout-session",
       { plan },
       {
         headers: {
@@ -68,7 +68,7 @@ export async function createCustomerPortalSession() {
     const res = await httpClient.post<{
       url: string;
     }>(
-      "/subscription/create-customer-portal",
+      "/subscriptions/create-customer-portal",
       {},
       {
         headers: {
