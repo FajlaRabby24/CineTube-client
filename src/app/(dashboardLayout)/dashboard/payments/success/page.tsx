@@ -1,7 +1,7 @@
 "use client";
 
+import { CheckCircle2, LayoutDashboard, Play } from "lucide-react";
 import { motion } from "motion/react";
-import { CheckCircle2, Play, LayoutDashboard } from "lucide-react";
 import Link from "next/link";
 
 const SuccessPage = () => {
@@ -66,7 +66,7 @@ const SuccessPage = () => {
             className="flex flex-col gap-4 sm:flex-row"
           >
             <Link
-              href="/"
+              href="/media"
               className="group flex flex-1 items-center justify-center gap-2 rounded-xl bg-white px-6 py-4 font-bold text-black transition-all hover:bg-neutral-200"
             >
               <Play className="h-5 w-5 fill-current" />
