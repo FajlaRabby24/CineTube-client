@@ -3,7 +3,6 @@
 import {
   CalendarIcon,
   ClockIcon,
-  ExternalLinkIcon,
   PlusIcon,
   StarIcon,
   XIcon,
@@ -250,10 +249,9 @@ const MediaDetails = ({ media }: MediaDetailsProps) => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 mt-12 grid lg:grid-cols-3 gap-16">
-        {/* Left Column: Details */}
-        <div className="lg:col-span-2 space-y-12">
-          {/* Synopsis */}
+      <div className="container mx-auto px-4 mt-12 grid lg:grid-cols-4 gap-8 lg:gap-16">
+        {/* Left: Synopsis (span 2) */}
+        <div className="lg:col-span-2 space-y-8">
           <section className="space-y-4">
             <h2 className="text-2xl font-black uppercase font-outfit tracking-tight border-b border-white/5 pb-2">
               Synopsis
@@ -262,69 +260,9 @@ const MediaDetails = ({ media }: MediaDetailsProps) => {
               {media.synopsis}
             </p>
           </section>
-        </div>
-
-        {/* Right Column: Sidebar */}
-        <div className="space-y-12">
-          {/* Availability */}
-          <section className="p-8 rounded-[2rem] bg-white/5 border border-white/10 backdrop-blur-md space-y-6">
-            <div className="space-y-1">
-              <h3 className="text-xl font-black uppercase font-outfit tracking-tight">
-                Available On
-              </h3>
-              <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
-                Official Streaming Platforms
-              </p>
-            </div>
-
-            <div className="space-y-3">
-              {media.platforms.map((p) => (
-                <a
-                  key={p.id}
-                  href={p.streamUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-between p-4 rounded-xl bg-white/5 hover:bg-primary hover:text-white transition-all duration-300 group"
-                >
-                  <span className="font-bold uppercase tracking-widest text-xs">
-                    {p.platform}
-                  </span>
-                  <ExternalLinkIcon className="size-4 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </a>
-              ))}
-            </div>
-          </section>
-
-          {/* Quick Info */}
-          <section className="space-y-6 px-4">
-            <div className="border-l-2 border-primary pl-4 py-1">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
-                Language
-              </h4>
-              <p className="text-sm font-bold text-white uppercase">
-                {media.language}
-              </p>
-            </div>
-            <div className="border-l-2 border-primary pl-4 py-1">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
-                Country
-              </h4>
-              <p className="text-sm font-bold text-white uppercase">
-                {media.country}
-              </p>
-            </div>
-            <div className="border-l-2 border-primary pl-4 py-1">
-              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
-                View Count
-              </h4>
-              <p className="text-sm font-bold text-white uppercase tracking-widest">
-                {media.totalViews.toLocaleString()} Views
-              </p>
-            </div>
-          </section>
-
-          {/* Tags */}
-          <div className="flex flex-wrap gap-2 px-4">
+          
+          {/* Tags moved below synopsis */}
+          <div className="flex flex-wrap gap-2 pt-4">
             {media.tags.map((t) => (
               <span
                 key={t.id}
@@ -333,6 +271,26 @@ const MediaDetails = ({ media }: MediaDetailsProps) => {
                 #{t.tag.name.toLowerCase().replace(/\s+/g, "")}
               </span>
             ))}
+          </div>
+        </div>
+
+        {/* Right: Quick Info Modules (Spread) */}
+        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
+          <div className="border-l-2 border-primary pl-4 py-1 h-fit">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
+              Language
+            </h4>
+            <p className="text-sm font-bold text-white uppercase">
+              {media.language}
+            </p>
+          </div>
+          <div className="border-l-2 border-primary pl-4 py-1 h-fit">
+            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
+              View Count
+            </h4>
+            <p className="text-sm font-bold text-white uppercase tracking-widest">
+              {media.totalViews.toLocaleString()} Views
+            </p>
           </div>
         </div>
       </div>

@@ -1,15 +1,20 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getMediaReviews, createReview } from "@/services/Review/review.service";
-import ReviewCard from "./ReviewCard";
-import CommentForm from "./CommentForm";
-import { getUserInfo } from "@/services/Auth/getMe.service";
-import { MessageSquareIcon, StarIcon, Loader2Icon } from "lucide-react";
-import { useState } from "react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Label } from "@/components/ui/label";
+import { getUserInfo } from "@/services/Auth/getMe.service";
+import {
+  createReview,
+  getMediaReviews,
+} from "@/services/Review/review.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { MessageSquareIcon } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+import CommentForm from "./CommentForm";
+import ReviewCard from "./ReviewCard";
+
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface ReviewSectionProps {
   mediaId: string;
@@ -22,11 +27,18 @@ const ReviewSection = ({ mediaId }: ReviewSectionProps) => {
   const { data, isLoading } = useQuery({
     queryKey: ["reviews", mediaId],
     queryFn: () => getMediaReviews(mediaId),
+    refetchOnWindowFocus: false,
+    refetchOnMount: false,
+    refetchInterval: false,
+    retry: false,
   });
 
   const mutation = useMutation({
-    mutationFn: (data: { rating: number; content: string; hasSpoiler: boolean }) => 
-      createReview(mediaId, data),
+    mutationFn: (data: {
+      rating: number;
+      content: string;
+      hasSpoiler: boolean;
+    }) => createReview(mediaId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reviews", mediaId] });
       toast.success("Review submitted! It will appear after moderation.");
@@ -37,7 +49,10 @@ const ReviewSection = ({ mediaId }: ReviewSectionProps) => {
     },
   });
 
-  const handleReviewSubmit = async (data: { content: string; rating?: number }) => {
+  const handleReviewSubmit = async (data: {
+    content: string;
+    rating?: number;
+  }) => {
     const user = await getUserInfo();
     if (!user) {
       toast.error("Please login to write a review");
@@ -58,9 +73,31 @@ const ReviewSection = ({ mediaId }: ReviewSectionProps) => {
 
   if (isLoading) {
     return (
-      <div className="flex flex-col items-center justify-center py-20 space-y-4">
-        <Loader2Icon className="size-12 animate-spin text-primary" />
-        <p className="text-slate-500 font-bold uppercase tracking-widest text-xs">Loading Reviews...</p>
+      <div className="space-y-8 animate-pulse">
+        {[1, 2, 3].map((i) => (
+          <div
+            key={i}
+            className="bg-white/5 border border-white/10 rounded-[2rem] p-8 backdrop-blur-md"
+          >
+            <div className="flex flex-col md:flex-row gap-8">
+              <div className="w-full md:w-48 shrink-0 flex flex-col items-center md:items-start space-y-4">
+                <Skeleton className="size-16 rounded-2xl bg-white/5" />
+                <div className="space-y-2 w-full">
+                  <Skeleton className="h-4 w-3/4 bg-white/5 mx-auto md:mx-0" />
+                  <Skeleton className="h-4 w-1/2 bg-white/5 mx-auto md:mx-0" />
+                </div>
+              </div>
+              <div className="flex-1 space-y-4">
+                <Skeleton className="h-6 w-1/4 bg-white/5" />
+                <Skeleton className="h-20 w-full bg-white/5" />
+                <div className="flex gap-4 border-t border-white/5 pt-4">
+                  <Skeleton className="h-10 w-24 rounded-xl bg-white/5" />
+                  <Skeleton className="h-10 w-24 rounded-xl bg-white/5" />
+                </div>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
     );
   }
@@ -99,16 +136,16 @@ const ReviewSection = ({ mediaId }: ReviewSectionProps) => {
             placeholder="What did you think of the story, acting, and visuals?"
             buttonText="Submit Review"
           />
-          
+
           <div className="flex items-center space-x-2">
-            <Checkbox 
-              id="spoiler" 
-              checked={hasSpoiler} 
+            <Checkbox
+              id="spoiler"
+              checked={hasSpoiler}
               onCheckedChange={(checked) => setHasSpoiler(checked as boolean)}
               className="border-white/20 data-[state=checked]:bg-primary"
             />
-            <Label 
-              htmlFor="spoiler" 
+            <Label
+              htmlFor="spoiler"
               className="text-sm font-bold text-slate-400 uppercase tracking-widest cursor-pointer"
             >
               This review contains spoilers
@@ -126,7 +163,9 @@ const ReviewSection = ({ mediaId }: ReviewSectionProps) => {
         ) : (
           <div className="text-center py-20 bg-white/5 rounded-[2rem] border border-dashed border-white/10">
             <MessageSquareIcon className="size-16 text-slate-700 mx-auto mb-4" />
-            <h3 className="text-xl font-bold text-white mb-2">No reviews yet</h3>
+            <h3 className="text-xl font-bold text-white mb-2">
+              No reviews yet
+            </h3>
             <p className="text-slate-500 max-w-sm mx-auto">
               Be the first to share your experience with this title.
             </p>

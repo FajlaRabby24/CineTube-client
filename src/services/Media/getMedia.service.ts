@@ -28,7 +28,6 @@ export interface IMediaResponse {
   totalEpisodes: number | null;
   youtubeStreamUrl: string;
   language: string;
-  country: string;
   pricingType: string;
   averageRating: number;
   totalReviews: number;
