@@ -37,9 +37,9 @@ export const createComment = async (reviewId: string, content: string) => {
   const accessToken = cookieStore.get("accessToken")?.value;
   const sessionToken = cookieStore.get("better-auth.session_token")?.value;
 
-  if (!accessToken) return { success: false, message: "Unauthorized" };
+  if (!accessToken) return null;
 
-  return await httpClient.post<IComment>(
+  const res = await httpClient.post<IComment>(
     `/reviews/${reviewId}/comments`,
     { content },
     {
@@ -48,6 +48,12 @@ export const createComment = async (reviewId: string, content: string) => {
       },
     },
   );
+
+  if (!res.success) {
+    return null;
+  }
+
+  return res ?? null;
 };
 
 export const createReply = async (commentId: string, content: string) => {

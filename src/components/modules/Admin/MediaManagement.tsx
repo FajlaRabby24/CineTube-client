@@ -777,11 +777,6 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
                     icon: GlobeIcon,
                     items: [
                       {
-                        key: "Origin Grid",
-                        val: selectedMedia.country,
-                        icon: GlobeIcon,
-                      },
-                      {
                         key: "Native Encoding",
                         val: selectedMedia.language,
                         icon: ShieldIcon,

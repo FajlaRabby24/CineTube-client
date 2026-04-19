@@ -2,15 +2,17 @@
 
 import { cn } from "@/lib/utils";
 import { getUserInfo } from "@/services/Auth/getMe.service";
+import { createComment } from "@/services/Comment/comment.service";
 import { likeReview } from "@/services/Review/review.service";
 import { IReview } from "@/types/review.types";
 import { formatDistanceToNow } from "date-fns";
-import { FlagIcon, HeartIcon, MessageSquareIcon, StarIcon } from "lucide-react";
+import { ChevronDownIcon, HeartIcon, StarIcon } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
-import CommentSection from "./CommentSection";
+import CommentForm from "./CommentForm";
+import CommentItem from "./CommentItem";
 import ReportDialog from "./ReportDialog";
 
 interface ReviewCardProps {
@@ -19,8 +21,33 @@ interface ReviewCardProps {
 
 const ReviewCard = ({ review: initialReview }: ReviewCardProps) => {
   const [review, setReview] = useState(initialReview);
-  const [showComments, setShowComments] = useState(false);
+  const [isReplying, setIsReplying] = useState(false);
+  const [showReplies, setShowReplies] = useState(false);
   const [isReportOpen, setIsReportOpen] = useState(false);
+
+  const handleCommentSubmit = async (data: { content: string }) => {
+    try {
+      const user = await getUserInfo();
+      if (!user) {
+        toast.error("Please login to comment");
+        return;
+      }
+
+      const res = await createComment(review.id, data.content);
+      if (res?.success) {
+        toast.success("Comment posted!");
+        setReview((prev) => ({
+          ...prev,
+          comments: [res?.data, ...(prev.comments || [])],
+          commentsCount: prev.commentsCount + 1,
+        }));
+        setIsReplying(false);
+        setShowReplies(true);
+      }
+    } catch (error) {
+      toast.error("Failed to post comment");
+    }
+  };
 
   const handleLike = async () => {
     try {
@@ -85,11 +112,9 @@ const ReviewCard = ({ review: initialReview }: ReviewCardProps) => {
         {/* Action / Title space */}
         <div className="mt-1 space-y-1">
           {review.title && (
-            <h3 className="text-sm font-bold text-white">
-              {review.title}
-            </h3>
+            <h3 className="text-sm font-bold text-white">{review.title}</h3>
           )}
-          
+
           {review.hasSpoiler && (
             <div className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-red-400 bg-red-400/10 text-[10px] font-bold uppercase tracking-wider mb-1">
               Spoilers
@@ -116,15 +141,11 @@ const ReviewCard = ({ review: initialReview }: ReviewCardProps) => {
           </button>
 
           <button
-            onClick={() => setShowComments(!showComments)}
+            onClick={() => setIsReplying(!isReplying)}
             className="text-[12px] font-medium text-slate-400 hover:text-white transition-colors"
           >
             Reply
           </button>
-          
-          {review.commentsCount > 0 && (
-             <span className="text-[12px] text-slate-500">• {review.commentsCount} replies</span>
-          )}
 
           <button
             onClick={() => setIsReportOpen(true)}
@@ -134,19 +155,51 @@ const ReviewCard = ({ review: initialReview }: ReviewCardProps) => {
           </button>
         </div>
 
-        <AnimatePresence>
-          {showComments && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3 }}
-              className="overflow-hidden"
+        {isReplying && (
+          <div className="pt-3">
+            <CommentForm
+              onSubmit={handleCommentSubmit}
+              placeholder="Add a reply..."
+              buttonText="Reply"
+              autoFocus
+            />
+          </div>
+        )}
+
+        {review.comments && review.comments.length > 0 && (
+          <div className="pt-2">
+            <button
+              onClick={() => setShowReplies(!showReplies)}
+              className="flex items-center gap-2 text-[13px] font-bold text-blue-500 hover:text-blue-400 transition-colors py-1 hover:bg-blue-500/10 px-3 -ml-3 rounded-full"
             >
-              <CommentSection reviewId={review.id} />
-            </motion.div>
-          )}
-        </AnimatePresence>
+              <ChevronDownIcon
+                className={cn(
+                  "size-4 transition-transform",
+                  showReplies && "rotate-180",
+                )}
+              />
+              {review.comments.length} replies
+            </button>
+
+            <AnimatePresence>
+              {showReplies && (
+                <motion.div
+                  initial={{ opacity: 0, height: 0 }}
+                  animate={{ opacity: 1, height: "auto" }}
+                  exit={{ opacity: 0, height: 0 }}
+                  transition={{ duration: 0.3 }}
+                  className="overflow-hidden"
+                >
+                  <div className="mt-2 space-y-1">
+                    {review.comments.map((comment) => (
+                      <CommentItem key={comment.id} comment={comment} isReply />
+                    ))}
+                  </div>
+                </motion.div>
+              )}
+            </AnimatePresence>
+          </div>
+        )}
       </div>
 
       <ReportDialog
