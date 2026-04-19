@@ -27,10 +27,6 @@ const ReviewSection = ({ mediaId }: ReviewSectionProps) => {
   const { data, isLoading } = useQuery({
     queryKey: ["reviews", mediaId],
     queryFn: () => getMediaReviews(mediaId),
-    refetchOnWindowFocus: false,
-    refetchOnMount: false,
-    refetchInterval: false,
-    retry: false,
   });
 
   const mutation = useMutation({
@@ -41,7 +37,6 @@ const ReviewSection = ({ mediaId }: ReviewSectionProps) => {
     }) => createReview(mediaId, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["reviews", mediaId] });
-      toast.success("Review submitted! It will appear after moderation.");
       setHasSpoiler(false);
     },
     onError: (error: any) => {
@@ -103,6 +98,7 @@ const ReviewSection = ({ mediaId }: ReviewSectionProps) => {
   }
 
   const reviews = data?.data || [];
+  console.log(reviews, "reviews");
 
   return (
     <section className="space-y-16">
@@ -156,8 +152,8 @@ const ReviewSection = ({ mediaId }: ReviewSectionProps) => {
 
       {/* Reviews List */}
       <div className="space-y-8">
-        {reviews.length > 0 ? (
-          reviews.map((review: any) => (
+        {reviews?.length > 0 ? (
+          reviews?.map((review: any) => (
             <ReviewCard key={review.id} review={review} />
           ))
         ) : (

@@ -31,10 +31,10 @@ const ReviewCard = ({ review: initialReview }: ReviewCardProps) => {
       }
 
       const res = await likeReview(review.id);
-      if (res.success) {
+      if (res?.success) {
         setReview((prev) => ({
           ...prev,
-          likesCount: res.data.likesCount,
+          likesCount: res?.data?.likesCount,
         }));
       }
     } catch (error) {
@@ -49,7 +49,12 @@ const ReviewCard = ({ review: initialReview }: ReviewCardProps) => {
         <div className="w-full md:w-48 shrink-0 flex flex-col items-center md:items-start space-y-4">
           <div className="relative size-16 rounded-2xl overflow-hidden bg-slate-800 border-2 border-white/5 shadow-2xl">
             {review.user.image ? (
-              <Image src={review.user.image} alt={review.user.name} fill className="object-cover" />
+              <Image
+                src={review.user.image}
+                alt={review.user.name}
+                fill
+                className="object-cover"
+              />
             ) : (
               <div className="size-full flex items-center justify-center bg-slate-800 text-slate-500 font-black text-xl">
                 {review.user.name[0]}
@@ -62,7 +67,9 @@ const ReviewCard = ({ review: initialReview }: ReviewCardProps) => {
             </h4>
             <div className="flex items-center gap-1.5 justify-center md:justify-start mt-1">
               <StarIcon className="size-4 text-yellow-400 fill-yellow-400" />
-              <span className="text-xl font-black text-yellow-400 font-outfit">{review.rating}</span>
+              <span className="text-xl font-black text-yellow-400 font-outfit">
+                {review.rating}
+              </span>
               <span className="text-slate-500 text-xs font-bold">/10</span>
             </div>
           </div>
@@ -78,7 +85,10 @@ const ReviewCard = ({ review: initialReview }: ReviewCardProps) => {
                 </h3>
               )}
               <p className="text-[10px] font-black text-slate-500 uppercase tracking-[0.2em]">
-                Posted {formatDistanceToNow(new Date(review.createdAt), { addSuffix: true })}
+                Posted{" "}
+                {formatDistanceToNow(new Date(review.createdAt), {
+                  addSuffix: true,
+                })}
               </p>
             </div>
 
@@ -109,7 +119,12 @@ const ReviewCard = ({ review: initialReview }: ReviewCardProps) => {
               className="flex items-center gap-2 text-xs font-black uppercase tracking-widest text-slate-400 hover:text-primary transition-all group/btn"
             >
               <div className="size-10 rounded-xl bg-white/5 flex items-center justify-center group-hover/btn:bg-primary/20 group-hover/btn:scale-110 transition-all">
-                <HeartIcon className={cn("size-5", review.likesCount > 0 && "fill-primary text-primary")} />
+                <HeartIcon
+                  className={cn(
+                    "size-5",
+                    review.likesCount > 0 && "fill-primary text-primary",
+                  )}
+                />
               </div>
               <span>{review.likesCount} Likes</span>
             </button>

@@ -5,12 +5,22 @@ import { IReview } from "@/types/review.types";
 import { cookies } from "next/headers";
 
 export const getMediaReviews = async (mediaId: string) => {
-  return await httpClient.get<IReview[]>(`/media/${mediaId}/reviews`);
+  const res = await httpClient.get<IReview[]>(`/media/${mediaId}/reviews`);
+  if (!res.success) {
+    return null;
+  }
+  console.log(res, "review service");
+  return res;
 };
 
 export const createReview = async (
   mediaId: string,
-  data: { rating: number; content: string; title?: string; hasSpoiler?: boolean },
+  data: {
+    rating: number;
+    content: string;
+    title?: string;
+    hasSpoiler?: boolean;
+  },
 ) => {
   const cookieStore = await cookies();
   const accessToken = cookieStore.get("accessToken")?.value;
@@ -30,9 +40,12 @@ export const likeReview = async (reviewId: string) => {
   const accessToken = cookieStore.get("accessToken")?.value;
   const sessionToken = cookieStore.get("better-auth.session_token")?.value;
 
-  if (!accessToken) return { success: false, message: "Unauthorized" };
+  if (!accessToken) return null;
 
-  return await httpClient.post<{ liked: boolean; likesCount: number }>(
+  const res = await httpClient.post<{
+    liked: boolean;
+    likesCount: number;
+  }>(
     `/reviews/${reviewId}/like`,
     {},
     {
@@ -41,4 +54,10 @@ export const likeReview = async (reviewId: string) => {
       },
     },
   );
+
+  if (!res.success) {
+    return null;
+  }
+  console.log(res, "like review");
+  return res ?? null;
 };

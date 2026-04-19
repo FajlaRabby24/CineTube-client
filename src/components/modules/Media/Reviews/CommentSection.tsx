@@ -1,13 +1,15 @@
 "use client";
 
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { toast } from "sonner";
-import { getReviewComments, createComment } from "@/services/Comment/comment.service";
-import CommentItem from "./CommentItem";
-import CommentForm from "./CommentForm";
 import { getUserInfo } from "@/services/Auth/getMe.service";
-import { Button } from "@/components/ui/button";
+import {
+  createComment,
+  getReviewComments,
+} from "@/services/Comment/comment.service";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2Icon } from "lucide-react";
+import { toast } from "sonner";
+import CommentForm from "./CommentForm";
+import CommentItem from "./CommentItem";
 
 interface CommentSectionProps {
   reviewId: string;
@@ -16,7 +18,7 @@ interface CommentSectionProps {
 const CommentSection = ({ reviewId }: CommentSectionProps) => {
   const queryClient = useQueryClient();
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, refetch } = useQuery({
     queryKey: ["comments", reviewId],
     queryFn: () => getReviewComments(reviewId),
   });
@@ -25,7 +27,7 @@ const CommentSection = ({ reviewId }: CommentSectionProps) => {
     mutationFn: (content: string) => createComment(reviewId, content),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["comments", reviewId] });
-      toast.success("Comment posted!");
+      refetch();
     },
     onError: (error: any) => {
       toast.error(error?.response?.data?.message || "Failed to post comment");
@@ -57,7 +59,10 @@ const CommentSection = ({ reviewId }: CommentSectionProps) => {
         <h4 className="text-xs font-black uppercase tracking-[0.2em] text-slate-500">
           Discussion ({comments.length})
         </h4>
-        <CommentForm onSubmit={handleCommentSubmit} placeholder="Join the discussion..." />
+        <CommentForm
+          onSubmit={handleCommentSubmit}
+          placeholder="Join the discussion..."
+        />
       </div>
 
       <div className="space-y-2">

@@ -83,7 +83,6 @@ const Navbar = ({
 
   userInfo,
 }: Navbar1Props) => {
-  console.log(userInfo, "navbar");
   return (
     <section className={cn("py-2 sticky top-0 z-50  bg-slate-950")}>
       <div className="container mx-auto px-4">

@@ -24,6 +24,26 @@ export interface IAdminReviewMedia {
   posterUrl: string | null;
 }
 
+/**
+ *  {
+      id: "cmo63n9f40000okmdtkgsytw6",
+      userId: "rMErvgk3LDmihRuAoABKBYOdIwoNiVzY",
+      mediaId: "cmo2rd8t00003qcmd4c5g2pqn",
+      rating: 5,
+      title: null,
+      content: "This is first review",
+      hasSpoiler: false,
+      status: "PENDING",
+      publishedAt: null,
+      rejectedReason: null,
+      moderatedBy: null,
+      likesCount: 0,
+      commentsCount: 0,
+      createdAt: "2026-04-19T18:28:27.374Z",
+      updatedAt: "2026-04-19T18:28:27.374Z",
+    }
+ */
+
 export interface IAdminReview {
   id: string;
   userId: string;
@@ -71,7 +91,7 @@ export async function getAdminReviews(queryString: string = "") {
       },
     });
 
-    console.log(res, "get admin reviews service");
+    // console.log(res, "get admin reviews service");
 
     return res ?? null;
   } catch (error) {

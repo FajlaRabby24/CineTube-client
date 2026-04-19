@@ -95,7 +95,7 @@ export async function getMediaById(id: string) {
   try {
     const url = `/media/${id}/details`;
     const res = await httpClient.get<IMediaResponse>(url);
-    console.log(res, "get media service");
+    // console.log(res, "get media service");
     return (res as any).data ?? null;
   } catch (error) {
     console.error("Error fetching media by id:", error);
