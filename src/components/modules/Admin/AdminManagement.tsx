@@ -1,8 +1,5 @@
 "use client";
 
-import { useRouter, useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
-
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,6 +33,9 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { motion } from "motion/react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { useEffect, useState } from "react";
 
 import { createAdmin } from "@/services/Admin/createAdmin.service";
 import {
@@ -58,15 +58,14 @@ const getErrorMessage = (error: unknown): string => {
 
 import {
   CalendarIcon,
+  Film,
   MailIcon,
   MoreHorizontalIcon,
   PhoneIcon,
   PlusIcon,
   SearchIcon,
   ShieldIcon,
-  UserCheckIcon,
   UserIcon,
-  UserXIcon,
 } from "lucide-react";
 
 import Image from "next/image";
@@ -178,55 +177,84 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
 
   if (isLoading) {
     return (
-      <div className="flex h-64 items-center justify-center">
-        <div className="size-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
+      <div className="flex h-[600px] items-center justify-center">
+        <div className="relative flex h-24 w-24 items-center justify-center rounded-full bg-red-600/10">
+          <div className="absolute inset-0 animate-ping rounded-full bg-red-600/20" />
+          <Film className="h-8 w-8 animate-pulse text-red-600" />
+        </div>
       </div>
     );
   }
 
   return (
     <>
-      <div className="space-y-4 p-3 md:p-6">
-        {/* Header */}
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <div>
-            <h1 className="text-2xl font-bold">Admin Management</h1>
-            <p className="text-sm text-muted-foreground">
-              Manage and monitor all admins
-            </p>
-          </div>
-          <div className="flex items-center gap-2">
-            <div className="relative w-full sm:w-72">
-              <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-              <Input
-                placeholder="Search admins..."
-                value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
-                onKeyDown={(e) =>
-                  e.key === "Enter" && handleSearch(searchInput)
-                }
-                className="pl-9"
-              />
+      <div className="min-h-screen space-y-8 p-6 text-white lg:p-10">
+        {/* Cinematic Header */}
+        <motion.div
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          className="relative overflow-hidden rounded-3xl border border-white/5 bg-black/40 p-8 backdrop-blur-2xl"
+        >
+          <div className="absolute -top-20 -right-20 h-64 w-64 rounded-full bg-red-600/10 blur-3xl text-red-600" />
+          <div className="relative z-10 flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <div>
+              <h1 className="text-4xl font-black italic tracking-tighter text-white uppercase">
+                Admin Management
+              </h1>
+              <p className="text-neutral-500">
+                Orchestrate system administrators and access permissions.
+              </p>
             </div>
-            <Button
-              onClick={() => setIsCreateOpen(true)}
-              className="shrink-0 cursor-pointer"
-            >
-              <PlusIcon className="mr-2 size-4" />
-              Create Admin
-            </Button>
-          </div>
-        </div>
 
-        {/* Table */}
+            <div className="flex flex-wrap items-center gap-4">
+              <div className="relative w-full sm:w-72">
+                <SearchIcon className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-neutral-600" />
+                <Input
+                  placeholder="Search admins..."
+                  value={searchInput}
+                  onChange={(e) => setSearchInput(e.target.value)}
+                  onKeyDown={(e) =>
+                    e.key === "Enter" && handleSearch(searchInput)
+                  }
+                  className="border-white/5 bg-white/5 pl-9 text-white placeholder:text-neutral-600 focus:border-red-600/40 focus:ring-0"
+                />
+              </div>
+              <Button
+                onClick={() => setIsCreateOpen(true)}
+                className="group relative flex items-center gap-2 overflow-hidden rounded-xl bg-red-600 px-6 font-bold text-white transition-all hover:bg-red-700 active:scale-95"
+              >
+                <PlusIcon className="size-4" />
+                Create Admin
+                <div className="absolute inset-0 -z-10 bg-gradient-to-r from-red-600 to-red-900 opacity-0 transition-opacity group-hover:opacity-100" />
+              </Button>
+            </div>
+          </div>
+        </motion.div>
+
+        {/* Table Container */}
+        <motion.div
+          initial={{ opacity: 0, scale: 0.98 }}
+          animate={{ opacity: 1, scale: 1 }}
+          className="rounded-3xl border border-white/5 bg-black/40 p-1 backdrop-blur-xl"
+        />
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Admin</TableHead>
-              <TableHead>Role</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead>Joined</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
+          <TableHeader className="bg-white/5">
+            <TableRow className="border-white/5 hover:bg-transparent">
+              <TableHead className="font-bold text-neutral-400 uppercase tracking-wider text-xs">
+                Admin
+              </TableHead>
+              <TableHead className="font-bold text-neutral-400 uppercase tracking-wider text-xs">
+                Role
+              </TableHead>
+              <TableHead className="font-bold text-neutral-400 uppercase tracking-wider text-xs">
+                Status
+              </TableHead>
+              <TableHead className="font-bold text-neutral-400 uppercase tracking-wider text-xs">
+                Joined
+              </TableHead>
+              <TableHead className="text-right font-bold text-neutral-400 uppercase tracking-wider text-xs">
+                Actions
+              </TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -241,10 +269,13 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
               </TableRow>
             ) : (
               admins?.map((admin: IAdminListItem) => (
-                <TableRow key={admin.id}>
+                <TableRow
+                  key={admin.id}
+                  className="border-white/5 transition-colors hover:bg-white/5"
+                >
                   <TableCell>
                     <div className="flex items-center gap-3">
-                      <div className="size-10 overflow-hidden rounded-full bg-muted">
+                      <div className="size-10 overflow-hidden rounded-full bg-white/10 ring-1 ring-white/10">
                         {admin.image ? (
                           <Image
                             src={admin.image}
@@ -254,14 +285,14 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                             className="size-full object-cover"
                           />
                         ) : (
-                          <div className="flex size-full items-center justify-center text-sm font-medium">
+                          <div className="flex size-full items-center justify-center text-sm font-black text-red-600">
                             {admin.name.charAt(0).toUpperCase()}
                           </div>
                         )}
                       </div>
                       <div>
-                        <p className="font-medium">{admin.name}</p>
-                        <p className="text-sm text-muted-foreground">
+                        <p className="font-bold text-white">{admin.name}</p>
+                        <p className="text-xs text-neutral-500">
                           {admin.email}
                         </p>
                       </div>
@@ -269,11 +300,11 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                   </TableCell>
                   <TableCell>
                     <Badge
-                      className={
+                      className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-widest ${
                         admin.role === "SUPER_ADMIN"
-                          ? "bg-purple-500"
-                          : "bg-blue-500"
-                      }
+                          ? "bg-purple-600/20 text-purple-400 ring-1 ring-purple-600/40"
+                          : "bg-blue-600/20 text-blue-400 ring-1 ring-blue-600/40"
+                      }`}
                     >
                       {admin.role.replace("_", " ")}
                     </Badge>
@@ -281,15 +312,22 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       {admin.isBanned ? (
-                        <Badge variant="destructive">Banned</Badge>
+                        <Badge className="bg-red-600/20 text-red-400 ring-1 ring-red-600/40 rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-widest">
+                          Banned
+                        </Badge>
                       ) : admin.isActive ? (
-                        <Badge className="bg-green-500">Active</Badge>
+                        <Badge className="bg-emerald-600/20 text-emerald-400 ring-1 ring-emerald-600/40 rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-widest text-center flex items-center gap-1">
+                          <span className="h-1 w-1 rounded-full bg-emerald-400 animate-pulse" />{" "}
+                          Active
+                        </Badge>
                       ) : (
-                        <Badge variant="secondary">Inactive</Badge>
+                        <Badge className="bg-neutral-600/20 text-neutral-400 ring-1 ring-neutral-600/40 rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-widest">
+                          Inactive
+                        </Badge>
                       )}
                     </div>
                   </TableCell>
-                  <TableCell className="text-sm">
+                  <TableCell className="text-sm font-medium text-neutral-400">
                     {new Date(admin.createdAt).toLocaleDateString()}
                   </TableCell>
                   <TableCell className="text-right">
@@ -297,21 +335,21 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                       <DropdownMenuTrigger asChild>
                         <Button
                           variant="ghost"
-                          className="cursor-pointer"
-                          size="icon"
+                          className="size-8 rounded-lg bg-white/5 p-0 text-neutral-400 transition-colors hover:bg-red-600/20 hover:text-red-600"
                         >
-                          <MoreHorizontalIcon className="size-5" />
+                          <MoreHorizontalIcon className="size-4" />
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent
                         align="end"
-                        className="w-40 space-y-1"
+                        className="w-48 border-white/5 bg-black/90 p-1 text-white backdrop-blur-xl"
                       >
                         <DropdownMenuItem
+                          className="flex cursor-pointer items-center gap-2 rounded-lg px-3 py-2 text-xs font-bold transition-colors hover:bg-red-600/20 hover:text-red-600"
                           onClick={() => handleViewDetails(admin.admin.id)}
                         >
-                          <UserIcon className="mr-2 size-4" />
-                          View Details
+                          <UserIcon className="size-4" />
+                          Admin Console
                         </DropdownMenuItem>
                       </DropdownMenuContent>
                     </DropdownMenu>
@@ -324,14 +362,14 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
 
         {/* Pagination */}
         {meta.totalPages > 1 && (
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <p className="text-sm text-muted-foreground">
+          <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+            <p className="text-xs font-bold text-neutral-600 uppercase tracking-widest">
               Showing {(meta.page - 1) * meta.limit + 1} to{" "}
               {Math.min(meta.page * meta.limit, meta.total)} of {meta.total}{" "}
-              admins
+              Operators
             </p>
             <Pagination>
-              <PaginationContent>
+              <PaginationContent className="gap-2">
                 <PaginationItem>
                   <PaginationPrevious
                     href="#"
@@ -339,9 +377,11 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                       e.preventDefault();
                       handlePageChange(meta.page - 1);
                     }}
-                    className={
-                      meta.page <= 1 ? "pointer-events-none opacity-50" : ""
-                    }
+                    className={`rounded-xl border-white/5 bg-white/5 text-neutral-400 transition-all hover:bg-red-600/10 hover:text-red-600 ${
+                      meta.page <= 1
+                        ? "pointer-events-none opacity-20"
+                        : "cursor-pointer"
+                    }`}
                   />
                 </PaginationItem>
                 {Array.from({ length: meta.totalPages }, (_, i) => i + 1).map(
@@ -354,6 +394,11 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                           handlePageChange(pageNum);
                         }}
                         isActive={meta.page === pageNum}
+                        className={`rounded-xl transition-all ${
+                          meta.page === pageNum
+                            ? "bg-red-600 text-white hover:bg-red-700"
+                            : "bg-white/5 text-neutral-400 hover:bg-red-600/10 hover:text-red-600"
+                        }`}
                       >
                         {pageNum}
                       </PaginationLink>
@@ -367,11 +412,11 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                       e.preventDefault();
                       handlePageChange(meta.page + 1);
                     }}
-                    className={
+                    className={`rounded-xl border-white/5 bg-white/5 text-neutral-400 transition-all hover:bg-red-600/10 hover:text-red-600 ${
                       meta.page >= meta.totalPages
-                        ? "pointer-events-none opacity-50"
-                        : ""
-                    }
+                        ? "pointer-events-none opacity-20"
+                        : "cursor-pointer"
+                    }`}
                   />
                 </PaginationItem>
               </PaginationContent>
@@ -382,23 +427,28 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
 
       {/* Admin Details Dialog */}
       <Dialog open={isDetailsOpen} onOpenChange={setIsDetailsOpen}>
-        <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto">
+        <DialogContent className="max-h-[90vh] max-w-lg overflow-y-auto border-white/5 bg-black/95 p-8 text-white backdrop-blur-2xl">
           <DialogHeader>
-            <DialogTitle>Admin Details</DialogTitle>
-            <DialogDescription>
-              Complete information about the admin
+            <DialogTitle className="text-2xl font-black italic tracking-tighter uppercase text-white">
+              Admin Console
+            </DialogTitle>
+            <DialogDescription className="text-neutral-500 font-medium">
+              Real-time synchronization with operator credentials.
             </DialogDescription>
           </DialogHeader>
 
           {isLoadingAdmin ? (
-            <div className="flex items-center justify-center py-8">
-              <div className="size-8 animate-spin rounded-full border-4 border-muted border-t-primary" />
+            <div className="flex items-center justify-center py-12">
+              <div className="relative flex h-16 w-16 items-center justify-center rounded-full bg-red-600/10">
+                <div className="absolute inset-0 animate-ping rounded-full bg-red-600/20" />
+                <ShieldIcon className="h-6 w-6 animate-pulse text-red-600" />
+              </div>
             </div>
           ) : selectedAdmin ? (
-            <div className="space-y-6">
+            <div className="space-y-8">
               {/* Profile Section */}
-              <div className="flex items-center gap-4">
-                <div className="size-20 overflow-hidden rounded-full bg-muted">
+              <div className="flex items-center gap-6 p-4 rounded-3xl bg-white/5 border border-white/5">
+                <div className="size-20 overflow-hidden rounded-full bg-white/10 ring-2 ring-red-600/20 shadow-[0_0_20px_rgba(229,9,20,0.15)]">
                   {selectedAdmin.user.image ? (
                     <Image
                       src={selectedAdmin.user.image}
@@ -408,182 +458,146 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                       className="size-full object-cover"
                     />
                   ) : (
-                    <div className="flex size-full items-center justify-center text-2xl font-medium">
+                    <div className="flex size-full items-center justify-center text-3xl font-black text-red-600">
                       {selectedAdmin.user.name.charAt(0).toUpperCase()}
                     </div>
                   )}
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold">
+                  <h3 className="text-xl font-black italic tracking-tight text-white uppercase">
                     {selectedAdmin.user.name}
                   </h3>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-sm font-medium text-neutral-500">
                     {selectedAdmin.user.email}
                   </p>
-                  <div className="mt-2 flex items-center gap-2">
+                  <div className="mt-3 flex flex-wrap items-center gap-2">
                     {selectedAdmin.user.isBanned ? (
-                      <Badge variant="destructive">Banned</Badge>
+                      <Badge className="bg-red-600/20 text-red-400 ring-1 ring-red-600/40 rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-widest">
+                        Banned
+                      </Badge>
                     ) : selectedAdmin.user.isActive ? (
-                      <Badge className="bg-green-500">Active</Badge>
+                      <Badge className="bg-emerald-600/20 text-emerald-400 ring-1 ring-emerald-600/40 rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-widest">
+                        Active
+                      </Badge>
                     ) : (
-                      <Badge variant="secondary">Inactive</Badge>
+                      <Badge className="bg-neutral-600/20 text-neutral-400 ring-1 ring-neutral-600/40 rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-widest">
+                        Inactive
+                      </Badge>
                     )}
                     <Badge
-                      className={
+                      className={`rounded-md px-2 py-0.5 text-[10px] font-black uppercase tracking-widest ${
                         selectedAdmin.user.role === "SUPER_ADMIN"
-                          ? "bg-purple-500"
-                          : "bg-blue-500"
-                      }
+                          ? "bg-purple-600/20 text-purple-400 ring-1 ring-purple-600/40"
+                          : "bg-blue-600/20 text-blue-400 ring-1 ring-blue-600/40"
+                      }`}
                     >
                       {selectedAdmin.user.role.replace("_", " ")}
                     </Badge>
-                    {selectedAdmin.user.emailVerified ? (
-                      <Badge
-                        variant="outline"
-                        className="border-green-500 text-green-500"
-                      >
-                        <UserCheckIcon className="mr-1 size-3" />
-                        Verified
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline" className="text-destructive">
-                        <UserXIcon className="mr-1 size-3" />
-                        Unverified
-                      </Badge>
-                    )}
                   </div>
                 </div>
               </div>
 
-              {/* Admin Specific Details */}
-              <div className="grid gap-4 rounded-lg border p-4">
-                <h4 className="font-semibold">Admin Information</h4>
-
-                <div className="grid gap-3">
-                  {selectedAdmin.designation && (
-                    <div className="flex items-center gap-3">
-                      <ShieldIcon className="size-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">
-                          Designation
-                        </p>
-                        <p className="text-sm font-medium">
-                          {selectedAdmin.designation}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {selectedAdmin.address && (
-                    <div className="flex items-center gap-3">
-                      <UserIcon className="size-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">Address</p>
-                        <p className="text-sm font-medium">
-                          {selectedAdmin.address}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* User Information */}
-              <div className="grid gap-4 rounded-lg border p-4">
-                <h4 className="font-semibold">Personal Information</h4>
-
-                <div className="grid gap-3">
-                  <div className="flex items-center gap-3">
-                    <MailIcon className="size-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Email</p>
-                      <p className="text-sm font-medium">
-                        {selectedAdmin.user.email}
-                      </p>
-                    </div>
-                  </div>
-
-                  {selectedAdmin.user.phoneNumber && (
-                    <div className="flex items-center gap-3">
-                      <PhoneIcon className="size-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">
-                          Phone Number
-                        </p>
-                        <p className="text-sm font-medium">
-                          {selectedAdmin.user.phoneNumber}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {selectedAdmin.user.bio && (
-                    <div className="flex items-start gap-3">
-                      <UserIcon className="mt-0.5 size-4 text-muted-foreground" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">Bio</p>
-                        <p className="text-sm font-medium">
-                          {selectedAdmin.user.bio}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Account Details */}
-              <div className="grid gap-4 rounded-lg border p-4">
-                <h4 className="font-semibold">Account Details</h4>
-
-                <div className="grid gap-3">
-                  <div className="flex items-center gap-3">
-                    <CalendarIcon className="size-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">Joined</p>
-                      <p className="text-sm font-medium">
-                        {new Date(
+              {/* Grid Layout for details */}
+              <div className="grid gap-4">
+                {[
+                  {
+                    label: "Admin Information",
+                    icon: ShieldIcon,
+                    items: [
+                      {
+                        key: "Designation",
+                        val: selectedAdmin.designation,
+                        icon: ShieldIcon,
+                      },
+                      {
+                        key: "Deployment Zone",
+                        val: selectedAdmin.address,
+                        icon: UserIcon,
+                      },
+                    ],
+                  },
+                  {
+                    label: "Personal Intelligence",
+                    icon: MailIcon,
+                    items: [
+                      {
+                        key: "Comm Link",
+                        val: selectedAdmin.user.email,
+                        icon: MailIcon,
+                      },
+                      {
+                        key: "Signal Line",
+                        val: selectedAdmin.user.phoneNumber,
+                        icon: PhoneIcon,
+                      },
+                      {
+                        key: "Operational Bio",
+                        val: selectedAdmin.user.bio,
+                        icon: UserIcon,
+                      },
+                    ],
+                  },
+                  {
+                    label: "Temporal Logs",
+                    icon: CalendarIcon,
+                    items: [
+                      {
+                        key: "Induction Date",
+                        val: new Date(
                           selectedAdmin.user.createdAt,
                         ).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "long",
                           day: "numeric",
-                        })}
-                      </p>
-                    </div>
-                  </div>
-
-                  <div className="flex items-center gap-3">
-                    <CalendarIcon className="size-4 text-muted-foreground" />
-                    <div>
-                      <p className="text-xs text-muted-foreground">
-                        Last Updated
-                      </p>
-                      <p className="text-sm font-medium">
-                        {new Date(
+                        }),
+                        icon: CalendarIcon,
+                      },
+                      {
+                        key: "Last Uplink",
+                        val: new Date(
                           selectedAdmin.user.updatedAt,
                         ).toLocaleDateString("en-US", {
                           year: "numeric",
                           month: "long",
                           day: "numeric",
-                        })}
-                      </p>
+                        }),
+                        icon: CalendarIcon,
+                      },
+                    ],
+                  },
+                ].map((section) => (
+                  <div
+                    key={section.label}
+                    className="group rounded-2xl border border-white/5 bg-white/5 p-4 transition-all hover:border-white/10 hover:bg-white/[0.07]"
+                  >
+                    <h4 className="mb-4 flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-neutral-600 transition-colors group-hover:text-red-600">
+                      <section.icon className="size-3" /> {section.label}
+                    </h4>
+                    <div className="grid gap-4">
+                      {section.items.map(
+                        (item) =>
+                          item.val && (
+                            <div
+                              key={item.key}
+                              className="flex items-start gap-3"
+                            >
+                              <div className="mt-0.5 rounded-lg bg-white/5 p-1.5 ring-1 ring-white/5 group-hover:bg-red-600/10 group-hover:ring-red-600/20">
+                                <item.icon className="size-3.5 text-neutral-500 group-hover:text-red-600" />
+                              </div>
+                              <div className="space-y-0.5">
+                                <p className="text-[10px] font-bold text-neutral-600 uppercase tracking-tighter">
+                                  {item.key}
+                                </p>
+                                <p className="text-sm font-bold text-neutral-300 group-hover:text-white transition-colors">
+                                  {item.val}
+                                </p>
+                              </div>
+                            </div>
+                          ),
+                      )}
                     </div>
                   </div>
-
-                  {selectedAdmin.user.needPasswordChange && (
-                    <div className="flex items-center gap-3">
-                      <ShieldIcon className="size-4 text-yellow-500" />
-                      <div>
-                        <p className="text-xs text-muted-foreground">
-                          Password Status
-                        </p>
-                        <p className="text-sm font-medium text-yellow-500">
-                          Password change required
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
+                ))}
               </div>
             </div>
           ) : (
@@ -596,12 +610,13 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
 
       {/* Create Admin Dialog */}
       <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-        <DialogContent>
+        <DialogContent className="border-white/5 bg-black/95 p-8 text-white backdrop-blur-2xl">
           <DialogHeader>
-            <DialogTitle>Create New Admin</DialogTitle>
-            <DialogDescription>
-              Add a new admin to the system. They will be able to access the
-              admin dashboard.
+            <DialogTitle className="text-2xl font-black italic tracking-tighter uppercase text-white">
+              Induct New Operator
+            </DialogTitle>
+            <DialogDescription className="text-neutral-500 font-medium">
+              Grant high-level system clearance to a new administrator.
             </DialogDescription>
           </DialogHeader>
 
@@ -614,8 +629,9 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
               e.stopPropagation();
               form.handleSubmit();
             }}
+            className="mt-6"
           >
-            <FieldGroup className="space-y-4">
+            <FieldGroup className="space-y-6">
               <Field>
                 <form.Field
                   name="name"
@@ -623,19 +639,25 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                 >
                   {(field) => (
                     <div className="space-y-2">
-                      <FieldLabel htmlFor={field.name}>Name</FieldLabel>
+                      <FieldLabel
+                        htmlFor={field.name}
+                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-600"
+                      >
+                        <UserIcon className="size-3" /> Identity Name
+                      </FieldLabel>
                       <Input
                         id={field.name}
                         name={field.name}
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
-                        placeholder="Enter admin name"
+                        placeholder="Operator Name"
+                        className="h-12 border-white/5 bg-white/5 text-white placeholder:text-neutral-700 focus:border-red-600/40 focus:ring-1 focus:ring-red-600/20"
                       />
                       {field.state.meta.isTouched &&
                         field.state.meta.errors.length > 0 && (
-                          <p className="text-xs text-red-500">
-                            {getErrorMessage(field.state.meta.errors[0])}
+                          <p className="text-[10px] font-bold text-red-500 uppercase tracking-tighter italic">
+                            ⚠ {getErrorMessage(field.state.meta.errors[0])}
                           </p>
                         )}
                     </div>
@@ -650,7 +672,12 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                 >
                   {(field) => (
                     <div className="space-y-2">
-                      <FieldLabel htmlFor={field.name}>Email</FieldLabel>
+                      <FieldLabel
+                        htmlFor={field.name}
+                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-600"
+                      >
+                        <MailIcon className="size-3" /> Secure Comm Line
+                      </FieldLabel>
                       <Input
                         id={field.name}
                         name={field.name}
@@ -658,12 +685,13 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
-                        placeholder="Enter admin email"
+                        placeholder="operator@system.io"
+                        className="h-12 border-white/5 bg-white/5 text-white placeholder:text-neutral-700 focus:border-red-600/40 focus:ring-1 focus:ring-red-600/20"
                       />
                       {field.state.meta.isTouched &&
                         field.state.meta.errors.length > 0 && (
-                          <p className="text-xs text-red-500">
-                            {getErrorMessage(field.state.meta.errors[0])}
+                          <p className="text-[10px] font-bold text-red-500 uppercase tracking-tighter italic">
+                            ⚠ {getErrorMessage(field.state.meta.errors[0])}
                           </p>
                         )}
                     </div>
@@ -678,7 +706,12 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                 >
                   {(field) => (
                     <div className="space-y-2">
-                      <FieldLabel htmlFor={field.name}>Password</FieldLabel>
+                      <FieldLabel
+                        htmlFor={field.name}
+                        className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-neutral-600"
+                      >
+                        <ShieldIcon className="size-3" /> Access Cipher
+                      </FieldLabel>
                       <Input
                         id={field.name}
                         name={field.name}
@@ -686,12 +719,13 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
                         value={field.state.value}
                         onBlur={field.handleBlur}
                         onChange={(e) => field.handleChange(e.target.value)}
-                        placeholder="Enter password (min 8 characters)"
+                        placeholder="MIN 8 CHARACTERS"
+                        className="h-12 border-white/5 bg-white/5 text-white placeholder:text-neutral-700 focus:border-red-600/40 focus:ring-1 focus:ring-red-600/20 font-mono"
                       />
                       {field.state.meta.isTouched &&
                         field.state.meta.errors.length > 0 && (
-                          <p className="text-xs text-red-500">
-                            {getErrorMessage(field.state.meta.errors[0])}
+                          <p className="text-[10px] font-bold text-red-500 uppercase tracking-tighter italic">
+                            ⚠ {getErrorMessage(field.state.meta.errors[0])}
                           </p>
                         )}
                     </div>
@@ -701,27 +735,30 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
             </FieldGroup>
 
             {createError && (
-              <p className="mt-4 text-sm text-red-500">{createError}</p>
+              <div className="mt-6 flex items-center gap-3 rounded-xl border border-red-900/50 bg-red-600/10 p-4 text-xs font-bold text-red-500 uppercase tracking-tighter">
+                <ShieldIcon className="size-4 shrink-0" />
+                {createError}
+              </div>
             )}
 
-            <div className="mt-6 flex justify-end gap-2">
+            <div className="mt-10 flex justify-end gap-3">
               <Button
                 type="button"
                 variant="outline"
-                className="cursor-pointer"
+                className="h-12 rounded-xl border-white/5 bg-transparent px-8 font-black uppercase tracking-widest text-neutral-500 transition-all hover:bg-white/5 hover:text-white"
                 onClick={() => {
                   setIsCreateOpen(false);
                   form.reset();
                 }}
               >
-                Cancel
+                Abort
               </Button>
               <Button
-                className="cursor-pointer"
+                className="h-12 rounded-xl bg-red-600 px-10 font-black uppercase tracking-widest text-white transition-all hover:bg-red-700 hover:shadow-[0_0_20px_rgba(229,9,20,0.3)] active:scale-95 disabled:opacity-50"
                 type="submit"
                 disabled={isCreating}
               >
-                {isCreating ? "Creating..." : "Create Admin"}
+                {isCreating ? "Deploying..." : "Induct Operator"}
               </Button>
             </div>
           </form>

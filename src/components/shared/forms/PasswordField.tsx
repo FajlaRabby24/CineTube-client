@@ -5,7 +5,6 @@ import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
 import { AnyFieldApi } from "@tanstack/react-form";
 import { EyeIcon, EyeOffIcon } from "lucide-react";
-import Link from "next/link";
 import { useState } from "react";
 
 const getErrorMessage = (error: unknown): string => {
@@ -65,7 +64,7 @@ export default function PasswordField({
         >
           {label}
         </FieldLabel>
-        <Link
+        {/* <Link
           href={`/forgot-password`}
           className={cn(
             "ml-auto inline-block text-sm underline-offset-4 hover:underline",
@@ -73,7 +72,7 @@ export default function PasswordField({
           )}
         >
           Forgot your password?
-        </Link>
+        </Link> */}
       </div>
 
       <div className="relative">

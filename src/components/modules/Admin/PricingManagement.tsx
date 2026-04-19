@@ -76,11 +76,12 @@ const PricingManagement = () => {
     },
     onError: (error) => {
       toast.error(error.message);
-    }
+    },
   });
 
   const updateMutation = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: any }) => updatePricingPlan(id, data),
+    mutationFn: ({ id, data }: { id: string; data: any }) =>
+      updatePricingPlan(id, data),
     onSuccess: (res) => {
       if (res.success) {
         toast.success(res.message);
@@ -92,7 +93,7 @@ const PricingManagement = () => {
     },
     onError: (error) => {
       toast.error(error.message);
-    }
+    },
   });
 
   const plans = pricingPlansData || [];
@@ -190,7 +191,10 @@ const PricingManagement = () => {
           <TableBody>
             {plans.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
+                <TableCell
+                  colSpan={6}
+                  className="py-8 text-center text-muted-foreground"
+                >
                   No pricing plans found
                 </TableCell>
               </TableRow>
@@ -212,10 +216,18 @@ const PricingManagement = () => {
                     )}
                   </TableCell>
                   <TableCell>
-                    {plan.isPopular && <Badge variant="default" className="bg-blue-500">Popular</Badge>}
+                    {plan.isPopular && (
+                      <Badge variant="default" className="bg-blue-500">
+                        Popular
+                      </Badge>
+                    )}
                   </TableCell>
                   <TableCell className="text-right">
-                    <Button variant="ghost" size="icon" onClick={() => handleOpenEdit(plan)}>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      onClick={() => handleOpenEdit(plan)}
+                    >
                       <EditIcon className="size-4" />
                     </Button>
                   </TableCell>
@@ -238,7 +250,9 @@ const PricingManagement = () => {
               <Input
                 id="create-name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 required
               />
             </div>
@@ -265,7 +279,9 @@ const PricingManagement = () => {
                 min="0"
                 step="0.01"
                 value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, price: e.target.value })
+                }
                 required
               />
             </div>
@@ -275,7 +291,9 @@ const PricingManagement = () => {
                 id="create-features"
                 className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px]"
                 value={formData.features}
-                onChange={(e) => setFormData({ ...formData, features: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, features: e.target.value })
+                }
                 required
               />
             </div>
@@ -283,9 +301,14 @@ const PricingManagement = () => {
               <Checkbox
                 id="create-isPopular"
                 checked={formData.isPopular}
-                onCheckedChange={(checked) => setFormData({ ...formData, isPopular: checked as boolean })}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, isPopular: checked as boolean })
+                }
               />
-              <Label htmlFor="create-isPopular" className="text-sm font-medium leading-none">
+              <Label
+                htmlFor="create-isPopular"
+                className="text-sm font-medium leading-none"
+              >
                 Mark as Popular
               </Label>
             </div>
@@ -293,14 +316,23 @@ const PricingManagement = () => {
               <Checkbox
                 id="create-isActive"
                 checked={formData.isActive}
-                onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked as boolean })}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, isActive: checked as boolean })
+                }
               />
-              <Label htmlFor="create-isActive" className="text-sm font-medium leading-none">
+              <Label
+                htmlFor="create-isActive"
+                className="text-sm font-medium leading-none"
+              >
                 Active
               </Label>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsCreateOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsCreateOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={createMutation.isPending}>
@@ -315,7 +347,9 @@ const PricingManagement = () => {
         <DialogContent className="max-w-md">
           <DialogHeader>
             <DialogTitle>Edit Pricing Plan</DialogTitle>
-            <DialogDescription>Update the details of the subscription plan.</DialogDescription>
+            <DialogDescription>
+              Update the details of the subscription plan.
+            </DialogDescription>
           </DialogHeader>
           <form onSubmit={handleEditSubmit} className="space-y-4">
             <div className="space-y-2">
@@ -323,7 +357,9 @@ const PricingManagement = () => {
               <Input
                 id="edit-name"
                 value={formData.name}
-                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, name: e.target.value })
+                }
                 required
               />
             </div>
@@ -335,7 +371,9 @@ const PricingManagement = () => {
                 min="0"
                 step="0.01"
                 value={formData.price}
-                onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, price: e.target.value })
+                }
                 required
               />
             </div>
@@ -345,7 +383,9 @@ const PricingManagement = () => {
                 id="edit-features"
                 className="flex w-full rounded-md border border-input bg-transparent px-3 py-2 text-sm shadow-sm placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-50 min-h-[100px]"
                 value={formData.features}
-                onChange={(e) => setFormData({ ...formData, features: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, features: e.target.value })
+                }
                 required
               />
             </div>
@@ -354,16 +394,23 @@ const PricingManagement = () => {
               <Input
                 id="edit-stripe-price"
                 value={formData.stripePriceId}
-                onChange={(e) => setFormData({ ...formData, stripePriceId: e.target.value })}
+                onChange={(e) =>
+                  setFormData({ ...formData, stripePriceId: e.target.value })
+                }
               />
             </div>
             <div className="flex items-center space-x-2 pt-2">
               <Checkbox
                 id="edit-isPopular"
                 checked={formData.isPopular}
-                onCheckedChange={(checked) => setFormData({ ...formData, isPopular: checked as boolean })}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, isPopular: checked as boolean })
+                }
               />
-              <Label htmlFor="edit-isPopular" className="text-sm font-medium leading-none">
+              <Label
+                htmlFor="edit-isPopular"
+                className="text-sm font-medium leading-none"
+              >
                 Mark as Popular
               </Label>
             </div>
@@ -371,14 +418,23 @@ const PricingManagement = () => {
               <Checkbox
                 id="edit-isActive"
                 checked={formData.isActive}
-                onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked as boolean })}
+                onCheckedChange={(checked) =>
+                  setFormData({ ...formData, isActive: checked as boolean })
+                }
               />
-              <Label htmlFor="edit-isActive" className="text-sm font-medium leading-none">
+              <Label
+                htmlFor="edit-isActive"
+                className="text-sm font-medium leading-none"
+              >
                 Active
               </Label>
             </div>
             <DialogFooter>
-              <Button type="button" variant="outline" onClick={() => setIsEditOpen(false)}>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setIsEditOpen(false)}
+              >
                 Cancel
               </Button>
               <Button type="submit" disabled={updateMutation.isPending}>

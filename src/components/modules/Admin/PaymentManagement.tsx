@@ -1,25 +1,32 @@
 "use client";
 
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
-import Image from "next/image";
 
 import { useQuery } from "@tanstack/react-query";
-import { 
-  CreditCardIcon, 
-  SearchIcon, 
-  UserIcon, 
-  CalendarIcon, 
-  CheckCircle2Icon, 
-  ClockIcon, 
-  XCircleIcon,
+import {
+  CalendarIcon,
+  CheckCircle2Icon,
   ChevronLeftIcon,
   ChevronRightIcon,
-  InfoIcon
+  ClockIcon,
+  CreditCardIcon,
+  InfoIcon,
+  SearchIcon,
+  UserIcon,
+  XCircleIcon,
 } from "lucide-react";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import {
   Select,
@@ -36,15 +43,11 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
 
-import { getAllPayments, IPayment } from "@/services/Admin/payment.service";
+import {
+  getAllPayments,
+  IPaymentResponse,
+} from "@/services/Admin/payment.service";
 
 interface PaymentManagementProps {
   initialQueryString: string;
@@ -72,7 +75,8 @@ const PaymentManagement = ({ initialQueryString }: PaymentManagementProps) => {
 
   const [searchInput, setSearchInput] = useState(searchTerm);
   const [debouncedSearch, setDebouncedSearch] = useState(searchTerm);
-  const [selectedPayment, setSelectedPayment] = useState<IPayment | null>(null);
+  const [selectedPayment, setSelectedPayment] =
+    useState<IPaymentResponse | null>(null);
   const [isDetailsOpen, setIsDetailsOpen] = useState(false);
 
   useEffect(() => {
@@ -107,7 +111,12 @@ const PaymentManagement = ({ initialQueryString }: PaymentManagementProps) => {
   };
 
   const payments = paymentsData?.data || [];
-  const meta = paymentsData?.meta || { page: 1, limit: 10, total: 0, totalPages: 1 };
+  const meta = paymentsData?.meta || {
+    page: 1,
+    limit: 10,
+    total: 0,
+    totalPages: 1,
+  };
 
   const formatCurrency = (amount: number, currency: string) => {
     return new Intl.NumberFormat("en-US", {
@@ -116,7 +125,7 @@ const PaymentManagement = ({ initialQueryString }: PaymentManagementProps) => {
     }).format(amount);
   };
 
-  const handleViewDetails = (payment: IPayment) => {
+  const handleViewDetails = (payment: IPaymentResponse) => {
     setSelectedPayment(payment);
     setIsDetailsOpen(true);
   };
@@ -153,7 +162,10 @@ const PaymentManagement = ({ initialQueryString }: PaymentManagementProps) => {
             />
           </div>
 
-          <Select value={status} onValueChange={(val) => handleFilterChange("status", val)}>
+          <Select
+            value={status}
+            onValueChange={(val) => handleFilterChange("status", val)}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Status" />
             </SelectTrigger>
@@ -165,7 +177,10 @@ const PaymentManagement = ({ initialQueryString }: PaymentManagementProps) => {
             </SelectContent>
           </Select>
 
-          <Select value={plan} onValueChange={(val) => handleFilterChange("plan", val)}>
+          <Select
+            value={plan}
+            onValueChange={(val) => handleFilterChange("plan", val)}
+          >
             <SelectTrigger>
               <SelectValue placeholder="Sub Plan" />
             </SelectTrigger>
@@ -192,12 +207,15 @@ const PaymentManagement = ({ initialQueryString }: PaymentManagementProps) => {
             <TableBody>
               {payments.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={6} className="py-8 text-center text-muted-foreground">
+                  <TableCell
+                    colSpan={6}
+                    className="py-8 text-center text-muted-foreground"
+                  >
                     No transactions found
                   </TableCell>
                 </TableRow>
               ) : (
-                payments.map((payment: IPayment) => (
+                payments.map((payment: IPaymentResponse) => (
                   <TableRow key={payment.id}>
                     <TableCell>
                       <div className="flex items-center gap-3">
@@ -232,18 +250,36 @@ const PaymentManagement = ({ initialQueryString }: PaymentManagementProps) => {
                     </TableCell>
                     <TableCell>
                       {payment.plan ? (
-                        <Badge variant="secondary" className={planColorMap[payment.plan as keyof typeof planColorMap] + " text-white border-none"}>
+                        <Badge
+                          variant="secondary"
+                          className={
+                            planColorMap[
+                              payment.plan as keyof typeof planColorMap
+                            ] + " text-white border-none"
+                          }
+                        >
                           {payment.plan}
                         </Badge>
                       ) : (
-                        <span className="text-xs text-muted-foreground">N/A</span>
+                        <span className="text-xs text-muted-foreground">
+                          N/A
+                        </span>
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className={`${statusColorMap[payment.status as keyof typeof statusColorMap]} bg-opacity-10 text-${statusColorMap[payment.status as keyof typeof statusColorMap].split("-")[1]}-600 border-${statusColorMap[payment.status as keyof typeof statusColorMap].split("-")[1]}-200 flex w-fit items-center gap-1`}>
-                        {payment.status === "SUCCEEDED" && <CheckCircle2Icon className="size-3" />}
-                        {payment.status === "PENDING" && <ClockIcon className="size-3" />}
-                        {payment.status === "FAILED" && <XCircleIcon className="size-3" />}
+                      <Badge
+                        variant="outline"
+                        className={`${statusColorMap[payment.status as keyof typeof statusColorMap]} bg-opacity-10 text-${statusColorMap[payment.status as keyof typeof statusColorMap].split("-")[1]}-600 border-${statusColorMap[payment.status as keyof typeof statusColorMap].split("-")[1]}-200 flex w-fit items-center gap-1`}
+                      >
+                        {payment.status === "SUCCEEDED" && (
+                          <CheckCircle2Icon className="size-3" />
+                        )}
+                        {payment.status === "PENDING" && (
+                          <ClockIcon className="size-3" />
+                        )}
+                        {payment.status === "FAILED" && (
+                          <XCircleIcon className="size-3" />
+                        )}
                         {payment.status}
                       </Badge>
                     </TableCell>
@@ -251,7 +287,11 @@ const PaymentManagement = ({ initialQueryString }: PaymentManagementProps) => {
                       {new Date(payment.createdAt).toLocaleDateString()}
                     </TableCell>
                     <TableCell className="text-right">
-                      <Button variant="ghost" size="icon" onClick={() => handleViewDetails(payment)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => handleViewDetails(payment)}
+                      >
                         <InfoIcon className="size-4" />
                       </Button>
                     </TableCell>
@@ -310,19 +350,30 @@ const PaymentManagement = ({ initialQueryString }: PaymentManagementProps) => {
               <div className="rounded-lg bg-muted p-4 space-y-3">
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Status</span>
-                  <Badge className={statusColorMap[selectedPayment.status as keyof typeof statusColorMap] + " text-white"}>
+                  <Badge
+                    className={
+                      statusColorMap[
+                        selectedPayment.status as keyof typeof statusColorMap
+                      ] + " text-white"
+                    }
+                  >
                     {selectedPayment.status}
                   </Badge>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Amount</span>
                   <span className="text-lg font-bold">
-                    {formatCurrency(selectedPayment.amount, selectedPayment.currency)}
+                    {formatCurrency(
+                      selectedPayment.amount,
+                      selectedPayment.currency,
+                    )}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">Plan</span>
-                  <span className="font-medium">{selectedPayment.plan || "N/A"}</span>
+                  <span className="font-medium">
+                    {selectedPayment.plan || "N/A"}
+                  </span>
                 </div>
               </div>
 
@@ -334,11 +385,15 @@ const PaymentManagement = ({ initialQueryString }: PaymentManagementProps) => {
                 <div className="grid gap-2 text-sm">
                   <div className="flex justify-between border-b pb-2">
                     <span className="text-muted-foreground">Name</span>
-                    <span className="font-medium">{selectedPayment.user?.name}</span>
+                    <span className="font-medium">
+                      {selectedPayment.user?.name}
+                    </span>
                   </div>
                   <div className="flex justify-between border-b pb-2">
                     <span className="text-muted-foreground">Email</span>
-                    <span className="font-medium">{selectedPayment.user?.email}</span>
+                    <span className="font-medium">
+                      {selectedPayment.user?.email}
+                    </span>
                   </div>
                 </div>
               </div>
@@ -350,13 +405,17 @@ const PaymentManagement = ({ initialQueryString }: PaymentManagementProps) => {
                 </h4>
                 <div className="grid gap-2 text-sm">
                   <div className="flex flex-col border-b pb-2">
-                    <span className="text-xs text-muted-foreground">Payment Intent ID</span>
+                    <span className="text-xs text-muted-foreground">
+                      Payment Intent ID
+                    </span>
                     <span className="font-mono text-[10px] break-all">
                       {selectedPayment.stripePaymentIntentId || "N/A"}
                     </span>
                   </div>
                   <div className="flex flex-col border-b pb-2">
-                    <span className="text-xs text-muted-foreground">Invoice ID</span>
+                    <span className="text-xs text-muted-foreground">
+                      Invoice ID
+                    </span>
                     <span className="font-mono text-[10px] break-all">
                       {selectedPayment.stripeInvoiceId || "N/A"}
                     </span>
@@ -366,7 +425,9 @@ const PaymentManagement = ({ initialQueryString }: PaymentManagementProps) => {
 
               <div className="flex justify-between text-xs text-muted-foreground italic">
                 <span>Transaction date:</span>
-                <span>{new Date(selectedPayment.createdAt).toLocaleString()}</span>
+                <span>
+                  {new Date(selectedPayment.createdAt).toLocaleString()}
+                </span>
               </div>
             </div>
           )}
