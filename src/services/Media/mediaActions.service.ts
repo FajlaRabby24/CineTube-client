@@ -153,8 +153,8 @@ export async function getUserVoteStatus(
       },
     });
 
-    const responseBody = res?.data as any;
-    const userVote = (responseBody?.data?.userVote as TVoteType) || null;
+    const payload = res as any;
+    const userVote = (payload?.data?.userVote as TVoteType) || null;
 
     return {
       success: true,

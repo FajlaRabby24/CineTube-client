@@ -344,9 +344,16 @@ const MediaDetails = ({ media }: MediaDetailsProps) => {
 
               {/* YouTube Style Like/Dislike Button Group */}
               <div className="flex items-center h-8 w-fit bg-white/5 rounded-lg border border-white/10 overflow-hidden shrink-0">
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.85 }}
+                  animate={
+                    likeState.userVote === "LIKE"
+                      ? { scale: [1, 1.3, 0.9, 1.1, 1], rotate: [0, -10, 10, -5, 0] }
+                      : { scale: 1, rotate: 0 }
+                  }
+                  transition={{ duration: 0.4 }}
                   onClick={() => handleVote("LIKE")}
-                  className={`flex items-center gap-1.5 h-full px-3 transition-all hover:bg-white/10 ${
+                  className={`flex items-center gap-1.5 h-full px-3 transition-colors duration-300 hover:bg-white/10 ${
                     likeState.userVote === "LIKE"
                       ? "text-primary bg-white/5"
                       : "text-white"
@@ -360,11 +367,18 @@ const MediaDetails = ({ media }: MediaDetailsProps) => {
                       {likeState.totalLikes}
                     </span>
                   )}
-                </button>
+                </motion.button>
                 <div className="w-px h-4 bg-white/20"></div>
-                <button
+                <motion.button
+                  whileTap={{ scale: 0.85 }}
+                  animate={
+                    likeState.userVote === "DISLIKE"
+                      ? { scale: [1, 1.25, 0.9, 1], rotate: [0, 10, -5, 0] }
+                      : { scale: 1, rotate: 0 }
+                  }
+                  transition={{ duration: 0.3 }}
                   onClick={() => handleVote("DISLIKE")}
-                  className={`flex items-center justify-center h-full px-4 transition-all hover:bg-white/10 ${
+                  className={`flex items-center justify-center h-full px-4 transition-colors duration-300 hover:bg-white/10 ${
                     likeState.userVote === "DISLIKE"
                       ? "text-primary bg-white/5"
                       : "text-white"
@@ -373,7 +387,7 @@ const MediaDetails = ({ media }: MediaDetailsProps) => {
                   <ThumbsDownIcon
                     className={`size-3.5 ${likeState.userVote === "DISLIKE" ? "fill-current" : ""}`}
                   />
-                </button>
+                </motion.button>
               </div>
             </div>
 
