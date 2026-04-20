@@ -5,12 +5,14 @@ import {
   ClockIcon,
   PlusIcon,
   StarIcon,
+  ThumbsDownIcon,
+  ThumbsUpIcon,
   XIcon,
 } from "lucide-react";
 import { AnimatePresence, motion } from "motion/react";
 import Image from "next/image";
 import { usePathname, useRouter } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 
 import { Badge } from "@/components/ui/badge";
@@ -19,7 +21,11 @@ import { ShimmerButton } from "@/components/ui/shimmer-button";
 import { getYouTubeVideoId } from "@/lib/utils/getYoutubeVedioId";
 import { getUserInfo } from "@/services/Auth/getMe.service";
 import { IMediaResponse } from "@/services/Media/getMedia.service";
-import { addViews } from "@/services/Media/mediaActions.service";
+import {
+  addViews,
+  getUserVoteStatus,
+  toggleLikeMedia,
+} from "@/services/Media/mediaActions.service";
 import { getUserSubscription } from "@/services/Subscription/subscription.service";
 import { addToWatchlist } from "@/services/Watchlist/watchlist.service";
 import ReviewSection from "./Reviews/ReviewSection";
@@ -31,6 +37,56 @@ interface MediaDetailsProps {
 const MediaDetails = ({ media }: MediaDetailsProps) => {
   const [isPlaying, setIsPlaying] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const [likeState, setLikeState] = useState<{
+    totalLikes: number;
+    totalDislikes: number;
+    userVote: "LIKE" | "DISLIKE" | null;
+  }>({
+    totalLikes: (media as any).totalLikes || 0,
+    totalDislikes: (media as any).totalDislikes || 0,
+    userVote: null,
+  });
+
+  useEffect(() => {
+    const fetchVoteStatus = async () => {
+      const res = await getUserVoteStatus(media.id);
+      if (res.success && res.data?.userVote) {
+        setLikeState((prev) => ({ ...prev, userVote: res.data.userVote }));
+      }
+    };
+    fetchVoteStatus();
+  }, [media.id]);
+
+  const handleVote = async (type: "LIKE" | "DISLIKE") => {
+    // Optimistic UI Update
+    setLikeState((prev) => {
+      let { totalLikes, totalDislikes, userVote } = prev;
+      if (userVote === type) {
+        if (type === "LIKE") totalLikes--;
+        else totalDislikes--;
+        userVote = null;
+      } else {
+        if (type === "LIKE") {
+          totalLikes++;
+          if (userVote === "DISLIKE") totalDislikes--;
+        } else {
+          totalDislikes++;
+          if (userVote === "LIKE") totalLikes--;
+        }
+        userVote = type;
+      }
+      return { totalLikes, totalDislikes, userVote };
+    });
+
+    const res = await toggleLikeMedia(media.id, type);
+    if (!res.success) {
+      if (res.message === "Unauthorized") {
+        toast.error("Please login to vote");
+        router.push(`/login?redirectPath=${pathname}`);
+      }
+    }
+  };
   const videoId = getYouTubeVideoId(media.youtubeStreamUrl);
   const router = useRouter();
   const pathname = usePathname();
@@ -230,18 +286,18 @@ const MediaDetails = ({ media }: MediaDetailsProps) => {
                 </Badge>
               </div>
 
-              <div className="flex flex-wrap gap-4 pt-4">
+              <div className="flex flex-wrap items-center gap-4 pt-4">
                 <ShimmerButton
                   onClick={handleWatchNow}
                   background="#b32c05"
-                  className="h-14 px-8 rounded-2xl text-white transition-all duration-300 font-black uppercase tracking-widest text-xs cursor-pointer"
+                  className="h-14 px-8 rounded-2xl text-white transition-all duration-300 font-black uppercase tracking-widest text-xs cursor-pointer shrink-0"
                 >
                   Watch Now
                 </ShimmerButton>
                 <ShimmerButton
                   onClick={handleAddToWatchlist}
                   disabled={isSubmitting}
-                  className="h-14 px-8 rounded-2xl cursor-pointer text-white transition-all font-black uppercase tracking-widest text-xs disabled:opacity-50"
+                  className="h-14 px-8 rounded-2xl cursor-pointer text-white transition-all font-black uppercase tracking-widest text-xs disabled:opacity-50 shrink-0"
                 >
                   <PlusIcon className="mr-2 size-4" />{" "}
                   {isSubmitting ? "Adding..." : "Add to Watchlist"}
@@ -278,22 +334,68 @@ const MediaDetails = ({ media }: MediaDetailsProps) => {
         </div>
 
         {/* Right: Quick Info Modules (Spread) */}
-        <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-          <div className="border-l-2 border-primary pl-4 py-1 h-fit">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
-              Language
-            </h4>
-            <p className="text-sm font-bold text-white uppercase">
-              {media.language}
-            </p>
-          </div>
-          <div className="border-l-2 border-primary pl-4 py-1 h-fit">
-            <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
-              View Count
-            </h4>
-            <p className="text-sm font-bold text-white uppercase tracking-widest">
-              {media.totalViews.toLocaleString()} Views
-            </p>
+        <div className="lg:col-span-2">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* 1. Rate Space (Moved to Left) */}
+            <div className="border-l-2 border-primary pl-4 py-1 h-fit">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-2">
+                Rate Space
+              </h4>
+
+              {/* YouTube Style Like/Dislike Button Group */}
+              <div className="flex items-center h-8 w-fit bg-white/5 rounded-lg border border-white/10 overflow-hidden shrink-0">
+                <button
+                  onClick={() => handleVote("LIKE")}
+                  className={`flex items-center gap-1.5 h-full px-3 transition-all hover:bg-white/10 ${
+                    likeState.userVote === "LIKE"
+                      ? "text-primary bg-white/5"
+                      : "text-white"
+                  }`}
+                >
+                  <ThumbsUpIcon
+                    className={`size-3.5 ${likeState.userVote === "LIKE" ? "fill-current" : ""}`}
+                  />
+                  {likeState.totalLikes > 0 && (
+                    <span className="font-bold text-xs tracking-widest mt-px">
+                      {likeState.totalLikes}
+                    </span>
+                  )}
+                </button>
+                <div className="w-px h-4 bg-white/20"></div>
+                <button
+                  onClick={() => handleVote("DISLIKE")}
+                  className={`flex items-center justify-center h-full px-4 transition-all hover:bg-white/10 ${
+                    likeState.userVote === "DISLIKE"
+                      ? "text-primary bg-white/5"
+                      : "text-white"
+                  }`}
+                >
+                  <ThumbsDownIcon
+                    className={`size-3.5 ${likeState.userVote === "DISLIKE" ? "fill-current" : ""}`}
+                  />
+                </button>
+              </div>
+            </div>
+
+            {/* 2. Language */}
+            <div className="border-l-2 border-primary pl-4 py-1 h-fit">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
+                Language
+              </h4>
+              <p className="text-sm font-bold text-white uppercase">
+                {media.language}
+              </p>
+            </div>
+
+            {/* 3. View Count */}
+            <div className="border-l-2 border-primary pl-4 py-1 h-fit">
+              <h4 className="text-[10px] font-black uppercase tracking-[0.2em] text-slate-500 mb-1">
+                View Count
+              </h4>
+              <p className="text-sm font-bold text-white uppercase tracking-widest">
+                {media.totalViews.toLocaleString()} Views
+              </p>
+            </div>
           </div>
         </div>
       </div>

@@ -26,8 +26,8 @@ const MovieDetailsPage = async ({
     return (
       <div className="flex h-screen items-center justify-center bg-slate-950 text-white">
         <div className="text-center space-y-4">
-           <h1 className="text-4xl font-black">404</h1>
-           <p className="text-slate-500">Movie not found</p>
+          <h1 className="text-4xl font-black">404</h1>
+          <p className="text-slate-500">Movie not found</p>
         </div>
       </div>
     );
