@@ -1,4 +1,4 @@
-import Comments from "@/components/modules/Dashboard/Comments";
+import UserComments from "@/components/modules/Dashboard/Comments/UserComments";
 import { getUserComments } from "@/services/Dashboard/comment.service";
 import {
   dehydrate,
@@ -40,7 +40,7 @@ const CommentsPage = async ({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Comments initialQueryString={queryString} />
+      <UserComments initialQueryString={queryString} />
     </HydrationBoundary>
   );
 };

@@ -50,7 +50,9 @@ export interface IGetCommentsResponse {
   meta: ICommentMeta;
 }
 
-export async function getUserComments(queryString: string = ""): Promise<IGetCommentsResponse | null> {
+export async function getUserComments(
+  queryString: string = "",
+): Promise<IGetCommentsResponse | null> {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
@@ -60,7 +62,7 @@ export async function getUserComments(queryString: string = ""): Promise<IGetCom
       return null;
     }
 
-    const url = `/comment${queryString ? `?${queryString}` : ""}`;
+    const url = `/comments${queryString ? `?${queryString}` : ""}`;
     const res = await httpClient.get<IGetCommentsResponse>(url, {
       headers: {
         Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
@@ -78,14 +80,15 @@ export async function deleteUserComment(commentId: string) {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
+    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
 
     if (!accessToken) {
       return { success: false, message: "Unauthorized" };
     }
 
-    const res = await httpClient.delete(`/comment/${commentId}`, {
+    const res = await httpClient.delete(`/comments/${commentId}`, {
       headers: {
-        Authorization: accessToken,
+        Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
       },
     });
 
@@ -102,18 +105,27 @@ export async function updateUserComment(commentId: string, content: string) {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
+    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
 
     if (!accessToken) {
       return { success: false, message: "Unauthorized" };
     }
 
-    const res = await httpClient.patch(`/comment/${commentId}`, { content }, {
-      headers: {
-        Authorization: accessToken,
+    const res = await httpClient.patch(
+      `/comments/${commentId}`,
+      { content },
+      {
+        headers: {
+          Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
+        },
       },
-    });
+    );
 
-    return { success: true, message: "Comment updated successfully", data: res.data };
+    return {
+      success: true,
+      message: "Comment updated successfully",
+      data: res.data,
+    };
   } catch (error: any) {
     return {
       success: false,
