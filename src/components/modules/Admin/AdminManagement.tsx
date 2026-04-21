@@ -110,7 +110,6 @@ const AdminManagement = ({ initialQueryString }: AdminManagementProps) => {
     queryKey: ["admin-admins", page, debouncedSearch],
     queryFn: () => getAllAdmins(queryParams.toString()),
   });
-  // console.log(adminsData, "adminsData");
 
   const { data: selectedAdmin, isLoading: isLoadingAdmin } = useQuery({
     queryKey: ["admin-admin", selectedAdminId],

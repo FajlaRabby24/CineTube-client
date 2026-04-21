@@ -30,7 +30,6 @@ export async function approveReview(reviewId: string) {
 
     return { success: res.success, message: res.message };
   } catch (error) {
-    console.error("Error approving review:", error);
     return { success: false, message: "Failed to approve review" };
   }
 }
@@ -55,7 +54,6 @@ export async function rejectReview(reviewId: string, reason: string) {
 
     return { success: res.success, message: res.message };
   } catch (error) {
-    console.error("Error rejecting review:", error);
     return { success: false, message: "Failed to reject review" };
   }
 }
@@ -76,7 +74,6 @@ export async function deleteAdminReview(reviewId: string) {
 
     return { success: res.success, message: res.message };
   } catch (error) {
-    console.error("Error deleting review:", error);
     return { success: false, message: "Failed to delete review" };
   }
 }

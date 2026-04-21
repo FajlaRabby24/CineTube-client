@@ -44,10 +44,8 @@ export async function getUserWatchlist(queryString: string = "") {
       },
     });
 
-    console.log(res, "watch list service");
     return res ?? null;
   } catch (error) {
-    console.error("Error fetching user watchlist:", error);
     return null;
   }
 }

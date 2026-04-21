@@ -76,7 +76,6 @@ export async function getAllMedia(queryString: string) {
     const res = await httpClient.get<IMediasResponse[]>(url);
     return res ?? null;
   } catch (error) {
-    console.error("Error fetching media:", error);
     return null;
   }
 }
@@ -87,7 +86,6 @@ export async function getMediaBySlug(slug: string) {
     const res = await httpClient.get<IMediaResponse>(url);
     return res.data ?? null;
   } catch (error) {
-    console.error("Error fetching media by slug:", error);
     return null;
   }
 }
@@ -95,10 +93,8 @@ export async function getMediaById(id: string) {
   try {
     const url = `/media/${id}/details`;
     const res = await httpClient.get<IMediaResponse>(url);
-    // console.log(res, "get media service");
     return (res as any).data ?? null;
   } catch (error) {
-    console.error("Error fetching media by id:", error);
     return null;
   }
 }

@@ -71,7 +71,6 @@ export async function getUserComments(
 
     return (res as any) ?? null;
   } catch (error) {
-    console.error("Error fetching user comments:", error);
     return null;
   }
 }

@@ -91,11 +91,8 @@ export async function getAdminReviews(queryString: string = "") {
       },
     });
 
-    // console.log(res, "get admin reviews service");
-
     return res ?? null;
   } catch (error) {
-    console.error("Error fetching admin reviews:", error);
     return null;
   }
 }

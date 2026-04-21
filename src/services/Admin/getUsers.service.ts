@@ -72,7 +72,6 @@ export async function getAllUsers(queryString: string) {
     });
     return res.data ?? null;
   } catch (error) {
-    console.error("Error fetching users:", error);
     return null;
   }
 }
@@ -93,10 +92,8 @@ export async function getUserById(userId: string) {
         Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
       },
     });
-    console.log(res.data, "in service");
     return res.data ?? null;
   } catch (error) {
-    console.error("Error fetching user:", error);
     return null;
   }
 }

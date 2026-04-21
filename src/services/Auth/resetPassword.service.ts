@@ -19,10 +19,20 @@ export const resetPasswordAction = async (payload: {
   }
 
   try {
-    await httpClient.post("/auth/reset-password", parsedPayload.data);
+    const res = await httpClient.post(
+      "/auth/reset-password",
+      parsedPayload.data,
+    );
+    if (!res.success) {
+      return {
+        success: false,
+        message: res.message || "Failed to reset password",
+      };
+    }
+
     return {
       success: true,
-      message: "Password reset successfully",
+      message: res.message || "Password reset successfully",
       route: "/login",
     };
   } catch (error: unknown) {

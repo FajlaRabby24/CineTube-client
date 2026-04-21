@@ -1,19 +1,25 @@
 "use client";
 
-import { useState } from "react";
-import { toast } from "sonner";
+import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
+  DialogFooter,
   DialogHeader,
   DialogTitle,
-  DialogFooter,
 } from "@/components/ui/dialog";
-import { Button } from "@/components/ui/button";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { createReport } from "@/services/Report/report.service";
+import { useState } from "react";
+import { toast } from "sonner";
 
 interface ReportDialogProps {
   isOpen: boolean;
@@ -31,7 +37,12 @@ const REPORT_REASONS = [
   { value: "OTHER", label: "Other" },
 ];
 
-const ReportDialog = ({ isOpen, onClose, targetId, targetType }: ReportDialogProps) => {
+const ReportDialog = ({
+  isOpen,
+  onClose,
+  targetId,
+  targetType,
+}: ReportDialogProps) => {
   const [reason, setReason] = useState<string>("");
   const [description, setDescription] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -68,7 +79,6 @@ const ReportDialog = ({ isOpen, onClose, targetId, targetType }: ReportDialogPro
         toast.error(res.message || "Failed to submit report");
       }
     } catch (error) {
-      console.error("Report error:", error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -79,21 +89,29 @@ const ReportDialog = ({ isOpen, onClose, targetId, targetType }: ReportDialogPro
     <Dialog open={isOpen} onOpenChange={onClose}>
       <DialogContent className="sm:max-w-[425px] bg-slate-900 border-white/10 text-white">
         <DialogHeader>
-          <DialogTitle className="text-xl font-black uppercase font-outfit">Report Content</DialogTitle>
+          <DialogTitle className="text-xl font-black uppercase font-outfit">
+            Report Content
+          </DialogTitle>
           <DialogDescription className="text-slate-400">
             Why are you reporting this {targetType.toLowerCase()}?
           </DialogDescription>
         </DialogHeader>
         <div className="grid gap-4 py-4">
           <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-300 uppercase tracking-widest">Reason</label>
+            <label className="text-sm font-bold text-slate-300 uppercase tracking-widest">
+              Reason
+            </label>
             <Select onValueChange={setReason} value={reason}>
               <SelectTrigger className="bg-white/5 border-white/10 focus:ring-primary h-12">
                 <SelectValue placeholder="Select a reason" />
               </SelectTrigger>
               <SelectContent className="bg-slate-900 border-white/10 text-white">
                 {REPORT_REASONS.map((r) => (
-                  <SelectItem key={r.value} value={r.value} className="focus:bg-primary focus:text-white">
+                  <SelectItem
+                    key={r.value}
+                    value={r.value}
+                    className="focus:bg-primary focus:text-white"
+                  >
                     {r.label}
                   </SelectItem>
                 ))}
@@ -101,7 +119,9 @@ const ReportDialog = ({ isOpen, onClose, targetId, targetType }: ReportDialogPro
             </Select>
           </div>
           <div className="space-y-2">
-            <label className="text-sm font-bold text-slate-300 uppercase tracking-widest">Description (Optional)</label>
+            <label className="text-sm font-bold text-slate-300 uppercase tracking-widest">
+              Description (Optional)
+            </label>
             <Textarea
               placeholder="Provide more details..."
               value={description}
@@ -111,7 +131,11 @@ const ReportDialog = ({ isOpen, onClose, targetId, targetType }: ReportDialogPro
           </div>
         </div>
         <DialogFooter>
-          <Button variant="ghost" onClick={onClose} className="hover:bg-white/10 text-white">
+          <Button
+            variant="ghost"
+            onClick={onClose}
+            className="hover:bg-white/10 text-white"
+          >
             Cancel
           </Button>
           <Button

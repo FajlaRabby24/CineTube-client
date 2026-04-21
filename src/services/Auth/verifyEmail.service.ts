@@ -16,7 +16,6 @@ export const verifyEmailAction = async (
   otp: string,
   redirectPath: string | undefined,
 ) => {
-  console.log(email, otp);
   const parsedPayload = verifyEmailSchema.safeParse({ email, otp });
   if (!parsedPayload.success) {
     const firstError = parsedPayload.error.issues[0].message || "Invalid input";

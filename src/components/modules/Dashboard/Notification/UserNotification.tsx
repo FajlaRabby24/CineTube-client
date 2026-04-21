@@ -81,7 +81,6 @@ export default function UserNotification() {
     queryKey: ["notifications", "all"],
     queryFn: () => getUserNotifications("limit=15"),
   });
-  console.log(notificationData, "user notification");
 
   const notifications = notificationData?.data || [];
 

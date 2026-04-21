@@ -20,7 +20,6 @@ export async function getNewTokensWithRefreshToken(
     if (!res.success) return false;
     return true;
   } catch (error) {
-    console.error("Error refreshing token:", error);
     return false;
   }
 }
@@ -63,7 +62,6 @@ export async function getUserInfo() {
     const data = res.data;
     return data;
   } catch (error) {
-    console.error("Error fetching user info:", error);
     return null;
   }
 }

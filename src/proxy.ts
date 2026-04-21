@@ -60,7 +60,6 @@ export const proxy = async (request: NextRequest) => {
 
     return NextResponse.next();
   } catch (error) {
-    console.error("Error in proxy middleware:", error);
     return NextResponse.next();
   }
 };

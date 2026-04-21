@@ -1,4 +1,4 @@
-import { jwtVerify, decodeJwt, JWTPayload } from "jose";
+import { decodeJwt, JWTPayload, jwtVerify } from "jose";
 
 export const jwtUtils = {
   verifyToken: async (token: string, secret: string) => {
@@ -25,7 +25,6 @@ export const jwtUtils = {
       const decoded = decodeJwt(token);
       return decoded as JWTPayload & { role?: string };
     } catch (error) {
-      console.error("Error decoding token:", error);
       return null;
     }
   },

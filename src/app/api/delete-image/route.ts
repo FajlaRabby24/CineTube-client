@@ -20,6 +20,6 @@ export async function DELETE(request: NextRequest) {
       resource_type: resourceType,
     });
   } catch (error) {
-    console.log(`Error from cloudinary file delete - routes ${error}`);
+    return false;
   }
 }

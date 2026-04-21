@@ -93,7 +93,6 @@ const ReviewSection = ({ mediaId }: ReviewSectionProps) => {
   }
 
   const reviews = data?.data || [];
-  console.log(reviews, "reviews");
 
   return (
     <section className="max-w-4xl mx-auto space-y-10">
@@ -112,9 +111,7 @@ const ReviewSection = ({ mediaId }: ReviewSectionProps) => {
       {/* Review Form */}
       <div className="space-y-3 pt-4 2xl:-mx-2">
         <div className="space-y-1 px-2">
-          <h3 className="text-lg font-bold text-white">
-            Rate this media
-          </h3>
+          <h3 className="text-lg font-bold text-white">Rate this media</h3>
           <p className="text-[14px] text-slate-400">
             Share your thoughts and help others decide what to watch.
           </p>
@@ -131,7 +128,9 @@ const ReviewSection = ({ mediaId }: ReviewSectionProps) => {
                 <Checkbox
                   id="spoiler"
                   checked={hasSpoiler}
-                  onCheckedChange={(checked) => setHasSpoiler(checked as boolean)}
+                  onCheckedChange={(checked) =>
+                    setHasSpoiler(checked as boolean)
+                  }
                   className="border-white/20 data-[state=checked]:bg-primary h-4 w-4"
                 />
                 <Label

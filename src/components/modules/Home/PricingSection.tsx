@@ -85,7 +85,6 @@ const PricingSection = () => {
         });
       }
     } catch (error) {
-      console.error("Subscription error:", error);
       toast.error("An error occurred. Please try again.", { id: "checkout" });
     } finally {
       setLoadingPlan(null);

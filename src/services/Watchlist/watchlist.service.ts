@@ -25,7 +25,6 @@ export async function addToWatchlist(mediaId: string) {
 
     return res;
   } catch (error: any) {
-    console.error("Error adding to watchlist:", error);
     return {
       success: false,
       message: error?.response?.data?.message || "Something went wrong",

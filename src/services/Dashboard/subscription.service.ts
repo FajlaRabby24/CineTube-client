@@ -59,7 +59,6 @@ export async function getUserSubscriptions(
 
     return (res as any) ?? null;
   } catch (error) {
-    console.error("Error fetching user subscription:", error);
     return null;
   }
 }

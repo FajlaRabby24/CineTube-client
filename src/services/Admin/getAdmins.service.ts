@@ -62,10 +62,8 @@ export async function getAllAdmins(queryString: string = "") {
       },
     });
 
-    // console.log(res, "get admin service");
     return res ?? null;
   } catch (error) {
-    console.error("Error fetching admins:", error);
     return null;
   }
 }
@@ -87,7 +85,6 @@ export async function getAdminById(adminId: string) {
     });
     return res.data ?? null;
   } catch (error) {
-    console.error("Error fetching admin:", error);
     return null;
   }
 }

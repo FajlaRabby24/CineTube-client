@@ -6,14 +6,14 @@ interface VerifyEmailPageProps {
 }
 
 const VerifyEmailPage = async ({ searchParams }: VerifyEmailPageProps) => {
-  const { email } = await searchParams;
+  const { email, redirectPath } = await searchParams;
 
   return (
     <ModernAuthLayout
       title="Verify Your Identity"
       description="Protecting your account is our top priority. Please enter the secure code below."
     >
-      <VerifyEmailForm email={email || ""} />
+      <VerifyEmailForm email={email || ""} redirectPath={redirectPath} />
     </ModernAuthLayout>
   );
 };

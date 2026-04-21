@@ -4,7 +4,6 @@ import { httpClient } from "@/lib/axios/httpClient";
 import { cookies } from "next/headers";
 
 export async function banUser(userId: string, reason?: string) {
-  console.log(userId, reason, "user actions");
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
@@ -26,7 +25,6 @@ export async function banUser(userId: string, reason?: string) {
 
     return { success: res.success, message: res.message };
   } catch (error) {
-    console.error("Error banning user:", error);
     return { success: false, message: "Failed to ban user" };
   }
 }
@@ -53,7 +51,6 @@ export async function unbanUser(userId: string) {
 
     return { success: res.success, message: res.message };
   } catch (error) {
-    console.error("Error unbanning user:", error);
     return { success: false, message: "Failed to unban user" };
   }
 }

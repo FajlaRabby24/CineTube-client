@@ -54,11 +54,8 @@ export async function getAllReports(queryString: string) {
       },
     });
 
-    console.log(res, "report service");
-
     return res ?? null;
   } catch (error) {
-    console.error("Error fetching reports:", error);
     return null;
   }
 }
@@ -85,7 +82,6 @@ export async function resolveReport(reportId: string, resolution: string) {
 
     return res ?? null;
   } catch (error: any) {
-    console.error("Error resolving report:", error);
     return {
       success: false,
       message: error?.message || "Failed to resolve report",
@@ -115,7 +111,6 @@ export async function dismissReport(reportId: string) {
 
     return res ?? null;
   } catch (error: any) {
-    console.error("Error dismissing report:", error);
     return {
       success: false,
       message: error?.message || "Failed to dismiss report",

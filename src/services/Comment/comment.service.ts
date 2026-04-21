@@ -6,7 +6,6 @@ import { cookies } from "next/headers";
 
 export const getReviewComments = async (reviewId: string) => {
   const res = await httpClient.get<IComment[]>(`/reviews/${reviewId}/comments`);
-  console.log(res, "get review comments");
   return res;
 };
 

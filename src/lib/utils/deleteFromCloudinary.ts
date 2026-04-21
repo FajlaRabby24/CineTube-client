@@ -23,9 +23,7 @@ export async function deleteFromCloudinary(
     });
   } catch (err) {
     const error = err as AxiosError<DeleteImageErrorResponse>;
-    console.error(
-      error.response?.data?.error ||
-        "Something went wrong, in deleteFromCloudinary",
-    );
+    error.response?.data?.error ||
+      "Something went wrong, in deleteFromCloudinary";
   }
 }

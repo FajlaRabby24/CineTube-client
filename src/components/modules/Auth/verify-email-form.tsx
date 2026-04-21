@@ -1,10 +1,7 @@
 "use client";
 
 import AppSubmitButton from "@/components/shared/forms/AppSubmitButton";
-import {
-  FieldDescription,
-  FieldGroup,
-} from "@/components/ui/field";
+import { FieldGroup } from "@/components/ui/field";
 import {
   InputOTP,
   InputOTPGroup,
@@ -19,13 +16,14 @@ import { verifyEmailAction } from "../../../services/Auth/verifyEmail.service";
 
 export interface IVerifyEmailForm {
   email: string;
+  redirectPath?: string;
 }
 
-export function VerifyEmailForm({ email }: IVerifyEmailForm) {
+export function VerifyEmailForm({ email, redirectPath }: IVerifyEmailForm) {
   const router = useRouter();
 
   const { mutateAsync, isPending } = useMutation({
-    mutationFn: (otp: string) => verifyEmailAction({ email, otp }),
+    mutationFn: (otp: string) => verifyEmailAction(email, otp, redirectPath),
   });
 
   const form = useForm({
@@ -37,7 +35,7 @@ export function VerifyEmailForm({ email }: IVerifyEmailForm) {
         const result = await mutateAsync(value.otp);
         if (result.success) {
           toast.success(result.message);
-          router.push("/login");
+          router.push(result.route || "/login");
         } else {
           toast.error(result.message);
         }
@@ -51,7 +49,8 @@ export function VerifyEmailForm({ email }: IVerifyEmailForm) {
     <div className="space-y-8">
       <div className="text-center space-y-2">
         <p className="text-slate-400 font-medium">
-          We've sent a 6-digit code to <span className="text-white font-bold">{email}</span>
+          We've sent a 6-digit code to{" "}
+          <span className="text-white font-bold">{email}</span>
         </p>
       </div>
 
@@ -92,7 +91,9 @@ export function VerifyEmailForm({ email }: IVerifyEmailForm) {
             )}
           </form.Field>
 
-          <form.Subscribe selector={(s) => [s.canSubmit, s.isSubmitting] as const}>
+          <form.Subscribe
+            selector={(s) => [s.canSubmit, s.isSubmitting] as const}
+          >
             {([canSubmit, isSubmitting]) => (
               <AppSubmitButton
                 isPending={isSubmitting || isPending}

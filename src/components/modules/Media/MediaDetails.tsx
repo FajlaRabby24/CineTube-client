@@ -124,7 +124,6 @@ const MediaDetails = ({ media }: MediaDetailsProps) => {
         });
       }
     } catch (error) {
-      console.error("Watch now error:", error);
       toast.error("An error occurred. Please try again.");
     }
   };
@@ -148,7 +147,6 @@ const MediaDetails = ({ media }: MediaDetailsProps) => {
         toast.error(res.message || "Failed to add to watchlist");
       }
     } catch (error) {
-      console.error("Watchlist error:", error);
       toast.error("An error occurred. Please try again.");
     } finally {
       setIsSubmitting(false);
@@ -348,7 +346,10 @@ const MediaDetails = ({ media }: MediaDetailsProps) => {
                   whileTap={{ scale: 0.85 }}
                   animate={
                     likeState.userVote === "LIKE"
-                      ? { scale: [1, 1.3, 0.9, 1.1, 1], rotate: [0, -10, 10, -5, 0] }
+                      ? {
+                          scale: [1, 1.3, 0.9, 1.1, 1],
+                          rotate: [0, -10, 10, -5, 0],
+                        }
                       : { scale: 1, rotate: 0 }
                   }
                   transition={{ duration: 0.4 }}

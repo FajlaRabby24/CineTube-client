@@ -62,7 +62,6 @@ export async function getUserReviews(userId: string, queryString: string = "") {
     });
     return res.data ?? null;
   } catch (error) {
-    console.error("Error fetching user reviews:", error);
     return null;
   }
 }

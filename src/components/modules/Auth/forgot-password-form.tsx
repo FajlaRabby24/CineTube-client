@@ -1,21 +1,23 @@
 "use client";
 
+import AppSubmitButton from "@/components/shared/forms/AppSubmitButton";
+import InputField from "@/components/shared/forms/InputField";
+import { FieldGroup } from "@/components/ui/field";
+import { forgotPasswordAction } from "@/services/Auth/forgotPassword.service";
 import { useForm } from "@tanstack/react-form";
 import { useMutation } from "@tanstack/react-query";
-import { forgotPasswordAction } from "@/services/Auth/forgotPassword.service";
-import { toast } from "sonner";
-import InputField from "@/components/shared/forms/InputField";
-import AppSubmitButton from "@/components/shared/forms/AppSubmitButton";
-import { FieldGroup } from "@/components/ui/field";
-import { z } from "zod";
-import Link from "next/link";
 import { ChevronLeftIcon } from "lucide-react";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { toast } from "sonner";
+import { z } from "zod";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Please enter a valid email address"),
 });
 
 export function ForgotPasswordForm() {
+  const router = useRouter();
   const { mutateAsync, isPending } = useMutation({
     mutationFn: (email: string) => forgotPasswordAction(email),
   });
@@ -29,6 +31,7 @@ export function ForgotPasswordForm() {
         const result = await mutateAsync(value.email);
         if (result.success) {
           toast.success(result.message);
+          router.push(result.route || "/login");
         } else {
           toast.error(result.message);
         }

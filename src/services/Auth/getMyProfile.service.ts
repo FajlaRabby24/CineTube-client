@@ -50,7 +50,6 @@ export async function getMyProfile() {
 
     return res.data;
   } catch (error) {
-    console.error("Error fetching my profile:", error);
     return null;
   }
 }

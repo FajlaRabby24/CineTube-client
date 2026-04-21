@@ -1,6 +1,5 @@
 "use client";
 
-import { motion } from "framer-motion";
 import { Key, LogOut, Settings, Shield, User2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
@@ -46,7 +45,6 @@ const UserDropdown = ({ userInfo }: { userInfo: IUserInfo }) => {
         }
       }
     } catch (error) {
-      console.error("Logout error:", error);
       toast.error("Logout failed");
     }
   };

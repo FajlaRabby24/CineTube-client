@@ -65,7 +65,6 @@ export async function getUserReviews(
 
     return (res as any) ?? null;
   } catch (error) {
-    console.error("Error fetching user reviews:", error);
     return null;
   }
 }

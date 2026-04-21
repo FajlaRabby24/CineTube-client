@@ -25,7 +25,6 @@ export async function createAdmin(payload: ICreateAdminPayload) {
     if (!accessToken) {
       return { success: false, message: "Unauthorized" };
     }
-    console.log(payload, "payload");
     const url = `/admin/create-admin`;
     const res = await httpClient.post(url, payload, {
       headers: {
@@ -38,7 +37,6 @@ export async function createAdmin(payload: ICreateAdminPayload) {
 
     return { success: false, message: res.message };
   } catch (error: unknown) {
-    console.error("Error creating admin:", error);
     if (error && typeof error === "object" && "response" in error) {
       const axiosError = error as {
         response?: { data?: { message?: string } };

@@ -73,7 +73,7 @@ export function SignupForm({ redirectPath }: RegisterFormProps) {
           message: string;
           route: string;
         };
-        
+
         if (!result.success) {
           toast.error(result.message || "Registration failed");
           return;
@@ -121,7 +121,10 @@ export function SignupForm({ redirectPath }: RegisterFormProps) {
             </form.Field>
 
             <Field className="space-y-2">
-              <FieldLabel htmlFor="image" className="text-slate-300 font-bold uppercase tracking-widest text-[10px]">
+              <FieldLabel
+                htmlFor="image"
+                className="text-slate-300 font-bold uppercase tracking-widest text-[10px]"
+              >
                 Profile Picture
               </FieldLabel>
               <ImagePreview
@@ -164,7 +167,7 @@ export function SignupForm({ redirectPath }: RegisterFormProps) {
               />
             )}
           </form.Field>
-          
+
           <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">
             Must be at least 8 characters.
           </p>
@@ -188,14 +191,17 @@ export function SignupForm({ redirectPath }: RegisterFormProps) {
             <FieldSeparator className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] my-6">
               Or join with
             </FieldSeparator>
-            
+
             <Field>
               <GoogleLoginButton className="bg-white/5 border-white/10 text-white hover:bg-white/10 h-14 rounded-xl transition-all" />
             </Field>
 
             <FieldDescription className="text-center mt-8 text-slate-400 font-medium">
               Already have an account?{" "}
-              <Link href="/login" className="text-red-600 font-black hover:underline underline-offset-4">
+              <Link
+                href="/login"
+                className="text-red-600 font-black hover:underline underline-offset-4"
+              >
                 Sign in
               </Link>
             </FieldDescription>

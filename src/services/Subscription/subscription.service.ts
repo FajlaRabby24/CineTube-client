@@ -29,7 +29,6 @@ export async function getUserSubscription() {
     if (!res.success) return null;
     return res.data;
   } catch (error) {
-    console.error("Error fetching subscription:", error);
     return null;
   }
 }
@@ -55,7 +54,6 @@ export async function createCheckoutSession(plan: string) {
 
     return res ?? null;
   } catch (error) {
-    console.error("Error creating checkout session:", error);
     return null;
   }
 }
@@ -79,7 +77,6 @@ export async function createCustomerPortalSession() {
 
     return res ?? null;
   } catch (error) {
-    console.error("Error creating portal session:", error);
     return null;
   }
 }

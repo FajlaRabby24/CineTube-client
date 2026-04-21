@@ -19,7 +19,6 @@ const getTokenSecondRemaining = (token: string): number => {
 
     return remainingSeconds > 0 ? remainingSeconds : 0;
   } catch (error) {
-    console.log(`Error decoding token: ${error}`);
     return 0;
   }
 };

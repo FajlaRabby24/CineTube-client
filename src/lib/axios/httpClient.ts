@@ -38,7 +38,6 @@ const httpGet = async <TData>(
     });
     return response.data;
   } catch (error) {
-    console.error(`GET request to ${endpoint} failed:`, error);
     throw error;
   }
 };
@@ -56,7 +55,6 @@ const httpPost = async <TData>(
     });
     return response.data;
   } catch (error) {
-    console.error(`POST request to ${endpoint} failed:`, error);
     throw error;
   }
 };
@@ -74,7 +72,6 @@ const httpPut = async <TData>(
     });
     return response.data;
   } catch (error) {
-    console.error(`PUT request to ${endpoint} failed:`, error);
     throw error;
   }
 };
@@ -92,7 +89,6 @@ const httpPatch = async <TData>(
     });
     return response.data;
   } catch (error) {
-    console.error(`PATCH request to ${endpoint} failed:`, error);
     throw error;
   }
 };
@@ -109,7 +105,6 @@ const httpDelete = async <TData>(
     });
     return response.data;
   } catch (error) {
-    console.error(`DELETE request to ${endpoint} failed:`, error);
     throw error;
   }
 };

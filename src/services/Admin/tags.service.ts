@@ -35,7 +35,6 @@ export async function getAllTags(): Promise<ITagResponse[] | null> {
 
     return (res.data as ITagResponse[]) ?? null;
   } catch (error) {
-    console.error("Error fetching tags:", error);
     return null;
   }
 }
@@ -68,7 +67,6 @@ export async function createTag(payload: {
 
     return { success: true, message: res.message };
   } catch (error) {
-    console.error("Error creating tag:", error);
     return { success: false, message: "Failed to create tag" };
   }
 }
@@ -100,7 +98,6 @@ export async function updateTag(
 
     return { success: true, message: res.message };
   } catch (error) {
-    console.error("Error updating tag:", error);
     return { success: false, message: "Failed to update tag" };
   }
 }
@@ -125,7 +122,6 @@ export async function deleteTag(
 
     return { success: true, message: res.message };
   } catch (error) {
-    console.error("Error deleting tag:", error);
     return { success: false, message: "Failed to delete tag" };
   }
 }

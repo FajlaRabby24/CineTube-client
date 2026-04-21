@@ -61,10 +61,8 @@ export async function getUserPayments(
       },
     });
 
-    console.log(res, "payment.servicer");
     return (res as any) ?? null;
   } catch (error) {
-    console.error("Error fetching user payments:", error);
     return null;
   }
 }

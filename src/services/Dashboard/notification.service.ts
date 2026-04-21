@@ -37,11 +37,8 @@ export async function getUserNotifications(queryString: string = "") {
       },
     });
 
-    console.log(res, "notification service");
-
     return res ?? null;
   } catch (error) {
-    console.error("Error fetching notifications:", error);
     return null;
   }
 }

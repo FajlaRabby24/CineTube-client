@@ -22,7 +22,6 @@ export async function deleteMedia(mediaId: string) {
       message: res?.message || "Media deleted successfully",
     };
   } catch (error: any) {
-    console.error("Error deleting media:", error);
     return {
       success: false,
       message: error.response?.data?.message || "Failed to delete media",
@@ -50,7 +49,6 @@ export async function createMedia(data: any) {
       message: res?.message || "Media created successfully",
     };
   } catch (error: any) {
-    console.error("Error creating media:", error);
     return {
       success: false,
       message: error.response?.data?.message || "Failed to create media",
@@ -78,7 +76,6 @@ export async function updateMedia({ id, data }: { id: string; data: any }) {
       message: res?.message || "Media updated successfully",
     };
   } catch (error: any) {
-    console.error("Error updating media:", error);
     return {
       success: false,
       message: error.response?.data?.message || "Failed to update media",
@@ -94,7 +91,6 @@ export async function addViews(mediaId: string) {
       data: res?.data,
     };
   } catch (error: any) {
-    console.error("Error adding view:", error);
     return { success: false };
   }
 }
@@ -126,7 +122,6 @@ export async function toggleLikeMedia(
       data: res?.data,
     };
   } catch (error: any) {
-    console.error("Error toggling like:", error);
     return {
       success: false,
       message: error.response?.data?.message || "Failed to vote",
@@ -161,7 +156,6 @@ export async function getUserVoteStatus(
       data: { userVote },
     };
   } catch (error: any) {
-    console.error("Error fetching vote status:", error);
     return { success: false, data: { userVote: null } };
   }
 }

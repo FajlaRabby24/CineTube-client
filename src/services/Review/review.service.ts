@@ -9,7 +9,6 @@ export const getMediaReviews = async (mediaId: string) => {
   if (!res.success) {
     return null;
   }
-  console.log(res, "review service");
   return res;
 };
 
@@ -58,6 +57,5 @@ export const likeReview = async (reviewId: string) => {
   if (!res.success) {
     return null;
   }
-  console.log(res, "like review");
   return res ?? null;
 };

@@ -51,7 +51,6 @@ export const getUserDashboardStats = async () => {
     }
     return res.data;
   } catch (error) {
-    console.error("Error fetching user dashboard stats:", error);
     return null;
   }
 };

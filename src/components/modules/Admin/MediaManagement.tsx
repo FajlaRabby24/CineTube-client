@@ -166,8 +166,6 @@ const MediaManagement = ({ initialQueryString }: MediaManagementProps) => {
     queryFn: () => getAllMedia(queryParams.toString()),
   });
 
-  console.log(mediaData, "media managment");
-
   const { data: selectedMediaData, isLoading: isLoadingMedia } =
     useQuery<IMediaResponse | null>({
       queryKey: ["admin-media-details", selectedMediaSlug],

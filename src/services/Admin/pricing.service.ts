@@ -19,7 +19,7 @@ export interface IPricingPlan {
 }
 
 export interface IPricingCreatePayload {
-   name: string;
+  name: string;
   plan: keyof typeof SubscriptionPlan;
   price: number;
   currency?: string;
@@ -42,13 +42,12 @@ export async function getAllPricingPlans() {
   try {
     const res = await httpClient.get<IPricingPlan[]>("/pricing");
 
-    if(!res.success){
+    if (!res.success) {
       return { success: false, message: res.message };
     }
 
     return res?.data ?? null;
   } catch (error) {
-    console.error("Error fetching pricing plans:", error);
     return null;
   }
 }
@@ -69,18 +68,23 @@ export async function createPricingPlan(payload: IPricingCreatePayload) {
       },
     });
 
-    if(!res.success){
+    if (!res.success) {
       return { success: false, message: res.message };
     }
 
-    return res
+    return res;
   } catch (error: any) {
-    console.error("Error creating pricing plan:", error);
-    return { success: false, message: error?.message || "Failed to create pricing plan" };
+    return {
+      success: false,
+      message: error?.message || "Failed to create pricing plan",
+    };
   }
 }
 
-export async function updatePricingPlan(pricingId: string, payload: IPricingUpdatePayload) {
+export async function updatePricingPlan(
+  pricingId: string,
+  payload: IPricingUpdatePayload,
+) {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
@@ -90,19 +94,25 @@ export async function updatePricingPlan(pricingId: string, payload: IPricingUpda
       return { success: false, message: "Not authenticated" };
     }
 
-    const res = await httpClient.patch<IPricingPlan>(`/pricing/${pricingId}`, payload, {
-      headers: {
-        Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
+    const res = await httpClient.patch<IPricingPlan>(
+      `/pricing/${pricingId}`,
+      payload,
+      {
+        headers: {
+          Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
+        },
       },
-    });
+    );
 
-    if(!res.success){
+    if (!res.success) {
       return { success: false, message: res.message };
     }
 
     return res;
   } catch (error: any) {
-    console.error("Error updating pricing plan:", error);
-    return { success: false, message: error?.message || "Failed to update pricing plan" };
+    return {
+      success: false,
+      message: error?.message || "Failed to update pricing plan",
+    };
   }
 }

@@ -36,11 +36,8 @@ export async function logoutSession(sessionId: string, token: string) {
       },
     });
 
-    console.log({ res }, "res in logout session service");
-
     return { success: res.success, message: res.message };
   } catch (error) {
-    console.error("Error logging out session:", error);
     return { success: false, message: "Failed to logout session" };
   }
 }

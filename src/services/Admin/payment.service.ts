@@ -49,7 +49,6 @@ export async function getAllPayments(queryString: string = "") {
 
     return res ?? null;
   } catch (error) {
-    console.error("Error fetching admin payments:", error);
     return null;
   }
 }
