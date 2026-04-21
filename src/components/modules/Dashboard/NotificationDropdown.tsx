@@ -1,13 +1,13 @@
 "use client";
 
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { formatDistanceToNow } from "date-fns";
 import { AnimatePresence, motion } from "framer-motion";
 import {
   Bell,
   BellRing,
   CheckCircle2,
   Clock,
-  CreditCard,
   MessageSquare,
   ShieldAlert,
   ShieldCheck,
@@ -16,8 +16,7 @@ import {
   XCircle,
 } from "lucide-react";
 import Link from "next/link";
-import { useEffect, useState } from "react";
-import { formatDistanceToNow } from "date-fns";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button";
 import {
@@ -25,56 +24,106 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { cn } from "@/lib/utils";
 import {
   getUserNotifications,
   INotification,
   markAllNotificationsAsRead,
-  markNotificationAsRead,
 } from "@/services/Dashboard/notification.service";
-import { cn } from "@/lib/utils";
 
 const typeConfig: Record<string, { icon: any; color: string; bg: string }> = {
-  REVIEW_APPROVED: { icon: ShieldCheck, color: "text-green-500", bg: "bg-green-500/10" },
-  REVIEW_REJECTED: { icon: ShieldAlert, color: "text-red-500", bg: "bg-red-500/10" },
-  REVIEW_LIKED: { icon: ThumbsUp, color: "text-blue-500", bg: "bg-blue-500/10" },
-  COMMENT_RECEIVED: { icon: MessageSquare, color: "text-purple-500", bg: "bg-purple-500/10" },
-  COMMENT_REPLIED: { icon: MessageSquare, color: "text-indigo-500", bg: "bg-indigo-500/10" },
-  SUBSCRIPTION_ACTIVATED: { icon: Star, color: "text-amber-500", bg: "bg-amber-500/10" },
-  SUBSCRIPTION_EXPIRED: { icon: XCircle, color: "text-neutral-500", bg: "bg-neutral-500/10" },
-  PAYMENT_SUCCEEDED: { icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-500/10" },
-  PAYMENT_FAILED: { icon: XCircle, color: "text-rose-500", bg: "bg-rose-500/10" },
-  REPORT_RESOLVED: { icon: ShieldCheck, color: "text-teal-500", bg: "bg-teal-500/10" },
+  REVIEW_APPROVED: {
+    icon: ShieldCheck,
+    color: "text-green-500",
+    bg: "bg-green-500/10",
+  },
+  REVIEW_REJECTED: {
+    icon: ShieldAlert,
+    color: "text-red-500",
+    bg: "bg-red-500/10",
+  },
+  REVIEW_LIKED: {
+    icon: ThumbsUp,
+    color: "text-blue-500",
+    bg: "bg-blue-500/10",
+  },
+  COMMENT_RECEIVED: {
+    icon: MessageSquare,
+    color: "text-purple-500",
+    bg: "bg-purple-500/10",
+  },
+  COMMENT_REPLIED: {
+    icon: MessageSquare,
+    color: "text-indigo-500",
+    bg: "bg-indigo-500/10",
+  },
+  SUBSCRIPTION_ACTIVATED: {
+    icon: Star,
+    color: "text-amber-500",
+    bg: "bg-amber-500/10",
+  },
+  SUBSCRIPTION_EXPIRED: {
+    icon: XCircle,
+    color: "text-neutral-500",
+    bg: "bg-neutral-500/10",
+  },
+  PAYMENT_SUCCEEDED: {
+    icon: CheckCircle2,
+    color: "text-emerald-500",
+    bg: "bg-emerald-500/10",
+  },
+  PAYMENT_FAILED: {
+    icon: XCircle,
+    color: "text-rose-500",
+    bg: "bg-rose-500/10",
+  },
+  REPORT_RESOLVED: {
+    icon: ShieldCheck,
+    color: "text-teal-500",
+    bg: "bg-teal-500/10",
+  },
 };
 
 const NotificationDropdown = () => {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
+  // Keep local copy of notifications when opening to prevent flickering when they are marked as read
+  const [displayNotifications, setDisplayNotifications] = useState<
+    INotification[]
+  >([]);
 
   const { data: notificationData, isLoading } = useQuery({
-    queryKey: ["notifications"],
-    queryFn: () => getUserNotifications("limit=10"),
-    refetchInterval: 30000, // Poll every 30 seconds
+    queryKey: ["notifications", "unread"],
+    queryFn: () => getUserNotifications("isRead=false&limit=10"),
+    refetchInterval: 30000,
   });
 
   const markAllReadMutation = useMutation({
     mutationFn: () => markAllNotificationsAsRead(),
     onSuccess: () => {
+      // Invalidate both unread and all notifications
       queryClient.invalidateQueries({ queryKey: ["notifications"] });
     },
   });
 
-  const markReadMutation = useMutation({
-    mutationFn: (id: string) => markNotificationAsRead(id),
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["notifications"] });
-    },
-  });
+  const unreadNotifications = notificationData?.data || [];
+  const unreadCount = unreadNotifications.length;
 
-  const notifications = notificationData?.data || [];
-  const unreadCount = notifications.filter((n: INotification) => !n.isRead).length;
+  // Handle dropdown opening
+  const handleOpenChange = (open: boolean) => {
+    setIsOpen(open);
+    if (open) {
+      // Capture current unread notifications to show in the open dropdown
+      setDisplayNotifications(unreadNotifications);
+      // Mark all as read on the server
+      if (unreadCount > 0) {
+        markAllReadMutation.mutate();
+      }
+    }
+  };
 
   return (
-    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+    <DropdownMenu open={isOpen} onOpenChange={handleOpenChange}>
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
@@ -101,97 +150,94 @@ const NotificationDropdown = () => {
         <div className="flex items-center justify-between border-b border-white/5 bg-white/[0.02] p-4">
           <div className="flex items-center gap-2">
             <h3 className="text-[10px] font-black italic tracking-widest text-white uppercase">
-              Notifications Matrix
+              Current Unread Triggers
             </h3>
-            {unreadCount > 0 && (
-              <span className="rounded-full bg-red-600/10 px-2 py-0.5 text-[8px] font-black text-red-500 uppercase tracking-tighter">
-                {unreadCount} New
-              </span>
-            )}
           </div>
-          {unreadCount > 0 && (
-            <button
-              onClick={() => markAllReadMutation.mutate()}
-              className="text-[8px] font-black uppercase tracking-widest text-neutral-500 hover:text-white transition-colors"
-            >
-              Clear Buffer
-            </button>
-          )}
+          <span className="text-[8px] font-black uppercase text-neutral-500 italic">
+            SECURE_FEED_ACTIVE
+          </span>
         </div>
 
         <div className="max-h-[400px] overflow-y-auto">
-          {isLoading ? (
+          {isLoading && displayNotifications.length === 0 ? (
             <div className="flex h-40 flex-col items-center justify-center space-y-3">
               <div className="h-8 w-8 animate-spin rounded-full border-2 border-red-600/20 border-t-red-600" />
               <p className="text-[8px] font-black uppercase tracking-widest text-neutral-600 italic">
-                Syncing status...
+                Scanning frequencies...
               </p>
             </div>
-          ) : notifications.length === 0 ? (
+          ) : displayNotifications.length === 0 ? (
             <div className="flex h-60 flex-col items-center justify-center p-8 text-center">
               <div className="mb-4 rounded-2xl bg-white/5 p-4 text-neutral-500">
                 <Bell className="h-8 w-8 opacity-20" />
               </div>
               <p className="text-[10px] font-black uppercase tracking-widest text-white italic">
-                Buffer Empty
+                All Systems Clear
               </p>
               <p className="mt-1 text-[9px] font-medium text-neutral-500 uppercase leading-relaxed">
-                No telemetry data available at this time.
+                No new alerts detected in the current buffer.
               </p>
             </div>
           ) : (
             <AnimatePresence mode="popLayout">
-              {notifications.map((notification: INotification, i: number) => {
-                const config = typeConfig[notification.type] || {
-                  icon: Bell,
-                  color: "text-neutral-400",
-                  bg: "bg-neutral-500/10",
-                };
-                const Icon = config.icon;
+              {displayNotifications.map(
+                (notification: INotification, i: number) => {
+                  const config = typeConfig[notification.type] || {
+                    icon: Bell,
+                    color: "text-neutral-400",
+                    bg: "bg-neutral-500/10",
+                  };
+                  const Icon = config.icon;
 
-                return (
-                  <motion.div
-                    key={notification.id}
-                    initial={{ opacity: 0, x: 20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: i * 0.05 }}
-                    className={cn(
-                      "group relative flex gap-4 border-b border-white/5 p-4 transition-colors hover:bg-white/[0.03]",
-                      !notification.isRead && "bg-white/[0.01]"
-                    )}
-                  >
-                    {!notification.isRead && (
+                  return (
+                    <motion.div
+                      key={notification.id}
+                      initial={{ opacity: 0, x: 20 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.05 }}
+                      className={cn(
+                        "group relative flex gap-4 border-b border-white/5 p-4 transition-colors hover:bg-white/[0.03]",
+                        "bg-white/[0.01]",
+                      )}
+                    >
                       <div className="absolute left-1 top-1/2 -translate-y-1/2 h-8 w-0.5 rounded-full bg-red-600" />
-                    )}
 
-                    <div className={cn("flex h-10 w-10 shrink-0 items-center justify-center rounded-xl", config.bg)}>
-                      <Icon className={cn("h-5 w-5", config.color)} />
-                    </div>
-
-                    <div className="flex-1 space-y-1">
-                      <div className="flex items-start justify-between gap-2">
-                        <Link
-                          href={notification.link || "#"}
-                          onClick={() => {
-                            if (!notification.isRead) markReadMutation.mutate(notification.id);
-                            setIsOpen(false);
-                          }}
-                          className="text-[11px] font-black italic text-white uppercase tracking-tight hover:text-red-500 transition-colors line-clamp-1"
-                        >
-                          {notification.title}
-                        </Link>
-                        <span className="flex items-center gap-1 shrink-0 text-[8px] font-black uppercase text-neutral-600">
-                          <Clock className="h-2.5 w-2.5" />
-                          {formatDistanceToNow(new Date(notification.createdAt), { addSuffix: true })}
-                        </span>
+                      <div
+                        className={cn(
+                          "flex h-10 w-10 shrink-0 items-center justify-center rounded-xl",
+                          config.bg,
+                        )}
+                      >
+                        <Icon className={cn("h-5 w-5", config.color)} />
                       </div>
-                      <p className="text-[10px] font-medium leading-relaxed text-neutral-500 line-clamp-2">
-                        {notification.message}
-                      </p>
-                    </div>
-                  </motion.div>
-                );
-              })}
+
+                      <div className="flex-1 space-y-1">
+                        <div className="flex items-start justify-between gap-2">
+                          <Link
+                            href={notification.link || "#"}
+                            onClick={() => {
+                              setIsOpen(false);
+                            }}
+                            className="text-[11px] font-black italic text-white uppercase tracking-tight hover:text-red-500 transition-colors line-clamp-1"
+                          >
+                            {notification.title}
+                          </Link>
+                          <span className="flex items-center gap-1 shrink-0 text-[8px] font-black uppercase text-neutral-600">
+                            <Clock className="h-2.5 w-2.5" />
+                            {formatDistanceToNow(
+                              new Date(notification.createdAt),
+                              { addSuffix: true },
+                            )}
+                          </span>
+                        </div>
+                        <p className="text-[10px] font-medium leading-relaxed text-neutral-500 line-clamp-2">
+                          {notification.message}
+                        </p>
+                      </div>
+                    </motion.div>
+                  );
+                },
+              )}
             </AnimatePresence>
           )}
         </div>
@@ -202,7 +248,9 @@ const NotificationDropdown = () => {
             variant="ghost"
             className="h-10 w-full rounded-xl text-[9px] font-black uppercase tracking-[0.2em] italic text-neutral-400 hover:text-white transition-all"
           >
-            <Link href="/dashboard/notifications">View All Transmission Logs</Link>
+            <Link href="/dashboard/notifications">
+              View All Transmission Logs
+            </Link>
           </Button>
         </div>
       </DropdownMenuContent>

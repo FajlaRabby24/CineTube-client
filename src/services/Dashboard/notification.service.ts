@@ -45,7 +45,9 @@ export async function getUserNotifications(queryString: string = "") {
       },
     });
 
-    return (res as any) ?? null;
+    console.log(res, "notification service");
+
+    return res ?? null;
   } catch (error) {
     console.error("Error fetching notifications:", error);
     return null;
@@ -79,36 +81,6 @@ export async function markAllNotificationsAsRead() {
       message:
         error?.response?.data?.message ||
         "Failed to mark notifications as read",
-    };
-  }
-}
-
-export async function markNotificationAsRead(notificationId: string) {
-  try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
-
-    if (!accessToken) {
-      return { success: false, message: "Unauthorized" };
-    }
-
-    const res = await httpClient.patch(
-      `/notifications/${notificationId}/read`,
-      {},
-      {
-        headers: {
-          Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
-        },
-      },
-    );
-
-    return res;
-  } catch (error: any) {
-    return {
-      success: false,
-      message:
-        error?.response?.data?.message || "Failed to mark notification as read",
     };
   }
 }
