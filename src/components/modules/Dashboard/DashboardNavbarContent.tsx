@@ -87,7 +87,7 @@ const DashboardNavbarContent = ({
       {/* Right Side Actions */}
       <div className="flex items-center gap-4">
         {/* Notification */}
-        <NotificationDropdown />
+        <NotificationDropdown role={userInfo.role} />
 
         <div className="h-4 w-px bg-white/5" />
 

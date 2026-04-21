@@ -24,6 +24,7 @@ import {
   DropdownMenuContent,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { UserRole } from "@/lib/authUtilts";
 import { cn } from "@/lib/utils";
 import {
   getUserNotifications,
@@ -84,7 +85,7 @@ const typeConfig: Record<string, { icon: any; color: string; bg: string }> = {
   },
 };
 
-const NotificationDropdown = () => {
+const NotificationDropdown = ({ role }: { role: UserRole }) => {
   const queryClient = useQueryClient();
   const [isOpen, setIsOpen] = useState(false);
   // Keep local copy of notifications when opening to prevent flickering when they are marked as read
@@ -240,7 +241,13 @@ const NotificationDropdown = () => {
             variant="ghost"
             className="h-10 w-full rounded-xl text-[9px] font-black uppercase tracking-[0.2em] italic text-neutral-400 hover:text-white transition-all"
           >
-            <Link href="/dashboard/notifications">
+            <Link
+              href={
+                role === UserRole.ADMIN || role === UserRole.SUPER_ADMIN
+                  ? "/admin/dashboard/notifications"
+                  : "/dashboard/notifications"
+              }
+            >
               View All Transmission Logs
             </Link>
           </Button>
