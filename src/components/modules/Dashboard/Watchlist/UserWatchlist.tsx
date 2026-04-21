@@ -12,7 +12,6 @@ import {
   SearchIcon,
   Trash2,
   Tv,
-  Zap,
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
@@ -23,6 +22,7 @@ import Swal from "sweetalert2";
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { getYouTubeVideoId } from "@/lib/utils/getYoutubeVedioId";
 import {
   getUserWatchlist,
   IWatchlistItem,
@@ -33,7 +33,7 @@ interface WatchlistProps {
   initialQueryString: string;
 }
 
-const Watchlist = ({ initialQueryString }: WatchlistProps) => {
+const UserWatchlist = ({ initialQueryString }: WatchlistProps) => {
   const router = useRouter();
   const searchParams = useSearchParams();
   const queryClient = useQueryClient();
@@ -174,7 +174,7 @@ const Watchlist = ({ initialQueryString }: WatchlistProps) => {
           </div>
         </div>
 
-        {items.length === 0 ? (
+        {items?.length === 0 ? (
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -199,7 +199,7 @@ const Watchlist = ({ initialQueryString }: WatchlistProps) => {
         ) : (
           <div className="grid gap-4 sm:gap-6 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
             <AnimatePresence mode="popLayout">
-              {items.map((item: IWatchlistItem, i: number) => (
+              {items?.map((item: IWatchlistItem, i: number) => (
                 <motion.div
                   key={item.id}
                   initial={{ opacity: 0, scale: 0.9 }}
@@ -208,9 +208,9 @@ const Watchlist = ({ initialQueryString }: WatchlistProps) => {
                   className="group relative flex flex-col rounded-3xl overflow-hidden border border-white/5 bg-black/40 backdrop-blur-2xl transition-all hover:border-red-600/20 shadow-2xl"
                 >
                   <div className="relative aspect-[2/3] overflow-hidden">
-                    {item.media.posterUrl ? (
+                    {item.media?.youtubeStreamUrl ? (
                       <Image
-                        src={item.media.posterUrl}
+                        src={`https://img.youtube.com/vi/${getYouTubeVideoId(item.media.youtubeStreamUrl)}/hqdefault.jpg`}
                         alt={item.media.title}
                         fill
                         className="object-cover transition-transform duration-700 group-hover:scale-110"
@@ -310,4 +310,4 @@ const Watchlist = ({ initialQueryString }: WatchlistProps) => {
   );
 };
 
-export default Watchlist;
+export default UserWatchlist;

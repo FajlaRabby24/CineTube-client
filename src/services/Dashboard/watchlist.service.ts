@@ -14,7 +14,7 @@ export interface IWatchlistMedia {
   id: string;
   title: string;
   slug: string;
-  posterUrl: string | null;
+  youtubeStreamUrl: string | null;
   type: "MOVIE" | "SHOW";
   releaseYear: number;
 }
@@ -24,25 +24,10 @@ export interface IWatchlistItem {
   userId: string;
   mediaId: string;
   createdAt: string;
-  updatedAt: string;
   media: IWatchlistMedia;
 }
 
-export interface IWatchlistMeta {
-  page: number;
-  limit: number;
-  total: number;
-  totalPages: number;
-}
-
-export interface IGetWatchlistResponse {
-  success: boolean;
-  message: string;
-  data: IWatchlistItem[];
-  meta: IWatchlistMeta;
-}
-
-export async function getUserWatchlist(queryString: string = ""): Promise<IGetWatchlistResponse | null> {
+export async function getUserWatchlist(queryString: string = "") {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
@@ -53,13 +38,14 @@ export async function getUserWatchlist(queryString: string = ""): Promise<IGetWa
     }
 
     const url = `/watchlist${queryString ? `?${queryString}` : ""}`;
-    const res = await httpClient.get<IGetWatchlistResponse>(url, {
+    const res = await httpClient.get<IWatchlistItem[]>(url, {
       headers: {
         Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
       },
     });
 
-    return (res as any) ?? null;
+    console.log(res, "watch list service");
+    return res ?? null;
   } catch (error) {
     console.error("Error fetching user watchlist:", error);
     return null;
@@ -70,6 +56,7 @@ export async function removeFromWatchlist(mediaId: string) {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
+    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
 
     if (!accessToken) {
       return { success: false, message: "Unauthorized" };
@@ -77,7 +64,7 @@ export async function removeFromWatchlist(mediaId: string) {
 
     const res = await httpClient.delete(`/watchlist/${mediaId}`, {
       headers: {
-        Authorization: accessToken,
+        Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
       },
     });
 
@@ -85,7 +72,8 @@ export async function removeFromWatchlist(mediaId: string) {
   } catch (error: any) {
     return {
       success: false,
-      message: error?.response?.data?.message || "Failed to remove from watchlist",
+      message:
+        error?.response?.data?.message || "Failed to remove from watchlist",
     };
   }
 }

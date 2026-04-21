@@ -1,4 +1,4 @@
-import Watchlist from "@/components/modules/Dashboard/Watchlist";
+import UserWatchlist from "@/components/modules/Dashboard/Watchlist/UserWatchlist";
 import { getUserWatchlist } from "@/services/Dashboard/watchlist.service";
 import {
   dehydrate,
@@ -40,7 +40,7 @@ const WatchlistPage = async ({
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
-      <Watchlist initialQueryString={queryString} />
+      <UserWatchlist initialQueryString={queryString} />
     </HydrationBoundary>
   );
 };
