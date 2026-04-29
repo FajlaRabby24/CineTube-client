@@ -7,7 +7,7 @@ import {
   UserRole,
 } from "../../lib/authUtilts";
 import { httpClient } from "../../lib/axios/httpClient";
-import { setTokenInCookies } from "../../lib/tokenUtils";
+import { getSessionCookieName, setTokenInCookies } from "../../lib/tokenUtils";
 import { ILoginPayload, ILoginResponse } from "../../types/auth.types";
 import { loginZodSchema } from "../../zod/auth.validation";
 
@@ -54,7 +54,7 @@ export const loginAction = async (
     await setTokenInCookies("accessToken", accessToken);
     await setTokenInCookies("refreshToken", refreshToken);
     await setTokenInCookies(
-      "better-auth.session_token",
+      getSessionCookieName(),
       token,
       60 * 60 * 24 * 7, // 7 days
     );

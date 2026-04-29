@@ -2,6 +2,7 @@
 
 import { UserRole } from "@/lib/authUtilts";
 import { httpClient } from "@/lib/axios/httpClient";
+import { getSessionCookieName } from "@/lib/tokenUtils";
 import { cookies } from "next/headers";
 
 // ✅ Refresh token
@@ -10,11 +11,12 @@ export async function getNewTokensWithRefreshToken(
 ): Promise<boolean> {
   try {
     const cookieStore = await cookies();
-    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
+    const sessionTokenName = getSessionCookieName();
+    const sessionToken = cookieStore.get(sessionTokenName)?.value;
 
     const res = await httpClient.post("/auth/refresh-token", {
       headers: {
-        Cookie: `refreshToken=${refreshToken}; better-auth.session_token=${sessionToken}`,
+        Cookie: `refreshToken=${refreshToken}; ${sessionTokenName}=${sessionToken}`,
       },
     });
     if (!res.success) return false;
@@ -45,7 +47,8 @@ export async function getUserInfo() {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
-    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
+    const sessionTokenName = getSessionCookieName();
+    const sessionToken = cookieStore.get(sessionTokenName)?.value;
 
     if (!accessToken) {
       return null;
@@ -53,7 +56,7 @@ export async function getUserInfo() {
 
     const res = await httpClient.get<IUserInfo>("/auth/me", {
       headers: {
-        Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
+        Cookie: `accessToken=${accessToken}; ${sessionTokenName}=${sessionToken}`,
       },
     });
 

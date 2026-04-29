@@ -23,6 +23,12 @@ const getTokenSecondRemaining = (token: string): number => {
   }
 };
 
+export const getSessionCookieName = async () => {
+  return process.env.NODE_ENV === "production"
+    ? "__Secure-better-auth.session_token"
+    : "better-auth.session_token";
+};
+
 export const setTokenInCookies = async (
   name: string,
   token: string,
@@ -30,7 +36,10 @@ export const setTokenInCookies = async (
 ) => {
   let maxAgeInSeconds;
 
-  if (name !== "better-auth.session_token") {
+  if (
+    name !== "better-auth.session_token" &&
+    name !== "__Secure-better-auth.session_token"
+  ) {
     maxAgeInSeconds = getTokenSecondRemaining(token);
   }
 

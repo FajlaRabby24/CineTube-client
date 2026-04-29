@@ -34,19 +34,7 @@ export interface IMyProfileResponse {
 
 export async function getMyProfile() {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
-
-    if (!accessToken) {
-      return null;
-    }
-
-    const res = await httpClient.get<IMyProfileResponse>("/auth/my-profile", {
-      headers: {
-        Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
-      },
-    });
+    const res = await httpClient.get<IMyProfileResponse>("/auth/my-profile");
 
     return res.data;
   } catch (error) {

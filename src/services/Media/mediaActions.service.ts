@@ -5,17 +5,7 @@ import { cookies } from "next/headers";
 
 export async function deleteMedia(mediaId: string) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
-
-    if (!accessToken) return { success: false, message: "Unauthorized" };
-
-    const res = await httpClient.delete(`/media/${mediaId}`, {
-      headers: {
-        Cookie: `accessToken=${accessToken}; better-auth.session_token=${sessionToken}`,
-      },
-    });
+    const res = await httpClient.delete(`/media/${mediaId}`);
 
     return {
       success: true,
@@ -31,18 +21,7 @@ export async function deleteMedia(mediaId: string) {
 
 export async function createMedia(data: any) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
-
-    if (!accessToken && !sessionToken)
-      return { success: false, message: "Unauthorized" };
-
-    const res = await httpClient.post("/media", data, {
-      headers: {
-        Cookie: `accessToken=${accessToken || ""}; better-auth.session_token=${sessionToken || ""}`,
-      },
-    });
+    const res = await httpClient.post("/media", data);
 
     return {
       success: true,
@@ -58,18 +37,7 @@ export async function createMedia(data: any) {
 
 export async function updateMedia({ id, data }: { id: string; data: any }) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
-
-    if (!accessToken && !sessionToken)
-      return { success: false, message: "Unauthorized" };
-
-    const res = await httpClient.patch(`/media/${id}`, data, {
-      headers: {
-        Cookie: `accessToken=${accessToken || ""}; better-auth.session_token=${sessionToken || ""}`,
-      },
-    });
+    const res = await httpClient.patch(`/media/${id}`, data);
 
     return {
       success: true,
@@ -100,21 +68,9 @@ export async function toggleLikeMedia(
   type: "LIKE" | "DISLIKE",
 ) {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
-
-    if (!accessToken && !sessionToken)
-      return { success: false, message: "Unauthorized" };
-
     const res = await httpClient.post(
       `/media/${mediaId}/like`,
-      { type },
-      {
-        headers: {
-          Cookie: `accessToken=${accessToken || ""}; better-auth.session_token=${sessionToken || ""}`,
-        },
-      },
+      { type }
     );
 
     return {
@@ -135,18 +91,7 @@ export async function getUserVoteStatus(
   mediaId: string,
 ): Promise<{ success: boolean; data: { userVote: TVoteType } }> {
   try {
-    const cookieStore = await cookies();
-    const accessToken = cookieStore.get("accessToken")?.value;
-    const sessionToken = cookieStore.get("better-auth.session_token")?.value;
-
-    if (!accessToken && !sessionToken)
-      return { success: false, data: { userVote: null } };
-
-    const res = await httpClient.get(`/media/${mediaId}/vote-status`, {
-      headers: {
-        Cookie: `accessToken=${accessToken || ""}; better-auth.session_token=${sessionToken || ""}`,
-      },
-    });
+    const res = await httpClient.get(`/media/${mediaId}/vote-status`);
 
     const payload = res as any;
     const userVote = (payload?.data?.userVote as TVoteType) || null;
