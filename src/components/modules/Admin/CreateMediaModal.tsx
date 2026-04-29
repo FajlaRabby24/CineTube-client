@@ -50,10 +50,6 @@ export const CreateMediaModal = ({
   const [tags, setTags] = useState<string[]>([]);
   const [tagInput, setTagInput] = useState("");
 
-  const [platforms, setPlatforms] = useState<
-    { platform: "YOUTUBE"; streamUrl: string }[]
-  >([]);
-
   const { mutateAsync: createMediaMutate, isPending: isCreating } = useMutation(
     {
       mutationFn: createMedia,
@@ -68,11 +64,7 @@ export const CreateMediaModal = ({
       releaseYear: new Date().getFullYear(),
       ageRating: "" as any,
       duration: undefined as any,
-      posterUrl: "",
-      backdropUrl: "",
-      trailerUrl: "",
       youtubeStreamUrl: "",
-      imdbId: "",
       language: "English",
       country: "USA",
       pricingType: "" as any,
@@ -94,14 +86,9 @@ export const CreateMediaModal = ({
           ...value,
           releaseYear: Number(value.releaseYear),
           duration: value.duration ? Number(value.duration) : undefined,
-          posterUrl: value.posterUrl || undefined,
-          backdropUrl: value.backdropUrl || undefined,
-          trailerUrl: value.trailerUrl || undefined,
           youtubeStreamUrl: value.youtubeStreamUrl || undefined,
-          imdbId: value.imdbId || undefined,
           genres,
           tags: tags.length > 0 ? tags : undefined,
-          platforms: platforms.length > 0 ? platforms : undefined,
         };
 
         const result = await createMediaMutate(submissionValue);
@@ -111,7 +98,6 @@ export const CreateMediaModal = ({
           form.reset();
           setGenres([]);
           setTags([]);
-          setPlatforms([]);
           queryClient.invalidateQueries({ queryKey: ["admin-media"] });
         } else {
           setCreateError(result.message);
@@ -143,7 +129,7 @@ export const CreateMediaModal = ({
         <DialogHeader className="p-6 pb-2">
           <DialogTitle>Create New Media</DialogTitle>
           <DialogDescription>
-            Add a new movie or series to the catalog with extensive details.
+            Add a new movie or series to the catalog with essential details.
           </DialogDescription>
         </DialogHeader>
 
@@ -168,20 +154,13 @@ export const CreateMediaModal = ({
                   General Info
                 </TabsTrigger>
                 <TabsTrigger
-                  value="media"
-                  className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none"
-                >
-                  Media & URLs
-                </TabsTrigger>
-                <TabsTrigger
                   value="metadata"
                   className="data-[state=active]:border-b-2 data-[state=active]:border-primary rounded-none shadow-none"
                 >
-                  Metadata & Tags
+                  Genres & Tags
                 </TabsTrigger>
               </TabsList>
 
-              {/* GENERAL INFO TAB */}
               <TabsContent value="general" className="mt-0 outline-none">
                 <FieldGroup className="grid gap-4 sm:grid-cols-2">
                   <Field>
@@ -204,12 +183,6 @@ export const CreateMediaModal = ({
                             onChange={(e) => field.handleChange(e.target.value)}
                             placeholder="e.g. Inception"
                           />
-                          {field.state.meta.isTouched &&
-                            field.state.meta.errors.length > 0 && (
-                              <p className="text-xs text-red-500">
-                                {getErrorMessage(field.state.meta.errors[0])}
-                              </p>
-                            )}
                         </div>
                       )}
                     </form.Field>
@@ -233,14 +206,8 @@ export const CreateMediaModal = ({
                             value={field.state.value}
                             onBlur={field.handleBlur}
                             onChange={(e) => field.handleChange(e.target.value)}
-                            placeholder="A thief who steals corporate secrets..."
+                            placeholder="A brief description..."
                           />
-                          {field.state.meta.isTouched &&
-                            field.state.meta.errors.length > 0 && (
-                              <p className="text-xs text-red-500">
-                                {getErrorMessage(field.state.meta.errors[0])}
-                              </p>
-                            )}
                         </div>
                       )}
                     </form.Field>
@@ -250,14 +217,10 @@ export const CreateMediaModal = ({
                     <form.Field name="type">
                       {(field) => (
                         <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>
-                            Media Type <span className="text-red-500">*</span>
-                          </FieldLabel>
+                          <FieldLabel htmlFor={field.name}>Type</FieldLabel>
                           <Select
                             value={field.state.value}
-                            onValueChange={(val: any) =>
-                              field.handleChange(val)
-                            }
+                            onValueChange={field.handleChange}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Select type" />
@@ -279,12 +242,6 @@ export const CreateMediaModal = ({
                               <SelectItem value="OTHER">Other</SelectItem>
                             </SelectContent>
                           </Select>
-                          {field.state.meta.isTouched &&
-                            field.state.meta.errors.length > 0 && (
-                              <p className="text-xs text-red-500">
-                                {getErrorMessage(field.state.meta.errors[0])}
-                              </p>
-                            )}
                         </div>
                       )}
                     </form.Field>
@@ -295,18 +252,58 @@ export const CreateMediaModal = ({
                       {(field) => (
                         <div className="space-y-2">
                           <FieldLabel htmlFor={field.name}>
-                            Release Year <span className="text-red-500">*</span>
+                            Release Year
                           </FieldLabel>
                           <Input
                             id={field.name}
                             name={field.name}
                             type="number"
                             value={field.state.value}
-                            onBlur={field.handleBlur}
                             onChange={(e) =>
                               field.handleChange(Number(e.target.value))
                             }
                           />
+                        </div>
+                      )}
+                    </form.Field>
+                  </Field>
+
+                  <Field>
+                    <form.Field name="youtubeStreamUrl">
+                      {(field) => (
+                        <div className="space-y-2 sm:col-span-2">
+                          <FieldLabel htmlFor={field.name}>
+                            YouTube URL
+                          </FieldLabel>
+                          <Input
+                            id={field.name}
+                            name={field.name}
+                            value={field.state.value}
+                            onChange={(e) => field.handleChange(e.target.value)}
+                            placeholder="https://youtube.com/watch?v=..."
+                          />
+                        </div>
+                      )}
+                    </form.Field>
+                  </Field>
+
+                  <Field>
+                    <form.Field name="pricingType">
+                      {(field) => (
+                        <div className="space-y-2">
+                          <FieldLabel htmlFor={field.name}>Pricing</FieldLabel>
+                          <Select
+                            value={field.state.value}
+                            onValueChange={field.handleChange}
+                          >
+                            <SelectTrigger>
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="FREE">Free</SelectItem>
+                              <SelectItem value="PREMIUM">Premium</SelectItem>
+                            </SelectContent>
+                          </Select>
                         </div>
                       )}
                     </form.Field>
@@ -317,14 +314,14 @@ export const CreateMediaModal = ({
                       {(field) => (
                         <div className="space-y-2">
                           <FieldLabel htmlFor={field.name}>
-                            Age Rating <span className="text-red-500">*</span>
+                            Age Rating
                           </FieldLabel>
                           <Select
                             value={field.state.value}
                             onValueChange={field.handleChange}
                           >
                             <SelectTrigger>
-                              <SelectValue placeholder="Select rating" />
+                              <SelectValue />
                             </SelectTrigger>
                             <SelectContent>
                               <SelectItem value="G">G</SelectItem>
@@ -332,105 +329,6 @@ export const CreateMediaModal = ({
                               <SelectItem value="PG_13">PG-13</SelectItem>
                               <SelectItem value="R">R</SelectItem>
                               <SelectItem value="NC_17">NC-17</SelectItem>
-                              <SelectItem value="TV_Y">TV-Y</SelectItem>
-                              <SelectItem value="TV_14">TV-14</SelectItem>
-                              <SelectItem value="TV_MA">TV-MA</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {field.state.meta.isTouched &&
-                            field.state.meta.errors.length > 0 && (
-                              <p className="text-xs text-red-500">
-                                {getErrorMessage(field.state.meta.errors[0])}
-                              </p>
-                            )}
-                        </div>
-                      )}
-                    </form.Field>
-                  </Field>
-
-                  <Field>
-                    <form.Field name="duration">
-                      {(field) => (
-                        <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>
-                            Duration (mins) <span className="text-red-500">*</span>
-                          </FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            type="number"
-                            value={field.state.value || ""}
-                            onBlur={field.handleBlur}
-                            onChange={(e) =>
-                              field.handleChange(Number(e.target.value))
-                            }
-                            placeholder="e.g. 120"
-                          />
-                          {field.state.meta.isTouched &&
-                            field.state.meta.errors.length > 0 && (
-                              <p className="text-xs text-red-500">
-                                {getErrorMessage(field.state.meta.errors[0])}
-                              </p>
-                            )}
-                        </div>
-                      )}
-                    </form.Field>
-                  </Field>
-
-                  <Field>
-                    <form.Field name="pricingType">
-                      {(field) => (
-                        <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>
-                            Pricing Type <span className="text-red-500">*</span>
-                          </FieldLabel>
-                          <Select
-                            value={field.state.value}
-                            onValueChange={(val: any) =>
-                              field.handleChange(val)
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select pricing" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="FREE">Free</SelectItem>
-                              <SelectItem value="PREMIUM">Premium</SelectItem>
-                            </SelectContent>
-                          </Select>
-                          {field.state.meta.isTouched &&
-                            field.state.meta.errors.length > 0 && (
-                              <p className="text-xs text-red-500">
-                                {getErrorMessage(field.state.meta.errors[0])}
-                              </p>
-                            )}
-                        </div>
-                      )}
-                    </form.Field>
-                  </Field>
-
-                  <Field>
-                    <form.Field name="status">
-                      {(field) => (
-                        <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>Status</FieldLabel>
-                          <Select
-                            value={field.state.value}
-                            onValueChange={(val: any) =>
-                              field.handleChange(val)
-                            }
-                          >
-                            <SelectTrigger>
-                              <SelectValue placeholder="Select status" />
-                            </SelectTrigger>
-                            <SelectContent>
-                              <SelectItem value="PUBLISHED">
-                                Published
-                              </SelectItem>
-                              <SelectItem value="UNPUBLISHED">
-                                Unpublished
-                              </SelectItem>
-                              <SelectItem value="DRAFT">Draft</SelectItem>
                             </SelectContent>
                           </Select>
                         </div>
@@ -440,103 +338,11 @@ export const CreateMediaModal = ({
                 </FieldGroup>
               </TabsContent>
 
-              {/* MEDIA URLs TAB */}
-              <TabsContent
-                value="media"
-                className="mt-0 outline-none space-y-4 pb-3"
-              >
-                <FieldGroup className="grid gap-4 sm:grid-cols-2">
-                  <Field>
-                    <form.Field name="youtubeStreamUrl">
-                      {(field) => (
-                        <div className="space-y-2">
-                          <FieldLabel htmlFor={field.name}>
-                            YouTube Stream URL{" "}
-                            <span className="text-red-500">*</span>
-                          </FieldLabel>
-                          <Input
-                            id={field.name}
-                            name={field.name}
-                            type="url"
-                            value={field.state.value}
-                            onBlur={field.handleBlur}
-                            onChange={(e) => field.handleChange(e.target.value)}
-                            placeholder="https://youtube.com/watch?v=..."
-                          />
-                          {field.state.meta.isTouched &&
-                            field.state.meta.errors.length > 0 && (
-                              <p className="text-xs text-red-500">
-                                {getErrorMessage(field.state.meta.errors[0])}
-                              </p>
-                            )}
-                        </div>
-                      )}
-                    </form.Field>
-                  </Field>
-                </FieldGroup>
-
-                {/* <div className="border rounded-lg p-4 space-y-4 shadow-sm">
-                  <h4 className="font-semibold text-sm">Streaming Platforms</h4>
-                  {platforms.map((platform, idx) => (
-                    <div key={idx} className="flex items-center gap-2">
-                      <Select
-                        value={platform.platform}
-                        onValueChange={(val: any) => {
-                          const newPlatforms = [...platforms];
-                          newPlatforms[idx].platform = val;
-                          setPlatforms(newPlatforms);
-                        }}
-                      >
-                        <SelectTrigger className="w-[150px]">
-                          <SelectValue placeholder="Platform" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="YOUTUBE">YouTube</SelectItem>
-                        </SelectContent>
-                      </Select>
-                      <Input
-                        placeholder="Stream URL"
-                        value={platform.streamUrl}
-                        onChange={(e) => {
-                          const newPlatforms = [...platforms];
-                          newPlatforms[idx].streamUrl = e.target.value;
-                          setPlatforms(newPlatforms);
-                        }}
-                      />
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        type="button"
-                        onClick={() => {
-                          setPlatforms(platforms.filter((_, i) => i !== idx));
-                        }}
-                      >
-                        <TrashIcon className="size-4 text-destructive" />
-                      </Button>
-                    </div>
-                  ))}
-                  <Button
-                    type="button"
-                    variant="outline"
-                    size="sm"
-                    onClick={() =>
-                      setPlatforms([
-                        ...platforms,
-                        { platform: "YOUTUBE", streamUrl: "" },
-                      ])
-                    }
-                  >
-                    <PlusIcon className="mr-2 size-4" /> Add Platform
-                  </Button>
-                </div> */}
-              </TabsContent>
-
-              {/* METADATA TAB */}
               <TabsContent
                 value="metadata"
                 className="mt-0 outline-none space-y-6"
               >
-                <FieldGroup className="grid gap-4 sm:grid-cols-2">
+                <div className="grid grid-cols-2 gap-4">
                   <Field>
                     <form.Field name="language">
                       {(field) => (
@@ -544,9 +350,7 @@ export const CreateMediaModal = ({
                           <FieldLabel htmlFor={field.name}>Language</FieldLabel>
                           <Input
                             id={field.name}
-                            name={field.name}
                             value={field.state.value}
-                            onBlur={field.handleBlur}
                             onChange={(e) => field.handleChange(e.target.value)}
                           />
                         </div>
@@ -560,78 +364,44 @@ export const CreateMediaModal = ({
                           <FieldLabel htmlFor={field.name}>Country</FieldLabel>
                           <Input
                             id={field.name}
-                            name={field.name}
                             value={field.state.value}
-                            onBlur={field.handleBlur}
                             onChange={(e) => field.handleChange(e.target.value)}
                           />
                         </div>
                       )}
                     </form.Field>
                   </Field>
-                </FieldGroup>
+                </div>
 
-                <div className="space-y-2">
-                  <FieldLabel>Flags & Banners</FieldLabel>
-                  <div className="flex flex-wrap gap-4 pt-2">
-                    <Field>
-                      <form.Field name="isFeatured">
-                        {(field) => (
-                          <label className="flex items-center gap-2 cursor-pointer border p-2 px-3 rounded text-sm hover:bg-muted/50 transition">
-                            <input
-                              type="checkbox"
-                              checked={field.state.value}
-                              onChange={(e) =>
-                                field.handleChange(e.target.checked)
-                              }
-                              className="rounded"
-                            />
-                            Is Featured
-                          </label>
-                        )}
-                      </form.Field>
-                    </Field>
-                    <Field>
-                      <form.Field name="isTrending">
-                        {(field) => (
-                          <label className="flex items-center gap-2 cursor-pointer border p-2 px-3 rounded text-sm hover:bg-muted/50 transition">
-                            <input
-                              type="checkbox"
-                              checked={field.state.value}
-                              onChange={(e) =>
-                                field.handleChange(e.target.checked)
-                              }
-                              className="rounded"
-                            />
-                            Is Trending
-                          </label>
-                        )}
-                      </form.Field>
-                    </Field>
-                    <Field>
-                      <form.Field name="isEditorsPick">
-                        {(field) => (
-                          <label className="flex items-center gap-2 cursor-pointer border p-2 px-3 rounded text-sm hover:bg-muted/50 transition">
-                            <input
-                              type="checkbox"
-                              checked={field.state.value}
-                              onChange={(e) =>
-                                field.handleChange(e.target.checked)
-                              }
-                              className="rounded"
-                            />
-                            Editor's Pick
-                          </label>
-                        )}
-                      </form.Field>
-                    </Field>
-                  </div>
+                <div className="flex gap-4">
+                  <form.Field name="isFeatured">
+                    {(field) => (
+                      <label className="flex gap-2 text-sm items-center cursor-pointer border p-2 rounded">
+                        <input
+                          type="checkbox"
+                          checked={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.checked)}
+                        />{" "}
+                        Featured
+                      </label>
+                    )}
+                  </form.Field>
+                  <form.Field name="isTrending">
+                    {(field) => (
+                      <label className="flex gap-2 text-sm items-center cursor-pointer border p-2 rounded">
+                        <input
+                          type="checkbox"
+                          checked={field.state.value}
+                          onChange={(e) => field.handleChange(e.target.checked)}
+                        />{" "}
+                        Trending
+                      </label>
+                    )}
+                  </form.Field>
                 </div>
 
                 <div className="space-y-2">
-                  <FieldLabel>
-                    Genres <span className="text-red-500">*</span>
-                  </FieldLabel>
+                  <FieldLabel>Genres</FieldLabel>
                   <div className="flex flex-wrap gap-2">
                     {GenreEnum.options.map((g) => (
                       <Badge
@@ -648,9 +418,8 @@ export const CreateMediaModal = ({
 
                 <div className="space-y-2">
                   <FieldLabel>Tags</FieldLabel>
-                  <div className="flex items-center gap-2 mb-2">
+                  <div className="flex gap-2">
                     <Input
-                      placeholder="Add a tag..."
                       value={tagInput}
                       onChange={(e) => setTagInput(e.target.value)}
                       onKeyDown={(e) =>
@@ -661,18 +430,15 @@ export const CreateMediaModal = ({
                       Add
                     </Button>
                   </div>
-                  <div className="flex flex-wrap gap-2">
-                    {tags.map((tag) => (
-                      <Badge
-                        key={tag}
-                        variant="secondary"
-                        className="pl-3 pr-1 py-1 gap-1"
-                      >
-                        {tag}
+                  <div className="flex flex-wrap gap-2 mt-2">
+                    {tags.map((t) => (
+                      <Badge key={t} variant="secondary" className="gap-1">
+                        {t}
                         <button
                           type="button"
-                          onClick={() => setTags(tags.filter((t) => t !== tag))}
-                          className="opacity-70 hover:opacity-100"
+                          onClick={() =>
+                            setTags(tags.filter((tag) => tag !== t))
+                          }
                         >
                           <XIcon className="size-3" />
                         </button>
@@ -686,15 +452,12 @@ export const CreateMediaModal = ({
 
           <div className="p-6 pt-4 border-t flex flex-col gap-2 bg-background z-10 sticky bottom-0">
             {createError && (
-              <p className="text-sm text-red-500 bg-red-50 dark:bg-red-950 p-2 rounded mb-2 font-medium">
-                {createError}
-              </p>
+              <p className="text-sm text-red-500 font-medium">{createError}</p>
             )}
-            <div className="flex justify-end gap-2 isolate">
+            <div className="flex justify-end gap-2">
               <Button
                 type="button"
                 variant="outline"
-                className="cursor-pointer"
                 onClick={() => {
                   onOpenChange(false);
                   form.reset();
@@ -702,11 +465,7 @@ export const CreateMediaModal = ({
               >
                 Cancel
               </Button>
-              <Button
-                className="cursor-pointer"
-                type="submit"
-                disabled={isCreating}
-              >
+              <Button type="submit" disabled={isCreating}>
                 {isCreating ? "Creating..." : "Create Media"}
               </Button>
             </div>

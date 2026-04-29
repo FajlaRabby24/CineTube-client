@@ -22,9 +22,8 @@ export const AgeRatingEnum = z.enum([
   "TV_14",
   "TV_MA",
 ]);
-export const PricingTypeEnum = z.enum(["FREE", "PREMIUM"]); // BASIC removed per prisma
+export const PricingTypeEnum = z.enum(["FREE", "PREMIUM"]);
 export const ContentStatusEnum = z.enum(["DRAFT", "PUBLISHED", "UNPUBLISHED"]);
-export const StreamingPlatformEnum = z.enum(["YOUTUBE"]);
 export const GenreEnum = z.enum([
   "ACTION",
   "ADVENTURE",
@@ -62,10 +61,7 @@ export const createMediaZodSchema = z.object({
     .number()
     .int()
     .min(1, "Duration must be at least 1 minute"),
-  totalSeasons: z.coerce.number().int().optional(),
-  totalEpisodes: z.coerce.number().int().optional(),
   youtubeStreamUrl: z.string().url("Must be a valid YouTube URL"),
-  imdbId: z.string().optional(),
   language: z.string().optional(),
   country: z.string().optional(),
   pricingType: PricingTypeEnum,
@@ -74,31 +70,6 @@ export const createMediaZodSchema = z.object({
   isEditorsPick: z.boolean().optional(),
   isTrending: z.boolean().optional(),
   genres: z.array(GenreEnum).min(1, "At least one genre is required"),
-  platforms: z
-    .array(
-      z.object({
-        platform: StreamingPlatformEnum,
-        streamUrl: z.string().url().optional().or(z.literal("")),
-      }),
-    )
-    .optional(),
-  castMembers: z
-    .array(
-      z.object({
-        actorName: z.string(),
-        character: z.string().optional(),
-        profileUrl: z.string().url().optional().or(z.literal("")),
-      }),
-    )
-    .optional(),
-  directors: z
-    .array(
-      z.object({
-        directorName: z.string(),
-        profileUrl: z.string().url().optional().or(z.literal("")),
-      }),
-    )
-    .optional(),
   tags: z.array(z.string()).optional(),
 });
 
