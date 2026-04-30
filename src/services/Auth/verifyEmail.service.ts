@@ -7,7 +7,7 @@ import {
   isValidRedirectForRole,
   UserRole,
 } from "@/lib/authUtilts";
-import { setTokenInCookies } from "@/lib/tokenUtils";
+import { getSessionCookieName, setTokenInCookies } from "@/lib/tokenUtils";
 import { httpClient } from "../../lib/axios/httpClient";
 import { verifyEmailSchema } from "../../zod/auth.validation";
 
@@ -44,7 +44,7 @@ export const verifyEmailAction = async (
     await setTokenInCookies("accessToken", accessToken);
     await setTokenInCookies("refreshToken", refreshToken);
     await setTokenInCookies(
-      "better-auth.session_token",
+      await getSessionCookieName(),
       token,
       60 * 60 * 24 * 7, // 7 days
     );

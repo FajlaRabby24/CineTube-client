@@ -11,7 +11,7 @@ export async function getNewTokensWithRefreshToken(
 ): Promise<boolean> {
   try {
     const cookieStore = await cookies();
-    const sessionTokenName = getSessionCookieName();
+    const sessionTokenName = await getSessionCookieName();
     const sessionToken = cookieStore.get(sessionTokenName)?.value;
 
     const res = await httpClient.post("/auth/refresh-token", {
@@ -47,7 +47,7 @@ export async function getUserInfo() {
   try {
     const cookieStore = await cookies();
     const accessToken = cookieStore.get("accessToken")?.value;
-    const sessionTokenName = getSessionCookieName();
+    const sessionTokenName = await getSessionCookieName();
     const sessionToken = cookieStore.get(sessionTokenName)?.value;
 
     if (!accessToken) {

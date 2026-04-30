@@ -2,7 +2,6 @@
 import { envVars } from "@/config/env";
 import { ApiResponse } from "@/types/api.types";
 import axios from "axios";
-import { cookies } from "next/headers";
 
 const API_BASE_URL = envVars.NEXT_PUBLIC_API_BASE_URL;
 
@@ -11,19 +10,29 @@ if (!API_BASE_URL) {
 }
 
 const axiosInstance = async () => {
-  const cookieStore = await cookies();
-  const cookieHeader = cookieStore
-    .getAll()
-    .map((cookie) => `${cookie.name}=${cookie.value}`)
-    .join("; ");
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
+  };
+
+  if (typeof window === "undefined") {
+    // We are on the server, so we need to manually pass cookies
+    const { cookies } = await import("next/headers");
+    const cookieStore = await cookies();
+    const cookieHeader = cookieStore
+      .getAll()
+      .map((cookie) => `${cookie.name}=${cookie.value}`)
+      .join("; ");
+
+    if (cookieHeader) {
+      headers["Cookie"] = cookieHeader;
+    }
+  }
 
   const instance = axios.create({
     baseURL: API_BASE_URL,
     timeout: 30000,
-    headers: {
-      "Content-Type": "application/json",
-      Cookie: cookieHeader,
-    },
+    headers,
+    withCredentials: true,
   });
 
   return instance;

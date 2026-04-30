@@ -54,7 +54,7 @@ export const loginAction = async (
     await setTokenInCookies("accessToken", accessToken);
     await setTokenInCookies("refreshToken", refreshToken);
     await setTokenInCookies(
-      getSessionCookieName(),
+      await getSessionCookieName(),
       token,
       60 * 60 * 24 * 7, // 7 days
     );
