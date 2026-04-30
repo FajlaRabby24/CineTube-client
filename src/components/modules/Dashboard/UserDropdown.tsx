@@ -1,6 +1,6 @@
 "use client";
 
-import { Key, LogOut, Settings, Shield, User2Icon } from "lucide-react";
+import { LogOut, Settings, Shield, User2Icon } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 import Swal from "sweetalert2";
@@ -113,16 +113,6 @@ const UserDropdown = ({ userInfo }: { userInfo: IUserInfo }) => {
             <User2Icon className="h-4 w-4 text-neutral-500 group-hover:text-white transition-all" />
             <span className="text-[10px] font-black italic uppercase tracking-widest text-neutral-400 group-hover:text-white">
               Update Profile
-            </span>
-          </DropdownMenuItem>
-
-          <DropdownMenuItem
-            onClick={() => router.push("/reset-password")}
-            className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-white/5 focus:bg-white/5 group transition-colors"
-          >
-            <Key className="h-4 w-4 text-neutral-500 group-hover:text-white transition-all" />
-            <span className="text-[10px] font-black italic uppercase tracking-widest text-neutral-400 group-hover:text-white">
-              Reset Password
             </span>
           </DropdownMenuItem>
         </div>
