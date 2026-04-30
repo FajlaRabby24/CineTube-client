@@ -14,7 +14,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { deleteCookie, getCookie } from "@/lib/cookieUtils";
+import { deleteCookie } from "@/lib/cookieUtils";
+import { getSessionCookieName } from "@/lib/tokenUtils";
 import { IUserInfo } from "@/services/Auth/getMe.service";
 import { logoutSession } from "@/services/Auth/logoutSession.service";
 
@@ -23,7 +24,7 @@ const UserDropdown = ({ userInfo }: { userInfo: IUserInfo }) => {
 
   const handleLogout = async () => {
     try {
-      const token = await getCookie("better-auth.session_token");
+      const token = await getSessionCookieName();
       const currentSessionIdAndToken = userInfo.sessions.filter(
         (session) => session.token === token,
       )[0];
@@ -101,27 +102,27 @@ const UserDropdown = ({ userInfo }: { userInfo: IUserInfo }) => {
           >
             <Settings className="h-4 w-4 text-neutral-500 group-hover:text-white group-hover:rotate-45 transition-all" />
             <span className="text-[10px] font-black italic uppercase tracking-widest text-neutral-400 group-hover:text-white">
-              Encryption Config
+              Change Password
             </span>
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            onClick={() => router.push("/Update Profile")}
+            onClick={() => router.push("/update-profile")}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-white/5 focus:bg-white/5 group transition-colors"
           >
             <User2Icon className="h-4 w-4 text-neutral-500 group-hover:text-white transition-all" />
             <span className="text-[10px] font-black italic uppercase tracking-widest text-neutral-400 group-hover:text-white">
-              Identity Matrix
+              Update Profile
             </span>
           </DropdownMenuItem>
 
           <DropdownMenuItem
-            onClick={() => router.push("/Reset Password")}
+            onClick={() => router.push("/reset-password")}
             className="flex items-center gap-3 px-3 py-2.5 rounded-xl cursor-pointer hover:bg-white/5 focus:bg-white/5 group transition-colors"
           >
             <Key className="h-4 w-4 text-neutral-500 group-hover:text-white transition-all" />
             <span className="text-[10px] font-black italic uppercase tracking-widest text-neutral-400 group-hover:text-white">
-              Protocol Reset
+              Reset Password
             </span>
           </DropdownMenuItem>
         </div>
@@ -131,13 +132,13 @@ const UserDropdown = ({ userInfo }: { userInfo: IUserInfo }) => {
         <DropdownMenuItem
           onClick={() => {
             Swal.fire({
-              title: "Terminate Session?",
+              title: "Logout?",
               text: "Confirming secure logout protocol.",
               icon: "warning",
               showCancelButton: true,
               confirmButtonColor: "#dc2626",
               cancelButtonColor: "#171717",
-              confirmButtonText: "Terminate",
+              confirmButtonText: "Logout",
               background: "#0a0a0a",
               color: "#fff",
               customClass: {
@@ -153,7 +154,7 @@ const UserDropdown = ({ userInfo }: { userInfo: IUserInfo }) => {
         >
           <LogOut className="h-4 w-4 text-red-600 group-hover:text-white transition-all" />
           <span className="text-[10px] font-black italic uppercase tracking-widest text-red-600 group-hover:text-white">
-            Disconnect
+            Logout
           </span>
         </DropdownMenuItem>
       </DropdownMenuContent>
