@@ -292,7 +292,7 @@ const MoviesListing = ({ initialQueryString }: MoviesListingProps) => {
               variant="outline"
               disabled={meta.page <= 1 || isPending}
               onClick={() => updateFilters({ page: meta.page - 1 })}
-              className="h-10 px-4 rounded-xl bg-white/5 border-white/10 text-white"
+              className="h-10 px-4 rounded-xl bg-white/5 border-white/10 text-white cursor-pointer"
             >
               <ChevronLeftIcon className="mr-2 size-4" /> Previous
             </Button>
@@ -304,7 +304,7 @@ const MoviesListing = ({ initialQueryString }: MoviesListingProps) => {
               variant="outline"
               disabled={meta.page >= meta.totalPages || isPending}
               onClick={() => updateFilters({ page: meta.page + 1 })}
-              className="h-10 px-4 rounded-xl bg-white/5 border-white/10 text-white"
+              className="h-10 px-4 rounded-xl bg-white/5 border-white/10 text-white cursor-pointer"
             >
               Next <ChevronRightIcon className="ml-2 size-4" />
             </Button>

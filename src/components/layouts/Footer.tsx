@@ -94,21 +94,21 @@ export const Footer = () => {
                 Legal
               </h4>
               <Link
-                href="#"
+                href="/terms"
                 className="font-medium hover:text-primary transition-colors flex items-center gap-2"
               >
                 <span className="h-px w-3 bg-primary/0 hover:bg-primary transition-all"></span>{" "}
                 Terms of Service
               </Link>
               <Link
-                href="#"
+                href="/terms"
                 className="font-medium hover:text-primary transition-colors flex items-center gap-2"
               >
                 <span className="h-px w-3 bg-primary/0 hover:bg-primary transition-all"></span>{" "}
                 Privacy Policy
               </Link>
               <Link
-                href="#"
+                href="/terms"
                 className="font-medium hover:text-primary transition-colors flex items-center gap-2"
               >
                 <span className="h-px w-3 bg-primary/0 hover:bg-primary transition-all"></span>{" "}
