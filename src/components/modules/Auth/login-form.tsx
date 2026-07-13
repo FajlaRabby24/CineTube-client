@@ -76,8 +76,8 @@ export function LoginForm({ redirectPath }: LoginFormProps) {
         <button
           type="button"
           onClick={() => {
-            form.setFieldValue("email", "fajlarabbyla24@gmail.com");
-            form.setFieldValue("password", "fajla123");
+            form.setFieldValue("email", "demouser@gmail.com");
+            form.setFieldValue("password", "demouser");
           }}
           className="bg-white/5 border border-white/10 hover:border-red-600/40 hover:bg-red-600/10 text-white text-[11px] font-bold uppercase tracking-wider py-3 rounded-xl transition-all cursor-pointer"
         >
@@ -132,12 +132,12 @@ export function LoginForm({ redirectPath }: LoginFormProps) {
           </form.Field>
 
           <div className="flex justify-end">
-             <Link 
-              href="/forgot-password" 
+            <Link
+              href="/forgot-password"
               className="text-xs font-bold text-slate-500 hover:text-red-600 transition-colors uppercase tracking-widest"
-             >
-                Forgot Password?
-             </Link>
+            >
+              Forgot Password?
+            </Link>
           </div>
 
           <Field>
@@ -159,14 +159,17 @@ export function LoginForm({ redirectPath }: LoginFormProps) {
             <FieldSeparator className="text-slate-500 text-[10px] font-black uppercase tracking-[0.2em] my-6">
               Or continue with
             </FieldSeparator>
-            
+
             <Field>
               <GoogleLoginButton className="bg-white/5 border-white/10 text-white hover:bg-white/10 h-14 rounded-xl transition-all" />
             </Field>
 
             <FieldDescription className="text-center mt-8 text-slate-400 font-medium">
               Don&apos;t have an account?{" "}
-              <Link href="/register" className="text-red-600 font-black hover:underline underline-offset-4">
+              <Link
+                href="/register"
+                className="text-red-600 font-black hover:underline underline-offset-4"
+              >
                 Join now
               </Link>
             </FieldDescription>
