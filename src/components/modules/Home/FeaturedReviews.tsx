@@ -3,6 +3,7 @@
 import { HeartIcon, QuoteIcon, StarIcon } from "lucide-react";
 import { motion } from "motion/react";
 import Image from "next/image";
+import { MagicCard } from "@/components/ui/magic-card";
 
 const reviews = [
   {
@@ -75,7 +76,12 @@ const FeaturedReviews = () => {
               transition={{ delay: index * 0.1 }}
               className="relative group h-full"
             >
-              <div className="h-full p-8 rounded-[2.5rem] bg-white/5 border border-white/10 backdrop-blur-md transition-all duration-500 group-hover:bg-white/10 group-hover:border-primary/30 flex flex-col justify-between">
+              <MagicCard
+                mode="orb"
+                glowFrom="#dc2626"
+                glowTo="#ea580c"
+                className="h-full p-8 rounded-[2.5rem] border border-white/10 bg-white/5 backdrop-blur-md flex flex-col justify-between"
+              >
                 <div className="space-y-6">
                   <div className="flex justify-between items-start">
                     <div className="flex gap-1">
@@ -100,6 +106,7 @@ const FeaturedReviews = () => {
                         src={review.user.avatar}
                         alt={review.user.name}
                         fill
+                        sizes="48px"
                         className="object-cover"
                       />
                     </div>
@@ -118,7 +125,7 @@ const FeaturedReviews = () => {
                     {review.likes}
                   </div>
                 </div>
-              </div>
+              </MagicCard>
             </motion.div>
           ))}
         </div>
