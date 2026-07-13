@@ -61,6 +61,30 @@ export function LoginForm({ redirectPath }: LoginFormProps) {
 
   return (
     <div className={cn("flex flex-col gap-6")}>
+      {/* Quick Access Demo Credentials */}
+      <div className="grid grid-cols-2 gap-3 pb-2">
+        <button
+          type="button"
+          onClick={() => {
+            form.setFieldValue("email", "fajlarabby.dev@gmail.com");
+            form.setFieldValue("password", "fajla123");
+          }}
+          className="bg-white/5 border border-white/10 hover:border-red-600/40 hover:bg-red-600/10 text-white text-[11px] font-bold uppercase tracking-wider py-3 rounded-xl transition-all cursor-pointer"
+        >
+          Demo Admin
+        </button>
+        <button
+          type="button"
+          onClick={() => {
+            form.setFieldValue("email", "fajlarabbyla24@gmail.com");
+            form.setFieldValue("password", "fajla123");
+          }}
+          className="bg-white/5 border border-white/10 hover:border-red-600/40 hover:bg-red-600/10 text-white text-[11px] font-bold uppercase tracking-wider py-3 rounded-xl transition-all cursor-pointer"
+        >
+          Demo User
+        </button>
+      </div>
+
       <form
         method="POST"
         action="#"
