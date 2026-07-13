@@ -1,7 +1,6 @@
 "use server";
 
 import { httpClient } from "@/lib/axios/httpClient";
-import { cookies } from "next/headers";
 
 export async function deleteMedia(mediaId: string) {
   try {
@@ -68,10 +67,7 @@ export async function toggleLikeMedia(
   type: "LIKE" | "DISLIKE",
 ) {
   try {
-    const res = await httpClient.post(
-      `/media/${mediaId}/like`,
-      { type }
-    );
+    const res = await httpClient.post(`/media/${mediaId}/like`, { type });
 
     return {
       success: true,

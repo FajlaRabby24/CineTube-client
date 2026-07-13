@@ -10,6 +10,7 @@ import Image from "next/image";
 import { useState } from "react";
 import { toast } from "sonner";
 import { z } from "zod";
+import { submitContactForm } from "@/services/Contact/contact.service";
 
 interface FormFields {
   name: string;
@@ -87,7 +88,7 @@ export default function ConctactForm() {
     return true;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
     if (!validateForm()) {
@@ -97,19 +98,27 @@ export default function ConctactForm() {
 
     setIsLoading(true);
 
-    // Simulate sending message (ready for EmailJS integration later)
-    setTimeout(() => {
+    try {
+      const res = await submitContactForm(formData);
+
+      if (res.success) {
+        toast.success(res.message || "Thank you! Your message has been sent successfully.");
+        setFormData({
+          name: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+        });
+        setErrors({});
+      } else {
+        toast.error(res.message || "Failed to send message");
+      }
+    } catch (error) {
+      toast.error("An unexpected error occurred. Please try again.");
+    } finally {
       setIsLoading(false);
-      toast.success("Thank you! Your message has been sent successfully.");
-      setFormData({
-        name: "",
-        email: "",
-        phone: "",
-        subject: "",
-        message: "",
-      });
-      setErrors({});
-    }, 1500);
+    }
   };
 
   return (
