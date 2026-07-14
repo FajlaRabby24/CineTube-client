@@ -3,7 +3,8 @@ import { BackgroundEffects } from "@/components/ui/background-effects";
 
 export const metadata = {
   title: "About Me - CineTube",
-  description: "Learn more about Fajla Rabby, Full Stack Web Developer and the creator of CineTube.",
+  description:
+    "Learn more about Fajla Rabby, Full Stack Web Developer and the creator of CineTube.",
 };
 
 export default function AboutMePage() {
@@ -14,12 +15,13 @@ export default function AboutMePage() {
 
       <div className="max-w-6xl w-full space-y-6 z-10">
         {/* About Me Page Header */}
-        <div className="text-center space-y-2">
+        <div className="text-center space-y-1">
           <h1 className="text-3xl font-black italic tracking-tighter text-white uppercase">
             About <span className="text-red-500">Me</span>
           </h1>
-          <p className="text-gray-400 text-sm max-w-2xl mx-auto font-medium">
-            Discover my programming journey, skill stack, projects, and future engineering goals.
+          <p className="text-gray-400 text-md max-w-2xl mx-auto font-medium">
+            Discover my programming journey, skill stack, projects, and future
+            engineering goals.
           </p>
         </div>
 
