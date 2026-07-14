@@ -51,25 +51,18 @@ bun --version
 1. **Clone the Repository**:
 
    ```bash
-   git clone https://github.com/FajlaRabby24/CuneTube-client.git
-   cd CineTube
+   git clone https://github.com/FajlaRabby24/CineTube-client.git
+   cd CineTube-client
    ```
 
-2. **Setup the Server**:
+2. **Install Dependencies**:
 
    ```bash
-   cd server
    bun install
-   # Run prisma migrations to sync databases
-   bunx prisma db push
-   # Start the development server
-   bun dev
    ```
 
-3. **Setup the Client**:
+3. **Start the Client**:
    ```bash
-   cd ../client
-   bun install
    # Start Next.js development server
    bun dev
    ```
